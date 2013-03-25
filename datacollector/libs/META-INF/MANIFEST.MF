@@ -1,0 +1,680 @@
+Manifest-Version: 1.0
+Implementation-Vendor: Funf at MIT Media Lab
+Ant-Version: Apache Ant 1.8.2
+Implementation-Title: Funf
+Implementation-Version: 0.3.0r62667525d8c51df8d93394068ac1dece0cd992ae
+Built-By: alangardner
+Created-By: 1.6.0_20-b20 (Sun Microsystems Inc.)
+Built-Date: 2011-11-07 19:25:44
+
+Name: edu/mit/media/funf/probe/builtin/BluetoothProbe$BluetoothScanRec
+ eiver.class
+SHA1-Digest: dA7xtDFVXTyHcPR1WS1ueYUwEyE=
+
+Name: edu/mit/media/funf/AsyncSharedPrefs.class
+SHA1-Digest: +RoQg5hTEL0nwTgRN3MMv1yq7DQ=
+
+Name: edu/mit/media/funf/probe/builtin/ProbeKeys$TemperatureSensorKeys
+ .class
+SHA1-Digest: d139Y+R5E7QbtNLqfS1zyntXkdg=
+
+Name: edu/mit/media/funf/opp/OppProbe$Status.class
+SHA1-Digest: mJ2kIpyg6mNhiFADyCEUMd988XQ=
+
+Name: edu/mit/media/funf/probe/CursorCell$ShortCell.class
+SHA1-Digest: pubRJ7YGVvhkE5lK5rhbOPt48Ws=
+
+Name: edu/mit/media/funf/probe/builtin/ProbeKeys$AccelerometerSensorKe
+ ys.class
+SHA1-Digest: +SGYJWDW/iWdUV6oR8UUoOMdUc4=
+
+Name: edu/mit/media/funf/probe/builtin/ApplicationsProbe.class
+SHA1-Digest: v1owaFc4dbW5a3p1tSlIurXeceU=
+
+Name: edu/mit/media/funf/probe/builtin/RotationVectorSensorProbe.class
+SHA1-Digest: w1F2+MG8sEwTX6B+HhZGH3eAMWw=
+
+Name: edu/mit/media/funf/probe/SensorProbe$SensorEventCopy.class
+SHA1-Digest: /Bg6uQFIvtd76xaBy9bLoTajQZk=
+
+Name: edu/mit/media/funf/FFT.class
+SHA1-Digest: dgkvBKPTLzu3S4zcn5K0kZhYZC4=
+
+Name: edu/mit/media/funf/probe/CursorCell$AnyCell.class
+SHA1-Digest: V7vPDV6p55bOAGMN3dCS6UsQguU=
+
+Name: edu/mit/media/funf/opp/NameValueProbeDataListener.class
+SHA1-Digest: jnH0bntP+uspkfmSAHog8UMgfXE=
+
+Name: edu/mit/media/funf/probe/builtin/ProbeKeys$HardwareInfoKeys.clas
+ s
+SHA1-Digest: Sm/x1Oy1xCYb1hm9bhvdA9tPK9E=
+
+Name: edu/mit/media/funf/Window.class
+SHA1-Digest: CUS6RBev3MR6DbwE1cPWbRhSSv0=
+
+Name: edu/mit/media/funf/configured/ConfiguredPipeline.class
+SHA1-Digest: 4d69QiTvbvr0wT2HyA0TywYxRNo=
+
+Name: edu/mit/media/funf/probe/builtin/ProbeKeys$BrowserSearchesKeys.c
+ lass
+SHA1-Digest: FQH0mxsDM0ixZXXMkio8J125x3I=
+
+Name: edu/mit/media/funf/Utils.class
+SHA1-Digest: AhbhYtRARTAFNYCDilz2mwqA/ek=
+
+Name: edu/mit/media/funf/probe/ProbeScheduleResolver.class
+SHA1-Digest: Eh3p995DNaCnYOHA/2Vwn4z7WLA=
+
+Name: edu/mit/media/funf/opp/ProbeCommunicator$DataResponder.class
+SHA1-Digest: nEyhLYv5d4M4mBVOnS7dprS+TAU=
+
+Name: edu/mit/media/funf/probe/ProbeExceptions$UnstorableTypeException
+ .class
+SHA1-Digest: NU26hqBYy5kePsl/VaP2gTTPRHI=
+
+Name: edu/mit/media/funf/probe/ContentProviderProbe$ContentProviderIte
+ rator.class
+SHA1-Digest: xyzeLyA8NMzRPEebYZPOAEMwwxc=
+
+Name: edu/mit/media/funf/probe/SynchronousProbe.class
+SHA1-Digest: 3Mt7UD+p3cU1XSx16kuQi3CNhYQ=
+
+Name: edu/mit/media/funf/probe/builtin/BluetoothProbe.class
+SHA1-Digest: mWhDmWDqj2CN8FVRbRvnmy7dJ1M=
+
+Name: edu/mit/media/funf/probe/ProbeExceptions.class
+SHA1-Digest: YeE5h1YxrRCl808DzylTvtXCJbQ=
+
+Name: edu/mit/media/funf/opp/ProbeController.class
+SHA1-Digest: 9Chj3Qtsb6AC1cbxmEDobMchHlM=
+
+Name: edu/mit/media/funf/storage/FileDirectoryArchive$1.class
+SHA1-Digest: qj+/fGBr7L3MyR97dIXMinVTEjk=
+
+Name: edu/mit/media/funf/probe/CursorCell$IntCell.class
+SHA1-Digest: D5fjC5V+StmHmiFP/coCYvtPu44=
+
+Name: edu/mit/media/funf/probe/builtin/ProbeKeys$CellKeys.class
+SHA1-Digest: JeHxYD1K2ddZMp8B1RgDiE8fpa0=
+
+Name: edu/mit/media/funf/storage/DatabaseService$LocalBinder.class
+SHA1-Digest: ABh1jNXntyAZz/xPHvn5DZ/7NOk=
+
+Name: edu/mit/media/funf/probe/builtin/ProbeKeys$ContactKeys.class
+SHA1-Digest: xXOz6K5Et/hp76rtWkJO85Qbqfo=
+
+Name: edu/mit/media/funf/probe/builtin/ProbeKeys$LocationKeys.class
+SHA1-Digest: 5f05Uety/63hJ0XlhLulhEV9Guw=
+
+Name: edu/mit/media/funf/FileUtils.class
+SHA1-Digest: 1YRgoX7MjS5CPmT2B0VY12UX60Q=
+
+Name: edu/mit/media/funf/probe/builtin/AccelerometerSensorProbe.class
+SHA1-Digest: AvY8eWobLAUmTMEhi75r23SIlHc=
+
+Name: edu/mit/media/funf/probe/builtin/ProbeKeys$TelephonyKeys.class
+SHA1-Digest: f+3cnjStRn7woDf9PCrSGXv0JZk=
+
+Name: edu/mit/media/funf/probe/builtin/LightSensorProbe.class
+SHA1-Digest: hztS45ZHN2zQ3MozJPmqm7EWYnk=
+
+Name: edu/mit/media/funf/probe/builtin/ProbeKeys$RunningApplicationsKe
+ ys.class
+SHA1-Digest: 4FRUoGKPj+LwSd8lFkWPT1RGJHs=
+
+Name: edu/mit/media/funf/probe/Probe$Details.class
+SHA1-Digest: UxnpwkxmYiW6G+mXF+O5O4svWh8=
+
+Name: edu/mit/media/funf/probe/builtin/ProbeKeys$BaseProbeKeys.class
+SHA1-Digest: /b1TPE5chCO3ROuVACMWKNuhEmo=
+
+Name: edu/mit/media/funf/storage/BackedUpArchive.class
+SHA1-Digest: wvXlufi5W95NQvr7LwzUKupInYY=
+
+Name: edu/mit/media/funf/storage/FileCopier.class
+SHA1-Digest: BxYLGKZLixvKzdsIkCPtirZ5JVU=
+
+Name: edu/mit/media/funf/FileUtils$1.class
+SHA1-Digest: NNaqPZgDs2DV6LiajtuxSr8ClRc=
+
+Name: edu/mit/media/funf/probe/builtin/ProbeKeys$AudioFilesKeys.class
+SHA1-Digest: /Y/tTBmIdrB+KahXAvk3d4ZmBmg=
+
+Name: edu/mit/media/funf/probe/builtin/ActivityProbe$ActivityCounter.c
+ lass
+SHA1-Digest: IhzE0qSy3aQPj6VCZwr21M/ORbk=
+
+Name: edu/mit/media/funf/storage/NameGenerator$IdentityNameGenerator.c
+ lass
+SHA1-Digest: 6+dxA5on5A1w1syxTsjY6Dxu7pE=
+
+Name: edu/mit/media/funf/probe/builtin/GravitySensorProbe.class
+SHA1-Digest: AOgG1ZkVTXsW43jMrWgDVDiw0hg=
+
+Name: edu/mit/media/funf/configured/ConfiguredPipeline$LocalBinder.cla
+ ss
+SHA1-Digest: ksjBMbwKoXjO1ew8LYXL5zyu6qo=
+
+Name: edu/mit/media/funf/probe/builtin/WifiProbe$3.class
+SHA1-Digest: tbQW+ar9k3+HIBeVmoQbzrt4dIQ=
+
+Name: edu/mit/media/funf/probe/builtin/TimeOffsetProbe$1.class
+SHA1-Digest: IH7XhBJPislN2XWH2i2UZvC9eEM=
+
+Name: edu/mit/media/funf/storage/StorageUtils.class
+SHA1-Digest: mjvtk+xB6AX9XIIc3sGwJeoHKjc=
+
+Name: edu/mit/media/funf/probe/builtin/LinearAccelerationSensorProbe.c
+ lass
+SHA1-Digest: JCsO2jCj7WogWcCXYYfIKi0NtO0=
+
+Name: edu/mit/media/funf/probe/builtin/BatteryProbe.class
+SHA1-Digest: Ueq3HVXvwQ8QwiOdU1OCZxrdevw=
+
+Name: edu/mit/media/funf/AsyncSharedPrefs$AsyncEditorImpl$1.class
+SHA1-Digest: RM/6+o/Q+q/n7PlCIoqFhWMfMxY=
+
+Name: edu/mit/media/funf/probe/builtin/LocationProbe$1.class
+SHA1-Digest: NomVHPEx+IWSGErVSC7/vLkKurU=
+
+Name: edu/mit/media/funf/probe/builtin/ContactProbe$ContactDataCell.cl
+ ass
+SHA1-Digest: LdoDXFl/+F6QQ9iNZFVPuoyljCE=
+
+Name: edu/mit/media/funf/storage/RemoteArchive.class
+SHA1-Digest: asNRYx2s7jbcPxl5rv9HLN6MGeU=
+
+Name: edu/mit/media/funf/probe/builtin/ProbeKeys$ProximitySensorKeys.c
+ lass
+SHA1-Digest: l22pH7xk+SDUcwV7fr4+b77kA4I=
+
+Name: edu/mit/media/funf/probe/builtin/ProbeKeys$OrientationSensorKeys
+ .class
+SHA1-Digest: 5Tz2ZkyX1rNDpTj+uZYEumJrl9M=
+
+Name: edu/mit/media/funf/probe/ContentProviderProbe.class
+SHA1-Digest: NjvTsdsI4YMir9LofalkG1DBCX4=
+
+Name: edu/mit/media/funf/probe/builtin/LocationProbe$ProbeLocationList
+ ener.class
+SHA1-Digest: Q9UyXA91kqPHbuHGyDJtQN1XAfI=
+
+Name: edu/mit/media/funf/storage/DirectoryCleaner$KeepUnderPercentageO
+ fDiskFree.class
+SHA1-Digest: jKFnGP0WlLcCAGYyIJUX/YoQBXc=
+
+Name: edu/mit/media/funf/storage/NameGenerator$RequiredSuffixNameGener
+ ator.class
+SHA1-Digest: IWPSrxWmto0u5Lx9A1bkPjv1Vw4=
+
+Name: edu/mit/media/funf/probe/builtin/AudioFeaturesProbe.class
+SHA1-Digest: U+xnZ2drYbrLfBjYVD0NPkf8kxE=
+
+Name: edu/mit/media/funf/probe/builtin/ImagesProbe.class
+SHA1-Digest: Xn5ddnozcoaCl4pWw+lZPE/t4l0=
+
+Name: edu/mit/media/funf/storage/NameGenerator$ConstantNameGenerator.c
+ lass
+SHA1-Digest: PrzCqe3k2N2hvUFWciuIHsPCZlQ=
+
+Name: edu/mit/media/funf/storage/UploadService$LocalBinder.class
+SHA1-Digest: FVBObiniYEWOQjLLClv3SHE1DQo=
+
+Name: edu/mit/media/funf/HashCodeUtil.class
+SHA1-Digest: jJJVWpk956dFx3dOW7q8QtWn3KY=
+
+Name: edu/mit/media/funf/probe/builtin/BrowserSearchesProbe.class
+SHA1-Digest: Z8WrvB77kv2UD+6f8eRVzXJhfjo=
+
+Name: edu/mit/media/funf/probe/Probe$Status.class
+SHA1-Digest: VlqOCIqd9acWaO6Ya3v7Xl0Gch0=
+
+Name: edu/mit/media/funf/probe/builtin/ProbeKeys$SMSKeys.class
+SHA1-Digest: k/OWwYvnFzVtaYQjBuSz+nTe3Lw=
+
+Name: edu/mit/media/funf/storage/NameValueDatabaseHelper$Column.class
+SHA1-Digest: hFK1+s0lMwjXyXk/1I+FselOU2g=
+
+Name: edu/mit/media/funf/probe/builtin/PressureSensorProbe.class
+SHA1-Digest: mktfH0WSI1MW8I2brvNaUkLpXus=
+
+Name: edu/mit/media/funf/storage/NameValueDatabaseHelper.class
+SHA1-Digest: Z9aNhy/xzdJyopzprHtcJm/yMvc=
+
+Name: edu/mit/media/funf/probe/builtin/ProbeKeys$BluetoothKeys.class
+SHA1-Digest: k3c7LKcJ5KgCp00Ei3bh1mBMSrw=
+
+Name: edu/mit/media/funf/probe/builtin/ActivityProbe$ActivityCounter$1
+ .class
+SHA1-Digest: qkA5Zg+kYqlsaNbP7j2U7234Rfc=
+
+Name: edu/mit/media/funf/probe/builtin/ProbeKeys$TimeOffsetKeys.class
+SHA1-Digest: JJlm0iLk7nXo12JPBwmjnuKPfwQ=
+
+Name: edu/mit/media/funf/R.class
+SHA1-Digest: zQcj1a8nDy8bgaWbyll1YMXrpW8=
+
+Name: edu/mit/media/funf/probe/builtin/ProbeKeys$BatteryKeys.class
+SHA1-Digest: e9kE/OwNKsOGYGfzE0v6cvPZyj0=
+
+Name: edu/mit/media/funf/Base64Coder.class
+SHA1-Digest: wMcNt7URXH+KeHsc4v5oRC91CZI=
+
+Name: edu/mit/media/funf/probe/builtin/ActivityProbe.class
+SHA1-Digest: 3SNtcrcMLl1OUvN0Wz+tDoH41Nw=
+
+Name: edu/mit/media/funf/storage/NameGenerator$TimestampNameGenerator.
+ class
+SHA1-Digest: 5i1YLv/+r/yL9WcfwvprNv3sv7E=
+
+Name: edu/mit/media/funf/storage/DirectoryCleaner$DescendingByLastModi
+ fiedComaparator.class
+SHA1-Digest: bIxZC6KTaLPYvy1qNyZIP6gAC14=
+
+Name: edu/mit/media/funf/probe/CursorCell$StringCell.class
+SHA1-Digest: uULUZfNHDSq+bhD5n4AxDtaYrks=
+
+Name: edu/mit/media/funf/probe/builtin/ProbeKeys$StatusKeys.class
+SHA1-Digest: 17hn7NNeDqofCohVjMwwylhEoSU=
+
+Name: edu/mit/media/funf/probe/Probe$LocalBinder.class
+SHA1-Digest: Mcqu9XGWuHun4VyISvX3ZACMcnc=
+
+Name: edu/mit/media/funf/probe/CursorCell.class
+SHA1-Digest: DyWpDeLdYT8Q8J+6aOPVUes5wXc=
+
+Name: edu/mit/media/funf/storage/CompositeFileArchive.class
+SHA1-Digest: apH6+LogF1FelyGROnUFQyXLSPs=
+
+Name: edu/mit/media/funf/probe/SensorProbe.class
+SHA1-Digest: 9eHA59bwjqUoFVcOtc4TmwiU4O8=
+
+Name: edu/mit/media/funf/Matrix.class
+SHA1-Digest: higiMjYPO4ZJivJPDUXQp2C/cnQ=
+
+Name: edu/mit/media/funf/opp/OppProbe$Parameter.class
+SHA1-Digest: AazL7Mix0e/alE/4phyW7DRv4A4=
+
+Name: edu/mit/media/funf/probe/builtin/BatteryProbe$1.class
+SHA1-Digest: si6YkNMhESiHvku0rDBSF+q6UGQ=
+
+Name: edu/mit/media/funf/probe/builtin/BrowserBookmarksProbe.class
+SHA1-Digest: uRgP9qrRDZdZzrdhL5GITXebxW8=
+
+Name: edu/mit/media/funf/probe/ContentProviderProbe$2.class
+SHA1-Digest: tqKiIkTjeCbe3iG90io8RkKzECc=
+
+Name: edu/mit/media/funf/opp/ProbeCommunicator.class
+SHA1-Digest: fw0CeKiuXrUeqj4wZgsYDK39ONw=
+
+Name: edu/mit/media/funf/configured/FunfConfig$Editor.class
+SHA1-Digest: uPQ4aZLYf/PBQ0A1RFwFBIrf3cc=
+
+Name: edu/mit/media/funf/probe/builtin/ProbeKeys$ApplicationsKeys.clas
+ s
+SHA1-Digest: ck48aGQVIfiaH1Dxl4ss2g72LS8=
+
+Name: edu/mit/media/funf/probe/DefaultProbeScheduler.class
+SHA1-Digest: RuCxTcW7JH0vrgHCXn8bfO8OQrQ=
+
+Name: edu/mit/media/funf/opp/ProbeController$ProbeMessageReceiver.clas
+ s
+SHA1-Digest: Mdwi1FkNK3olpwiLsg7qTnLN850=
+
+Name: edu/mit/media/funf/storage/UploadService$ArchiveFile.class
+SHA1-Digest: 5hqLnKZPUG+/sDVh81/fIpY8W7E=
+
+Name: edu/mit/media/funf/storage/Archive.class
+SHA1-Digest: 5SaisP95Vl1Mg08J8gp7I25oeyk=
+
+Name: edu/mit/media/funf/storage/DirectoryCleaner.class
+SHA1-Digest: xe+PSnJZAVFKaQUkH+TSPm40O2w=
+
+Name: edu/mit/media/funf/storage/NameGenerator$DatetimeNameGenerator.c
+ lass
+SHA1-Digest: oCnxZRQ7aIy2DbdxwOVKHnxRqoQ=
+
+Name: edu/mit/media/funf/storage/DatabaseService.class
+SHA1-Digest: zssVIV+OjnM56ljUFCzu94uzQco=
+
+Name: edu/mit/media/funf/probe/builtin/ProbeKeys$VideosKeys.class
+SHA1-Digest: 6Qm+WezX6U36dKAWx6m7FwRu+ks=
+
+Name: edu/mit/media/funf/probe/builtin/OrientationSensorProbe.class
+SHA1-Digest: grdwAZOaruh9U4L5n8P7ZL5fuWs=
+
+Name: edu/mit/media/funf/probe/builtin/RunningApplicationsProbe.class
+SHA1-Digest: m0S/L174xMACEuSj0LtxzDgv+Lw=
+
+Name: edu/mit/media/funf/probe/builtin/TimeOffsetProbe$NtpMessage.clas
+ s
+SHA1-Digest: 2pCXzq0R4/cv3L1wZlmriOMnpIk=
+
+Name: edu/mit/media/funf/probe/builtin/LocationProbe.class
+SHA1-Digest: O6a1vyd82VtUjcMGJ9VHyHiL/mQ=
+
+Name: edu/mit/media/funf/probe/builtin/ProximitySensorProbe.class
+SHA1-Digest: FKhqI/LHKoAKuJ3JDCJRfH+XZkQ=
+
+Name: edu/mit/media/funf/storage/DirectoryCleaner$KeepUnderStorageLimi
+ t.class
+SHA1-Digest: kn3R9SVLQqZmfdRF189WvCaj6Y8=
+
+Name: edu/mit/media/funf/probe/CursorCell$DoubleCell.class
+SHA1-Digest: AdgDX/wvSeDjQ7sEuTXxO9RBwtY=
+
+Name: edu/mit/media/funf/probe/builtin/ProbeKeys$GravitySensorKeys.cla
+ ss
+SHA1-Digest: 22qV2tOTd2uUdkCBGUYm3Qqparc=
+
+Name: edu/mit/media/funf/storage/DirectoryCleaner$KeepAll.class
+SHA1-Digest: nsPfwwQftuEcwUm7DNpao4ATSdg=
+
+Name: edu/mit/media/funf/configured/FunfConfig.class
+SHA1-Digest: F61iZ0a11cokYyAUPYtfRgCJ0uY=
+
+Name: edu/mit/media/funf/storage/DefaultArchive.class
+SHA1-Digest: c+FF4l9GP7nZo1Z5VGDJ6tv+L4U=
+
+Name: edu/mit/media/funf/IOUtils.class
+SHA1-Digest: JcfZmH3Vd9bJMNKB3c+Xsdm2TA0=
+
+Name: edu/mit/media/funf/AsyncSharedPrefs$AsyncEditorImpl.class
+SHA1-Digest: gc83lCUydZnT4millgpeapcnkW4=
+
+Name: edu/mit/media/funf/probe/Probe.class
+SHA1-Digest: Gdp2CMxVjZtSWcFfditCio2OE88=
+
+Name: edu/mit/media/funf/storage/NameGenerator.class
+SHA1-Digest: ivzIRXApnzGC6phyb3WMuVVXWpw=
+
+Name: edu/mit/media/funf/AsyncSharedPrefs$1.class
+SHA1-Digest: 8Dk5umY18n2zIYaIpUoezO7KOIk=
+
+Name: edu/mit/media/funf/opp/ProbeCommunicator$DataResponder$1.class
+SHA1-Digest: vXZvE6PIpWtaNvm8gn+MYEgHpcQ=
+
+Name: edu/mit/media/funf/probe/builtin/ProbeKeys$AndroidInternal$Sms.c
+ lass
+SHA1-Digest: OeXmhzJqcqCne0x/IVnOU/KJbxY=
+
+Name: edu/mit/media/funf/RSAEncode.class
+SHA1-Digest: HKAGko3+VKdg4gXOFoFQ/jZfmOA=
+
+Name: edu/mit/media/funf/probe/builtin/ProbeKeys$AndroidInternal.class
+SHA1-Digest: PMADwRJdtUU4SxxtNkHSybvGzMQ=
+
+Name: edu/mit/media/funf/probe/builtin/ContactProbe.class
+SHA1-Digest: zeWDckviRe0QY8XszkLGFUHLrDw=
+
+Name: edu/mit/media/funf/opp/OppProbe$ReservedParamaters.class
+SHA1-Digest: XCRYFzZ4b4sDITgBC8EjWkqifzM=
+
+Name: edu/mit/media/funf/storage/DirectoryCleaner$KeepMostRecent.class
+SHA1-Digest: vjwzDEDPPJO5LLcqmwyZJkorUuY=
+
+Name: edu/mit/media/funf/probe/builtin/GyroscopeSensorProbe.class
+SHA1-Digest: n7SHe9d42EzSDGND/8gXyCCgTCM=
+
+Name: edu/mit/media/funf/probe/ProbeUtils.class
+SHA1-Digest: cRXtbdHOcHqtZXXe4LO0XUQ6msQ=
+
+Name: edu/mit/media/funf/storage/NameValueProbeDataListener.class
+SHA1-Digest: Chedf3xqsUZ/ky63v78dzC+jVDw=
+
+Name: edu/mit/media/funf/probe/builtin/ProbeKeys$WifiKeys.class
+SHA1-Digest: Mtg3VgLdaz87BOxxwCyDAOT1gGw=
+
+Name: edu/mit/media/funf/probe/ProbeScheduler.class
+SHA1-Digest: M/YxSZvMaSheza+9xvGi7f2rq0w=
+
+Name: edu/mit/media/funf/probe/builtin/TimeOffsetProbe.class
+SHA1-Digest: Z1CxfnBVJ3bbvAVRrEvARC/ZnB4=
+
+Name: edu/mit/media/funf/probe/builtin/AudioFilesProbe.class
+SHA1-Digest: 17eBVX//NmxQ4J9INZBuuRZIb9I=
+
+Name: edu/mit/media/funf/probe/builtin/ProbeKeys$MagneticFieldSensorKe
+ ys.class
+SHA1-Digest: zq6xrV11GjH2295i4y34OtYX+i0=
+
+Name: edu/mit/media/funf/R$attr.class
+SHA1-Digest: hq+eDgWyiPzjGMrJfoytR+7eeCw=
+
+Name: edu/mit/media/funf/probe/builtin/ProbeKeys$ImagesKeys.class
+SHA1-Digest: +OapKlZTloc7QeJ0t9fLnVpZUkY=
+
+Name: edu/mit/media/funf/probe/SensorProbe$1.class
+SHA1-Digest: ixxrGB7dqZ3UvrERN7JepB0V52Q=
+
+Name: edu/mit/media/funf/probe/ProbeCommandServiceConnection.class
+SHA1-Digest: V6ZWG8j/s79C4OFhRijyHZW+rdg=
+
+Name: edu/mit/media/funf/probe/builtin/CallLogProbe.class
+SHA1-Digest: UN6SCA53yyJXX2th6u9Pn7o1KXI=
+
+Name: edu/mit/media/funf/probe/SensorProbe$2.class
+SHA1-Digest: o062mQHGWBeH8tRkIyiYiJc1Ysk=
+
+Name: edu/mit/media/funf/storage/HttpUploadService.class
+SHA1-Digest: p4klECdOaA4yjcu+oHmmco1jh9Q=
+
+Name: edu/mit/media/funf/probe/builtin/ProbeKeys$RotationVectorSensorK
+ eys.class
+SHA1-Digest: uG2Dt89Ghsf5tPuR27hu/dxSSL4=
+
+Name: edu/mit/media/funf/probe/builtin/ProbeKeys$AndroidInfoKeys.class
+SHA1-Digest: Iz60kbVnqonf/GG+r820rfKDWZE=
+
+Name: edu/mit/media/funf/probe/builtin/ProbeKeys$AudioFeaturesKeys.cla
+ ss
+SHA1-Digest: wVum7mYzGwNkf8TWU160o8rC8jI=
+
+Name: edu/mit/media/funf/storage/NameGenerator$SystemUniqueTimestampNa
+ meGenerator.class
+SHA1-Digest: SJmxbIjf5UV8Sp5GBS2Qy0vRbbI=
+
+Name: edu/mit/media/funf/probe/builtin/BluetoothProbe$1.class
+SHA1-Digest: uFJSXzFUHoLbghw+jtYdeF5h1cc=
+
+Name: edu/mit/media/funf/storage/FileCopier$SimpleFileCopier.class
+SHA1-Digest: Ea0C/g4YifPcExP+RMOt5wcGAVQ=
+
+Name: edu/mit/media/funf/probe/builtin/ProbeKeys.class
+SHA1-Digest: xH+FwdCWBTrBcnGaJ55FIviWLKo=
+
+Name: edu/mit/media/funf/probe/builtin/VideosProbe.class
+SHA1-Digest: twAuVjhPBZ71Zax3Ob/JJD93wIg=
+
+Name: edu/mit/media/funf/probe/ProbeCommandServiceConnection$1.class
+SHA1-Digest: J7S+htLx35IfQ9iqRpp5k3/kaMg=
+
+Name: edu/mit/media/funf/opp/ProbeController$1.class
+SHA1-Digest: y9WBog8i08v1cPtFNKamEf1TWIQ=
+
+Name: edu/mit/media/funf/storage/NameGenerator$CompositeNameGenerator.
+ class
+SHA1-Digest: mgrAQXggwvC4TPx/xdfGfg+m/z0=
+
+Name: edu/mit/media/funf/storage/BundleSerializer.class
+SHA1-Digest: /CdJlRnZ6Jj6RIOzi1QanWvRmT4=
+
+Name: edu/mit/media/funf/storage/NameValueDatabaseService.class
+SHA1-Digest: QOUA/CbbalQ4475+Q3kG8vqd/f4=
+
+Name: edu/mit/media/funf/probe/ContentProviderProbe$1.class
+SHA1-Digest: meNakmX7Pe/3e6VpwJbUNG4q1jY=
+
+Name: edu/mit/media/funf/probe/builtin/ProbeKeys$ScreenKeys.class
+SHA1-Digest: 6J1gwZnfrGky2pOuKsiQZUEbdcs=
+
+Name: edu/mit/media/funf/probe/CursorCell$NullCell.class
+SHA1-Digest: fmffX0vuswtFRBErlkiHp4+cLzg=
+
+Name: edu/mit/media/funf/MD5.class
+SHA1-Digest: X6CWc+5VYHXPh+vSBWQOa61K9yM=
+
+Name: edu/mit/media/funf/probe/builtin/HardwareInfoProbe.class
+SHA1-Digest: V8PRjyr2IgBgTx018n/XmsvFAIw=
+
+Name: edu/mit/media/funf/probe/builtin/ScreenProbe$1.class
+SHA1-Digest: RXwv9MYbm8UsJMHq+dzTNqznbKc=
+
+Name: edu/mit/media/funf/probe/builtin/ScreenProbe.class
+SHA1-Digest: UOB4Q+9ziebvuTVf2n8I+FLU9hU=
+
+Name: edu/mit/media/funf/probe/builtin/ProbeKeys$SensorKeys.class
+SHA1-Digest: DcGakeTm3RcbHEMddDuy9PX580k=
+
+Name: edu/mit/media/funf/probe/builtin/ProbeKeys$AccelerometerFeatures
+ Keys.class
+SHA1-Digest: zb8H9QSoBz8Xzr5NDttaWpx7cMw=
+
+Name: edu/mit/media/funf/probe/CursorCell$LongCell.class
+SHA1-Digest: X28L2vGW+I/MwK0/uvcUinSD0us=
+
+Name: edu/mit/media/funf/probe/builtin/ProbeKeys$ActivityKeys.class
+SHA1-Digest: fnCGQhhZfH2rrYiMv7ELB2oJLck=
+
+Name: edu/mit/media/funf/probe/builtin/SMSProbe.class
+SHA1-Digest: CjbmZXPL0awYs0Dsk9+j2rMjuUI=
+
+Name: edu/mit/media/funf/probe/builtin/WifiProbe$1.class
+SHA1-Digest: PXmXUfp4gFLM6LRE+xmb0RP8UrU=
+
+Name: edu/mit/media/funf/storage/DirectoryCleaner$KeepForLengthOfTime.
+ class
+SHA1-Digest: OnFnaxCCv16Fr0nPMjFTSK2bq8I=
+
+Name: edu/mit/media/funf/probe/DatedContentProviderProbe.class
+SHA1-Digest: 6j3X3weHv0Vr9uSHfl5xCsXCzvo=
+
+Name: edu/mit/media/funf/CustomizedIntentService.class
+SHA1-Digest: Ua+zcDyNoRimgfSZNyrfl+Y/1Do=
+
+Name: edu/mit/media/funf/probe/Probe$Parameter$Builtin.class
+SHA1-Digest: lAKMUq09Jv4LI4RkK2P/oi0duOI=
+
+Name: edu/mit/media/funf/probe/builtin/ProbeKeys$AndroidInternal$TextB
+ asedSmsColumns.class
+SHA1-Digest: y3apL+hFjtmrL7Jj4Zf7Pv0Hm5s=
+
+Name: edu/mit/media/funf/probe/builtin/ProbeKeys$GyroscopeSensorKeys.c
+ lass
+SHA1-Digest: EbDekzYTlTauXrvrqbtRIIVrw/g=
+
+Name: edu/mit/media/funf/probe/CursorCell$PhoneNumberCell.class
+SHA1-Digest: Oz8NwrVxwaYqI5JL+H9cqS+QXfo=
+
+Name: edu/mit/media/funf/storage/UploadService$1.class
+SHA1-Digest: kwKjJzesNNdpEsZwt5csyHvWmqs=
+
+Name: edu/mit/media/funf/EqualsUtil.class
+SHA1-Digest: jKA3K0x3M7K4KqZRp1nZ/qspffE=
+
+Name: edu/mit/media/funf/probe/CursorCell$HashedCell.class
+SHA1-Digest: k1JUYyZ4Oov06UgzryLEn4OfF5Y=
+
+Name: edu/mit/media/funf/probe/builtin/ProbeKeys$CallLogKeys.class
+SHA1-Digest: EU3KNEGBDjcNEmq9BnO6CwGGJZo=
+
+Name: edu/mit/media/funf/probe/Probe$Parameter.class
+SHA1-Digest: q3VIkXGYpqW7sHVQZd1XTL40kyA=
+
+Name: edu/mit/media/funf/storage/FileCopier$EncryptedFileCopier.class
+SHA1-Digest: kdHBOR/bQPd+hKzdg7+YxtRYYic=
+
+Name: edu/mit/media/funf/probe/builtin/TemperatureSensorProbe.class
+SHA1-Digest: imuMht8LekyhuZJFc1svTBOBtp0=
+
+Name: edu/mit/media/funf/R$string.class
+SHA1-Digest: IjABnbdbF1mGNf0WDXxpirlkBII=
+
+Name: edu/mit/media/funf/probe/builtin/WifiProbe.class
+SHA1-Digest: 3rmaiGS0lHnXGb3femI9XRMb+8A=
+
+Name: edu/mit/media/funf/HashUtil$HashingType.class
+SHA1-Digest: EvD+m8/T2mjglSGE7PF09at1Zek=
+
+Name: edu/mit/media/funf/probe/builtin/TimeOffsetProbe$SntpClient.clas
+ s
+SHA1-Digest: KK5v96eBvI9tyisNEJQJ9Skt3s0=
+
+Name: edu/mit/media/funf/opp/OppProbe.class
+SHA1-Digest: HH8iBHCv+tE07GPrG6gWN2FxAJQ=
+
+Name: edu/mit/media/funf/probe/builtin/MagneticFieldSensorProbe.class
+SHA1-Digest: iflvtCOCPAMriXNRiJciZdB8h24=
+
+Name: edu/mit/media/funf/probe/builtin/ProbeKeys$LightSensorKeys.class
+SHA1-Digest: ydIIHeFOualdny+BsZJs94WBhFo=
+
+Name: edu/mit/media/funf/probe/builtin/ProbeKeys$BrowserBookmarksKeys.
+ class
+SHA1-Digest: IGQcDwsKwutBqsIDqboNEoygOTA=
+
+Name: edu/mit/media/funf/probe/builtin/AndroidInfoProbe.class
+SHA1-Digest: YdSEqeYoqTGIVHSVVICT/g2c5V8=
+
+Name: edu/mit/media/funf/probe/builtin/WifiProbe$2.class
+SHA1-Digest: nWrY8IKffPyUbO/vBFu4N/ke7YI=
+
+Name: edu/mit/media/funf/storage/DirectoryCleaner$CompositeDirectoryCl
+ eaner.class
+SHA1-Digest: ARTLbWbY9UD5OCIgxNSaGwfexyI=
+
+Name: edu/mit/media/funf/MFCC.class
+SHA1-Digest: QB9XKUopfXr5HY11dPfDHiPrYm0=
+
+Name: edu/mit/media/funf/probe/builtin/ProbeKeys$LinearAccelerationSen
+ sorKeys.class
+SHA1-Digest: 7mg6+BKH/bRfP9bLt/Zawoa28S0=
+
+Name: edu/mit/media/funf/HashUtil.class
+SHA1-Digest: mhJSTzVfzdC8UdYUP/qert0cdzs=
+
+Name: edu/mit/media/funf/probe/builtin/ActivityProbe$1.class
+SHA1-Digest: HWZjaltLctJaB/0R/rXsm1ptMeU=
+
+Name: edu/mit/media/funf/storage/NameValueDatabaseHelper$Table.class
+SHA1-Digest: /6dfZHuT378G5l4q4AivVoDEuXo=
+
+Name: edu/mit/media/funf/probe/builtin/AudioFeaturesProbe$1.class
+SHA1-Digest: rAbnYt03BMeRNpwryLUuINkeVVU=
+
+Name: edu/mit/media/funf/CustomizedIntentService$ServiceHandler.class
+SHA1-Digest: 5vIsz69Y1K32PQQDIYZzUZAiTLY=
+
+Name: edu/mit/media/funf/probe/builtin/AccelerometerFeaturesProbe.clas
+ s
+SHA1-Digest: N0QBwBBTGz+G8C3YypSZOkX1cXc=
+
+Name: edu/mit/media/funf/probe/builtin/DelegateProbeScheduler.class
+SHA1-Digest: mjCeVYALNW1xPUdj0YAL629Dzys=
+
+Name: edu/mit/media/funf/storage/UploadService.class
+SHA1-Digest: US9S2CLl8/A5h8kszCJeymR1bhs=
+
+Name: edu/mit/media/funf/probe/builtin/TelephonyProbe.class
+SHA1-Digest: /wSTzMkBtDP8uR+7o30C8llRHs4=
+
+Name: edu/mit/media/funf/probe/CursorCell$FloatCell.class
+SHA1-Digest: 8n97T6jqCgARYdPvCSHxS8ypghA=
+
+Name: edu/mit/media/funf/probe/builtin/ProbeKeys$PressureSensorKeys.cl
+ ass
+SHA1-Digest: 4RZLhhyDLTBjDuR6eFd0kfTEyS0=
+
+Name: edu/mit/media/funf/probe/CursorCell$BooleanCell.class
+SHA1-Digest: 4RUbjFXTmSuAITwiojugdOJo9NM=
+
+Name: edu/mit/media/funf/storage/FileDirectoryArchive.class
+SHA1-Digest: qKnsAl7kxbDCLH0ZcCUftmm6Gqw=
+
+Name: edu/mit/media/funf/probe/builtin/CellProbe.class
+SHA1-Digest: bbpCGFS5b4LXKLXsdg8WPD5lR8U=
+
+Name: edu/mit/media/funf/storage/HttpArchive.class
+SHA1-Digest: eQMOWCNgRaQKAY43XyOSpz5uzhI=
+

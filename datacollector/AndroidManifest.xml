@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 
+ * Funf: Open Sensing Framework
+ * Copyright (C) 2010-2011 Nadav Aharony, Wei Pan, Alex Pentland. 
+ * Acknowledgments: Alan Gardner
+ * Contact: nadav@media.mit.edu
+ * 
+ * This file is part of Funf.
+ * 
+ * Funf is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as 
+ * published by the Free Software Foundation, either version 3 of 
+ * the License, or (at your option) any later version. 
+ * 
+ * Funf is distributed in the hope that it will be useful, but 
+ * WITHOUT ANY WARRANTY; without even the implied warranty of 
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+ * See the GNU Lesser General Public License for more details.
+ * 
+ * You should have received a copy of the GNU Lesser General Public 
+ * License along with Funf. If not, see <http://www.gnu.org/licenses/>.
+ -->
+
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+      package="dk.dtu.imm.datacollector"
+      android:versionCode="1"
+      android:versionName="0.5">
+    <uses-sdk  android:minSdkVersion="15" android:targetSdkVersion="15" />
+    <application android:label="@string/app_name" android:largeHeap="true" android:icon="@drawable/icon" >
+    	
+        
+        <activity android:name=".MainActivity">
+    <intent-filter>
+        <action android:name="android.intent.action.MAIN" />
+        <category android:name="android.intent.category.LAUNCHER" />
+    </intent-filter>
+</activity>
+        
+        <!-- Probe Services -->
+        <service android:name="edu.mit.media.funf.probe.builtin.ActivityProbe"></service>
+        <service android:name="edu.mit.media.funf.probe.builtin.AndroidInfoProbe"></service>
+        <service android:name="edu.mit.media.funf.probe.builtin.ApplicationsProbe"></service>
+        <service android:name="edu.mit.media.funf.probe.builtin.AudioFilesProbe"></service>
+        <service android:name="edu.mit.media.funf.probe.builtin.BatteryProbe"></service>
+        <service android:name="edu.mit.media.funf.probe.builtin.BluetoothProbe"></service>
+        <service android:name="edu.mit.media.funf.probe.builtin.BrowserBookmarksProbe"></service>
+        <service android:name="edu.mit.media.funf.probe.builtin.BrowserSearchesProbe"></service>
+        <service android:name="edu.mit.media.funf.probe.builtin.CallLogProbe"></service>
+        <service android:name="edu.mit.media.funf.probe.builtin.CellProbe"></service>
+        <service android:name="edu.mit.media.funf.probe.builtin.ContactProbe"></service>
+        <service android:name="edu.mit.media.funf.probe.builtin.HardwareInfoProbe"></service>
+        <service android:name="edu.mit.media.funf.probe.builtin.ImagesProbe"></service>
+        <service android:name="edu.mit.media.funf.probe.builtin.LocationProbe"></service>
+        <service android:name="edu.mit.media.funf.probe.builtin.RunningApplicationsProbe"></service>
+        <service android:name="edu.mit.media.funf.probe.builtin.ScreenProbe"></service>
+        <service android:name="edu.mit.media.funf.probe.builtin.SMSProbe"></service>
+        <service android:name="edu.mit.media.funf.probe.builtin.TelephonyProbe"></service>
+        <service android:name="edu.mit.media.funf.probe.builtin.TimeOffsetProbe"></service>
+        <service android:name="edu.mit.media.funf.probe.builtin.VideosProbe"></service>
+        <service android:name="edu.mit.media.funf.probe.builtin.WifiProbe"></service>
+        
+        <service android:name="edu.mit.media.funf.probe.builtin.AccelerometerSensorProbe"></service>
+        <service android:name="edu.mit.media.funf.probe.builtin.GravitySensorProbe"></service>
+        <service android:name="edu.mit.media.funf.probe.builtin.GyroscopeSensorProbe"></service>
+        <service android:name="edu.mit.media.funf.probe.builtin.LightSensorProbe"></service>
+        <service android:name="edu.mit.media.funf.probe.builtin.LinearAccelerationSensorProbe"></service>
+        <service android:name="edu.mit.media.funf.probe.builtin.MagneticFieldSensorProbe"></service>
+        <service android:name="edu.mit.media.funf.probe.builtin.OrientationSensorProbe"></service>
+        <service android:name="edu.mit.media.funf.probe.builtin.PressureSensorProbe"></service>
+        <service android:name="edu.mit.media.funf.probe.builtin.ProximitySensorProbe"></service>
+        <service android:name="edu.mit.media.funf.probe.builtin.RotationVectorSensorProbe"></service>
+        <service android:name="edu.mit.media.funf.probe.builtin.TemperatureSensorProbe"></service>
+        
+        <service android:name="edu.mit.media.funf.probe.builtin.AudioFeaturesProbe"></service>
+        <service android:name="edu.mit.media.funf.probe.builtin.AccelerometerFeaturesProbe"></service>
+        
+        <!-- Framework services -->
+        <service android:name=".MainPipeline"></service>
+        <service android:name="edu.mit.media.funf.storage.NameValueDatabaseService"></service>
+        <service android:name="edu.mit.media.funf.storage.HttpUploadService"></service>
+        
+        <receiver android:name=".LauncherReceiver" android:enabled="true">
+        	<intent-filter>
+        		<action android:name="android.intent.action.BATTERY_CHANGED" />
+        		<action android:name="android.intent.action.BOOT_COMPLETED" />
+        		<action android:name="android.intent.action.DOCK_EVENT" />
+        		<action android:name="android.intent.action.ACTION_SCREEN_ON" />
+        		<action android:name="android.intent.action.USER_PRESENT" />
+        	</intent-filter>
+        </receiver>
+    </application>
+    
+    <!-- Permission to upload data -->
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    
+    <!-- Battery Probe and launching -->
+    <uses-permission android:name="android.permission.BATTERY_STATS" />
+    
+
+    <!-- All probes -->
+    <uses-permission android:name="android.permission.WAKE_LOCK"/>
+    
+    <!-- Location probe, Cell probe -->
+	<uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/> 
+    
+    <!-- Location probe -->
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>   
+    
+    
+    <!-- Wifi and Hardware Info probes -->
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/> 
+    
+     <!-- Wifi probe -->
+    <uses-permission android:name="android.permission.CHANGE_WIFI_STATE"/> 
+    
+    <!-- Bluetooth probe -->
+    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN"/> 
+    
+    <!-- Bluetooth and Hardware Info probes -->
+    <uses-permission android:name="android.permission.BLUETOOTH"/> 
+    
+    <!-- Running applications probe -->
+    <uses-permission android:name="android.permission.GET_TASKS"/> 
+    
+    <!-- Browser probes -->
+    <uses-permission android:name="com.android.browser.permission.READ_HISTORY_BOOKMARKS" />
+    
+    <!-- Call Log and Contact probes -->
+    <uses-permission android:name="android.permission.READ_CONTACTS" />
+    
+    <!-- Backing up database to SD card -->
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/> 
+    
+    <!-- Backing up to the web -->
+    <uses-permission android:name="android.permission.INTERNET" />
+    
+    <!--  SMS Probe -->
+    <uses-permission android:name="android.permission.READ_SMS" />
+    
+    <!-- Running applications probe -->
+    <uses-permission android:name="android.permission.GET_TASKS"/> 
+    
+    <!-- Running Audio features probe -->
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+    
+    <!-- Backing up database to SD card -->
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/> 
+    
+    <!-- Backing up to the web -->
+    <uses-permission android:name="android.permission.INTERNET" />
+    
+    <!-- DatabaseService, Archive service (unique ids) -->
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+</manifest> 
