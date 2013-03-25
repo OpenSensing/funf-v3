@@ -1,0 +1,461 @@
+commit 7b165d8ca2a7fe234ba796b11feab99dc3523e06
+Author: Piotr <piotr@Piotrs-MacBook-Air.local>
+Date:   Fri Dec 14 16:18:32 2012 +0100
+
+    SMS problem fixed
+
+diff --git a/funf-open-sensing-framework/src/edu/mit/media/funf/probe/ContentProviderProbe.java b/funf-open-sensing-framework/src/edu/mit/media/funf/probe/ContentProviderProbe.java
+index a09745b..98e35a6 100644
+--- a/funf-open-sensing-framework/src/edu/mit/media/funf/probe/ContentProviderProbe.java
++++ b/funf-open-sensing-framework/src/edu/mit/media/funf/probe/ContentProviderProbe.java
+@@ -21,11 +21,14 @@
+  */
+ package edu.mit.media.funf.probe;
+ 
++import java.util.ArrayDeque;
+ import java.util.ArrayList;
+ import java.util.Iterator;
+ import java.util.List;
+ import java.util.Map;
+ import java.util.NoSuchElementException;
++import java.util.Queue;
++import java.util.concurrent.Executor;
+ 
+ import android.content.Context;
+ import android.database.Cursor;
+@@ -46,6 +49,7 @@ public abstract class ContentProviderProbe extends Probe {
+ 
+ 	protected Iterable<Bundle> mostRecentScan;
+ 	private Thread onRunThread;
++	private ThreadPerTaskExecutor onRunExecutor;
+ 	
+ 	@Override
+ 	public Parameter[] getAvailableParameters() {
+@@ -78,6 +82,7 @@ public abstract class ContentProviderProbe extends Probe {
+ 	@Override
+ 	protected void onRun(Bundle params) {
+ 		Log.d(TAG, "onRun of ContentProviderProbe");
++		/*
+ 		if (onRunThread == null) {
+ 			onRunThread = new Thread(new Runnable() {
+ 				@Override
+@@ -89,6 +94,19 @@ public abstract class ContentProviderProbe extends Probe {
+ 				}
+ 			});
+ 			onRunThread.start();
++		}*/
++		if (onRunExecutor == null) {
++			onRunExecutor = new ThreadPerTaskExecutor();
++			onRunExecutor.execute(new Runnable() {
++				@Override
++				public void run() {
++					mostRecentScan = parseCursorResults();
++					sendProbeData();
++					onRunThread = null;
++					stop();
++				}
++			});
++			
+ 		}
+ 	}
+ 
+@@ -115,13 +133,17 @@ public abstract class ContentProviderProbe extends Probe {
+ 	}
+ 	@Override
+ 	public void sendProbeData() {
+-		// TODO: make this always run on separate thread
++		int counter = 0;
++		// TODO: make this always run on separate thread		
+ 		if (mostRecentScan != null ) {
+ 			if (sendEachRowSeparately()) {
+ 				for (Bundle data : mostRecentScan) {
++					
+ 					if (data != null) {
++						Log.e(TAG, "Adding item : " + counter + " from " + getTimestamp(data) + "@" + System.currentTimeMillis());
+ 						sendProbeData(getTimestamp(data), data);
+ 						throttle();
++						counter ++;
+ 					}
+ 				}
+ 			} else {
+@@ -150,11 +172,11 @@ public abstract class ContentProviderProbe extends Probe {
+ 				}
+ 				sendProbeData(timestamp, data);
+ 			}
+-		}
++		}		
+ 	}
+ 	
+ 	protected boolean sendEachRowSeparately() {
+-		return false;
++		return true;
+ 	}
+ 	
+ 	protected abstract String getDataName();
+@@ -190,6 +212,45 @@ public abstract class ContentProviderProbe extends Probe {
+         };
+ 	}
+ 	
++	class ThreadPerTaskExecutor implements Executor {
++		final Queue<Runnable> tasks = new ArrayDeque<Runnable>();
++		final Executor executor;
++		Runnable active;
++
++		ThreadPerTaskExecutor(Executor executor) {
++			this.executor = executor;
++		}
++		ThreadPerTaskExecutor() {
++			this.executor = new SmallExecutor();
++		}
++
++		public synchronized void execute(final Runnable r) {
++			tasks.offer(new Runnable() {
++				public void run() {
++					try {
++						r.run();
++					} finally {
++						scheduleNext();
++					}
++				}
++			});
++			if (active == null) {
++				scheduleNext();
++			}
++		}
++
++		protected synchronized void scheduleNext() {
++			if ((active = tasks.poll()) != null) {
++				executor.execute(active);
++			}
++		}
++		class SmallExecutor implements Executor {
++			   public void execute(Runnable r) {
++			     new Thread(r).start();
++			   
++			 }}
++	}
++
+ 	class ContentProviderIterator implements Iterator<Bundle> {
+ 
+ 		private final Cursor c;
+@@ -204,6 +265,7 @@ public abstract class ContentProviderProbe extends Probe {
+ 			this.c = getCursor(projection);
+ 			int count = c.getCount();
+ 			this.brandNew = true;
++			
+ 			Log.v(TAG, "cursor returned " + count +" result");
+ 		}
+ 		
+diff --git a/funf-open-sensing-framework/src/edu/mit/media/funf/probe/DatedContentProviderProbe.java b/funf-open-sensing-framework/src/edu/mit/media/funf/probe/DatedContentProviderProbe.java
+index 1291d0a..9e2b4ed 100644
+--- a/funf-open-sensing-framework/src/edu/mit/media/funf/probe/DatedContentProviderProbe.java
++++ b/funf-open-sensing-framework/src/edu/mit/media/funf/probe/DatedContentProviderProbe.java
+@@ -23,6 +23,7 @@ package edu.mit.media.funf.probe;
+ 
+ import java.util.ArrayList;
+ import java.util.Arrays;
++import java.util.Calendar;
+ import java.util.List;
+ import java.util.concurrent.TimeUnit;
+ 
+@@ -45,13 +46,23 @@ public abstract class DatedContentProviderProbe extends ContentProviderProbe {
+ 			projection = new String[projectionList.size()];
+ 			projectionList.toArray(projection);
+ 		}
+-		Log.i(TAG, "Previous Date Sent Time: " + getDateColumnTimeUnit().convert(getPreviousDataSentTime(), TimeUnit.SECONDS));
++		String debugmessage = "Previous Run Time [ms]: " + getDateColumnTimeUnit().convert(getPreviousDataSentTime(), TimeUnit.SECONDS);
++		debugmessage += ".Previous Run Time [original]: " + getPreviousDataSentTime();
++		debugmessage+= ". Time now: " + System.currentTimeMillis();
++		Log.i(TAG, debugmessage);
++		
+ 		return getContentResolver().query(
+ 				getContentProviderUri(),
+ 				projection, // TODO: different platforms have different fields supported for content providers, need to resolve this
+                 dateColumn + " > ?", 
+                 new String[] {String.valueOf(getDateColumnTimeUnit().convert(getPreviousDataSentTime() + 1, TimeUnit.SECONDS))}, // Add one because of unit truncation
+-                dateColumn + " DESC");
++                dateColumn + " ASC");
++		/*return getContentResolver().query(
++				getContentProviderUri(),
++				projection, // TODO: different platforms have different fields supported for content providers, need to resolve this
++                dateColumn + " > ?", 
++                new String[] {String.valueOf(2355475157000l)}, // Add one because of unit truncation
++                dateColumn + " DESC");*/
+ 	}
+ 	
+ 	protected abstract Uri getContentProviderUri();
+diff --git a/funf-open-sensing-framework/src/edu/mit/media/funf/probe/Probe.java b/funf-open-sensing-framework/src/edu/mit/media/funf/probe/Probe.java
+index 7566af6..c520b21 100644
+--- a/funf-open-sensing-framework/src/edu/mit/media/funf/probe/Probe.java
++++ b/funf-open-sensing-framework/src/edu/mit/media/funf/probe/Probe.java
+@@ -531,6 +531,7 @@ public abstract class Probe extends CustomizedIntentService implements BaseProbe
+ 			}
+ 			sendProbeStatus(null);
+ 			long nowTimestamp = Utils.millisToSeconds(System.currentTimeMillis());
++			Log.i(TAG, "Setting probe " + getClass().getName() + "'s last time to: " + String.valueOf(nowTimestamp));
+ 			getHistoryPrefs().edit().putLong(MOST_RECENT_RUN_KEY, nowTimestamp).commit();
+ 			onRun(parameters);
+ 		}
+@@ -743,6 +744,7 @@ public abstract class Probe extends CustomizedIntentService implements BaseProbe
+ 				}
+ 
+ 				// Save the data sent times
++				Log.d(TAG, "Saving sent time as: " + String.valueOf(epochTimestamp));
+ 				getHistoryPrefs().edit()
+ 				.putString(MOST_RECENT_DATA_BY_REQUEST_KEY, dataSentTimes.toString())
+ 				.putLong(MOST_RECENT_DATA_KEY, epochTimestamp)
+diff --git a/funf-open-sensing-framework/src/edu/mit/media/funf/probe/builtin/ContactProbe.java b/funf-open-sensing-framework/src/edu/mit/media/funf/probe/builtin/ContactProbe.java
+index 3763e5c..c135c32 100644
+--- a/funf-open-sensing-framework/src/edu/mit/media/funf/probe/builtin/ContactProbe.java
++++ b/funf-open-sensing-framework/src/edu/mit/media/funf/probe/builtin/ContactProbe.java
+@@ -358,7 +358,7 @@ public class ContactProbe extends ContentProviderProbe implements ContactKeys {
+ 
+ 	@Override
+ 	protected boolean sendEachRowSeparately() {
+-		return false;
++		return true;
+ 	}
+ 
+ 
+diff --git a/funf-open-sensing-framework/src/edu/mit/media/funf/storage/UploadService.java b/funf-open-sensing-framework/src/edu/mit/media/funf/storage/UploadService.java
+index 3f39d5e..5cd7dda 100644
+--- a/funf-open-sensing-framework/src/edu/mit/media/funf/storage/UploadService.java
++++ b/funf-open-sensing-framework/src/edu/mit/media/funf/storage/UploadService.java
+@@ -49,7 +49,7 @@ public abstract class UploadService extends Service {
+ 	public static final int
+ 	MAX_REMOTE_ARCHIVE_RETRIES = 6,
+ 	MAX_FILE_RETRIES = 3,
+-	MAX_BACKLOG_LENGTH = 200;
++	MAX_BACKLOG_LENGTH = 1000;
+ 	
+ 	public static final int
+ 		NETWORK_ANY = 0,
+
+commit e3380a133b367b9a20740b6813084572a42d2d59
+Author: Piotr <piotr@Piotrs-MacBook-Air.local>
+Date:   Wed Dec 12 14:41:58 2012 +0100
+
+    updating the required SDK version in AndroidManifest.xml
+
+diff --git a/datacollector/AndroidManifest.xml b/datacollector/AndroidManifest.xml
+index 3ed48f4..46d7b4a 100644
+--- a/datacollector/AndroidManifest.xml
++++ b/datacollector/AndroidManifest.xml
+@@ -24,8 +24,8 @@
+ <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+       package="edu.mit.media.funf.bgcollector"
+       android:versionCode="1"
+-      android:versionName="1.0">
+-    <uses-sdk  android:minSdkVersion="7" android:targetSdkVersion="8" />
++      android:versionName="0.5">
++    <uses-sdk  android:minSdkVersion="15" android:targetSdkVersion="15" />
+     <application android:label="@string/app_name" android:largeHeap="true" android:icon="@drawable/icon" >
+
+commit b9e6a24cc6394c328b5f6da0a7cb95619a04313b
+Author: Piotr <piotr@Piotrs-MacBook-Air.local>
+Date:   Wed Dec 12 13:32:30 2012 +0100
+
+    fixed bug with empty phone numbers
+
+diff --git a/funf-open-sensing-framework/src/edu/mit/media/funf/HashUtil.java b/funf-open-sensing-framework/src/edu/mit/media/funf/HashUtil.java
+index 04436a9..5d132ee 100644
+--- a/funf-open-sensing-framework/src/edu/mit/media/funf/HashUtil.java
++++ b/funf-open-sensing-framework/src/edu/mit/media/funf/HashUtil.java
+@@ -122,16 +122,20 @@ public class HashUtil {
+ 	}
+ 
+ 	public static String formatPhoneNumber(String numberString) {
+-		numberString = numberString.replaceAll("[^0-9]+", "");
+-		
+-		int i = numberString.length();
+-		int maxLength = 8; // only look at the last n digits
+-		
+-		if (i <= maxLength) {
+-			return numberString;
+-		}
+-		else {
+-			return numberString.substring(i - maxLength); 						
++		if (numberString != null) {
++			numberString = numberString.replaceAll("[^0-9]+", "");
++			
++			int i = numberString.length();
++			int maxLength = 8; // only look at the last n digits
++			
++			if (i <= maxLength) {
++				return numberString;
++			}
++			else {
++				return numberString.substring(i - maxLength); 						
++			}
++		} else {
++			return "";
+ 		}
+ 
+ 	}
+
+commit d4129091fab2e11d1a7f2fcceded5a100ab19725
+Author: Piotr <piotr@Piotrs-MacBook-Air.local>
+Date:   Tue Dec 11 17:46:56 2012 +0100
+
+    fixed bug that prevented WiFi from scanning while off
+
+diff --git a/funf-open-sensing-framework/src/edu/mit/media/funf/probe/builtin/WifiProbe.java b/funf-open-sensing-framework/src/edu/mit/media/funf/probe/builtin/WifiProbe.java
+index 1de0439..ffc8026 100644
+--- a/funf-open-sensing-framework/src/edu/mit/media/funf/probe/builtin/WifiProbe.java
++++ b/funf-open-sensing-framework/src/edu/mit/media/funf/probe/builtin/WifiProbe.java
+@@ -151,6 +151,7 @@ public class WifiProbe extends Probe implements WifiKeys {
+ 	private void runScan() {
+ 		numberOfAttempts += 1; 
+ 		int state = wifiManager.getWifiState();
++		Log.i(TAG, "WiFi state: " + state);
+ 		if (state == WifiManager.WIFI_STATE_ENABLED) {
+ 			boolean successfulStart = wifiManager.startScan();
+ 			if (successfulStart) {
+@@ -159,9 +160,10 @@ public class WifiProbe extends Probe implements WifiKeys {
+ 				Log.e(TAG, "WIFI scan failed.");
+ 			}
+ 			numberOfAttempts = 0;
+-		} else if (numberOfAttempts <= 3) { 
++		} else if (numberOfAttempts <= 10) { 
+ 			// Prevent infinite recursion by keeping track of number of attempts to change wifi state
+ 			// TODO: investigate what is needed to keep Service alive while waiting for wifi state
++			Log.i(TAG, "Waiting for WiFi enabled, will retry " + (10 - numberOfAttempts) + " more times");
+ 			registerReceiver(new BroadcastReceiver() {
+ 				@Override
+ 				public void onReceive(Context ctx, Intent i) {
+@@ -176,8 +178,18 @@ public class WifiProbe extends Probe implements WifiKeys {
+ 					}
+ 				}
+ 			}, new IntentFilter(WifiManager.WIFI_STATE_CHANGED_ACTION));
+-			wifiManager.setWifiEnabled(true);
+-		} else {  // After 3 attempts stop trying
++			// no use asking to enable, if already enabling
++			if (state != WifiManager.WIFI_STATE_ENABLING) 
++				wifiManager.setWifiEnabled(true);
++			
++			// increasing the counter without waiting makes no sense, so we wait a second.
++			try {
++				Thread.sleep(1000);
++			} catch (InterruptedException e) {
++				// TODO Auto-generated catch block
++				e.printStackTrace();
++			}
++		} else {  // After 10 attempts stop trying
+ 			// TODO: possibly send error
+ 			stop();
+ 		}
+
+commit b6211e37f6dcbcd60b027d2a845b38227d07e60c
+Author: Piotr <piotr@Piotrs-MacBook-Air.local>
+Date:   Tue Dec 11 13:25:37 2012 +0100
+
+    Fixed Failed Binder Transaction as start of the app
+
+
+diff --git a/funf-open-sensing-framework/src/edu/mit/media/funf/probe/Probe.java b/funf-open-sensing-framework/src/edu/mit/media/funf/probe/Probe.java
+index eb92fca..9991d54 100644
+--- a/funf-open-sensing-framework/src/edu/mit/media/funf/probe/Probe.java
++++ b/funf-open-sensing-framework/src/edu/mit/media/funf/probe/Probe.java
+@@ -799,7 +799,14 @@ public abstract class Probe extends CustomizedIntentService implements BaseProbe
+ 		return null;
+ 	}
+ 	
+-	private static boolean packageHasRequiredPermissions(Context context, String packageName, String[] requiredPermissions) {
++	/**
++	 * This function causes FAILED_BINDER_TRANSACTION because it requests all permissions for all apps installed. Fixed version below.
++	 * @param context
++	 * @param packageName
++	 * @param requiredPermissions
++	 * @return
++	 */
++	/**private static boolean packageHasRequiredPermissions(Context context, String packageName, String[] requiredPermissions) {
+ 		Log.v(Utils.TAG, "Getting package info for '" + packageName + "'");
+ 		PackageInfo info = getPackageInfo(context, packageName);
+ 		if (info == null) {
+@@ -816,6 +823,17 @@ public abstract class Probe extends CustomizedIntentService implements BaseProbe
+ 			}
+ 		}
+ 		return true;
++	}*/
++	
++	private static boolean packageHasRequiredPermissions(Context context, String packageName, String[] requiredPermissions) {
++		Log.v(Utils.TAG, "PIOTR'S VERSION. Getting package info for '" + packageName + "'");
++		for (String permission : nonNullStrings(requiredPermissions)) {
++			if (context.getPackageManager().checkPermission(permission, packageName) == PackageManager.PERMISSION_DENIED) {
++				Log.w(Utils.TAG, "Package '" + packageName + "' does not have the required permission '" + permission + "' to run this probe.");
++				return false;
++			}
++		}
++		return true;
+ 	}
+ 	
+ 	/**
+
+
+commit ac6456c09951d54b7f9c011a22ffa8601d511c29
+Author: Piotr <piotr@Piotrs-MacBook-Air.local>
+Date:   Sat Dec 8 13:24:27 2012 +0100
+
+    added the counter in UploadService.java to prevent uploading too long a backlog
+
+diff --git a/funf-open-sensing-framework/src/edu/mit/media/funf/AsyncSharedPrefs.java b/funf-open-sensing-framework/src/edu/mit/media/funf/AsyncSharedPrefs.java
+index 43c5618..34702e0 100644
+--- a/funf-open-sensing-framework/src/edu/mit/media/funf/AsyncSharedPrefs.java
++++ b/funf-open-sensing-framework/src/edu/mit/media/funf/AsyncSharedPrefs.java
+@@ -254,6 +254,16 @@ public class AsyncSharedPrefs implements SharedPreferences, OnSharedPreferenceCh
+ 			}).start();
+ 			return true;
+ 		}
++		@Override
++		public void apply() {
++			// TODO Auto-generated method stub
++			
++		}
++		@Override
++		public Editor putStringSet(String arg0, Set<String> arg1) {
++			// TODO Auto-generated method stub
++			return null;
++		}
+ 	}
+ 	
+ 	
+@@ -296,4 +306,10 @@ public class AsyncSharedPrefs implements SharedPreferences, OnSharedPreferenceCh
+ 		}).start();
+ 	}
+ 
++	@Override
++	public Set<String> getStringSet(String arg0, Set<String> arg1) {
++		// TODO Auto-generated method stub
++		return null;
++	}
++
+ }
+diff --git a/funf-open-sensing-framework/src/edu/mit/media/funf/storage/UploadService.java b/funf-open-sensing-framework/src/edu/mit/media/funf/storage/UploadService.java
+index 49b49bf..f94ae9b 100644
+--- a/funf-open-sensing-framework/src/edu/mit/media/funf/storage/UploadService.java
++++ b/funf-open-sensing-framework/src/edu/mit/media/funf/storage/UploadService.java
+@@ -109,8 +109,15 @@ public abstract class UploadService extends Service {
+ 				Archive<File> archive = getArchive(archiveName);
+ 				RemoteArchive remoteArchive = getRemoteArchive(remoteArchiveName);
+ 				if (archive != null && remoteArchive != null) {
++					int counter = 0; 
+ 					for (File file : archive.getAll()) {
++						Log.d("FileCounter","File ID: " + counter);
+ 						archive(archive, remoteArchive, file, network);
++						if (counter == 50) {
++							break;
++						} else {
++							counter++;
++						}
+ 					}
+ 				}
+ 			}
+@@ -144,7 +151,7 @@ public abstract class UploadService extends Service {
+ 	public void archive(Archive<File> archive, RemoteArchive remoteArchive, File file, int network) {
+ 		ArchiveFile archiveFile = new ArchiveFile(archive, remoteArchive, file, network);
+ 		if (!filesToUpload.contains(archiveFile)) {
+-			Log.i(TAG, "Queuing " + file.getName());
++			Log.i(TAG, "Putting to a queue " + file.getName());
+ 			filesToUpload.offer(archiveFile);
+ 		}
+ 	}
