@@ -57,7 +57,14 @@ public class FileDirectoryArchive implements Archive<File> {
 	@Override
 	public boolean add(File item) {
 		this.archiveDir.mkdirs();
-		File archiveFile = new File(archiveDir, nameGenerator.generateName(item.getName()));
+		String filename = nameGenerator.generateName(item.getName());
+		String appendix = "";
+		File archiveFile = new File(archiveDir, filename);
+		while (archiveFile.exists()) {
+			appendix += "_";
+			filename = nameGenerator.generateName(appendix + item.getName());
+			archiveFile = new File(archiveDir, filename);
+		}
 		boolean result = fileCopier.copy(item, archiveFile);
 		cleaner.clean(archiveDir);
 		return result;
