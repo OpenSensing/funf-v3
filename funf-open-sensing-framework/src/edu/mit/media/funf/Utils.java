@@ -332,6 +332,10 @@ public final class Utils {
 		return millisToSeconds(System.currentTimeMillis());
 	}
 	
+	public static long getTimestampMillis() {
+		return System.currentTimeMillis();
+	}
+	
 	public static long millisToSeconds(long millis) {
 		return millis/1000L;
 	}

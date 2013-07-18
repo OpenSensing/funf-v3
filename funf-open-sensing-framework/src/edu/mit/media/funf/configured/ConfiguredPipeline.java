@@ -341,7 +341,7 @@ public abstract class ConfiguredPipeline extends CustomizedIntentService impleme
 	}
 	
 	public void uploadData(boolean force) {
-		archiveData();
+		//archiveData();
 		String archiveName = getPipelineName();
 		String uploadUrl = getConfig().getDataUploadUrl();
 		Intent i = new Intent(this, getUploadServiceClass());
