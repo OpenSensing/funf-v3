@@ -21,15 +21,6 @@
  */
 package dk.dtu.imm.datacollector;
 
-import static edu.mit.media.funf.AsyncSharedPrefs.async;
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.charset.Charset;
-import java.util.ArrayList;
-
-import org.json.JSONException;
-
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -41,6 +32,14 @@ import edu.mit.media.funf.configured.ConfiguredPipeline;
 import edu.mit.media.funf.configured.FunfConfig;
 import edu.mit.media.funf.probe.Probe;
 import edu.mit.media.funf.storage.BundleSerializer;
+import org.json.JSONException;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.charset.Charset;
+import java.util.ArrayList;
+
+import static edu.mit.media.funf.AsyncSharedPrefs.async;
 public class MainPipeline extends ConfiguredPipeline {
 	
 	public static final String TAG = "FunfBGCollector";

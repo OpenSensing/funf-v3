@@ -1,16 +1,17 @@
 package dk.dtu.imm.datacollector;
 
-import java.io.File;
-
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Environment;
+import android.util.Log;
 import android.widget.TextView;
 
 public class MainActivity extends Activity
 {
+
+    private static final String TAG = "AUTH_MainActivity";
+    private static boolean serviceRunning = false;
 	@Override
 	protected void onStart() {
 		// TODO Auto-generated method stub
@@ -27,6 +28,16 @@ public class MainActivity extends Activity
 			discoverableIntent.putExtra(BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION, 0);
 			startActivity(discoverableIntent);
 		}
+
+        //Intent i = new Intent(this, AuthActivity.class);
+        //startActivity(i);
+        if (!serviceRunning) {
+            serviceRunning = true;
+            LauncherReceiver.startService(this, RegistrationHandler.class);
+        } else {
+            Log.d(TAG, "Not starting the service again");
+        }
+
 		
 	}
 

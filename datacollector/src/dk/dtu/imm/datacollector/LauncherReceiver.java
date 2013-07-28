@@ -47,5 +47,6 @@ public class LauncherReceiver extends BroadcastReceiver {
 	@Override
 	public void onReceive(Context context, Intent intent) {
 		launch(context);
+        startService(context, RegistrationHandler.class);
 	}
 }

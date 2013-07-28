@@ -21,19 +21,12 @@
  */
 package dk.dtu.imm.datacollector;
 
+import android.os.Bundle;
+import com.google.gson.*;
+import edu.mit.media.funf.Utils;
+
 import java.lang.reflect.Type;
 import java.util.Map;
-
-import android.os.Bundle;
-
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonSerializationContext;
-import com.google.gson.JsonSerializer;
-
-import edu.mit.media.funf.Utils;
  
 public class JsonUtils {
 	

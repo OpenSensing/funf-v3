@@ -18,3 +18,12 @@ local.properties
 # Eclipse project files
 .classpath
 .project
+
+# intellij idea project files
+.idea/
+out/
+
+
+# mac files
+.DS_Store
+
