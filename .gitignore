@@ -27,3 +27,5 @@ out/
 # mac files
 .DS_Store
 
+
+*.swp
