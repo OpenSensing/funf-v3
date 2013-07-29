@@ -27,6 +27,8 @@ import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
+import edu.mit.media.funf.Utils;
+
 import static edu.mit.media.funf.Utils.TAG;
 
 public class NameValueDatabaseService extends DatabaseService {
@@ -61,6 +63,14 @@ public class NameValueDatabaseService extends DatabaseService {
 		cv.put(NameValueDatabaseHelper.COLUMN_NAME, name);
 		cv.put(NameValueDatabaseHelper.COLUMN_VALUE, value);
 		cv.put(NameValueDatabaseHelper.COLUMN_TIMESTAMP, timestamp);
+        if (intent.hasExtra(NameValueDatabaseHelper.COLUMN_IDP_TOKEN)) {
+            final String token = intent.getStringExtra(NameValueDatabaseHelper.COLUMN_IDP_TOKEN);
+            Log.d(TAG, "token: " + token);
+        } else {
+            Log.d(TAG, "no token in the intent, printing stack trace");
+            Utils.printStackTrace(Thread.currentThread().getStackTrace());
+         }
+
 		db.insertOrThrow(NameValueDatabaseHelper.DATA_TABLE.name, "", cv);
 	}
 }

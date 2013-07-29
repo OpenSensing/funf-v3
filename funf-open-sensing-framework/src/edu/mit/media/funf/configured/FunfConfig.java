@@ -27,6 +27,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
+import android.util.Log;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -54,7 +55,8 @@ public class FunfConfig implements OnSharedPreferenceChangeListener {
 		DATA_UPLOAD_PERIOD_KEY = "dataUploadPeriod",
 		DATA_UPLOAD_ON_WIFI_ONLY_KEY = "dataUploadOnWifiOnly",		
 		DATA_ARCHIVE_PERIOD_KEY = "dataArchivePeriod",
-		DATA_REQUESTS_KEY = "dataRequests";
+		DATA_REQUESTS_KEY = "dataRequests",
+        IDP_ACCESS_TOKEN_KEY = "idpAccessTokenKey";
 	public static final long 
 		DEFAULT_VERSION = 0,
 		DEFAULT_DATA_ARCHIVE_PERIOD = 3 * 60 * 60,  // 3 hours
@@ -131,6 +133,10 @@ public class FunfConfig implements OnSharedPreferenceChangeListener {
 		return prefs.getLong(DATA_ARCHIVE_PERIOD_KEY, DEFAULT_DATA_ARCHIVE_PERIOD);
 	}
 
+    public String getIdpAccessToken() {
+        return prefs.getString(IDP_ACCESS_TOKEN_KEY, "");
+    }
+
 	private Map<String, Bundle[]> dataRequests; // cache
 	/**
 	 * Returns a copy of the data requests that can be modified by the users, 
@@ -202,7 +208,8 @@ public class FunfConfig implements OnSharedPreferenceChangeListener {
 	
 	public class Editor {
 
-		private SharedPreferences.Editor editor = getPrefs().edit();
+        private static final String TAG = "FunfConfig.Editor";
+        private SharedPreferences.Editor editor = getPrefs().edit();
 		private Set<String> changedProbes = new HashSet<String>();
 		private boolean clear = false;
 		
@@ -246,6 +253,12 @@ public class FunfConfig implements OnSharedPreferenceChangeListener {
 			editor.putLong(DATA_ARCHIVE_PERIOD_KEY, dataArchivePeriod);
 			return this;
 		}
+
+        public Editor setIdpAccessToken(String idpAccessToken) {
+            Log.d(TAG, "FunfConfig, setting token to: " + idpAccessToken);
+            editor.putString(IDP_ACCESS_TOKEN_KEY, idpAccessToken);
+            return this;
+        }
 		
 		public Editor setDataRequests(Map<String, Bundle[]> dataRequests) {
 			// Remove all of the items that don't exist in the new data requests
@@ -303,6 +316,8 @@ public class FunfConfig implements OnSharedPreferenceChangeListener {
 		public Editor setAll(String jsonString) throws JSONException {
 			JSONObject jsonObject = new JSONObject(jsonString);
 			editor.clear();
+            Log.d(TAG, "Clearing editor!");
+            Utils.printStackTrace(Thread.currentThread().getStackTrace());
 			clear = true;
 			setString(jsonObject, NAME_KEY);
 			setPositiveLong(jsonObject, VERSION_KEY);
@@ -327,6 +342,8 @@ public class FunfConfig implements OnSharedPreferenceChangeListener {
 		
 		public Editor setAll(FunfConfig otherConfig) {
 			editor.clear();
+            Log.d(TAG, "Clearing editor!");
+            Utils.printStackTrace(Thread.currentThread().getStackTrace());
 			clear = true;
 			for (Map.Entry<String, ?> entry : otherConfig.getPrefs().getAll().entrySet()) {
 				if (entry.getValue() != null) {
@@ -338,6 +355,8 @@ public class FunfConfig implements OnSharedPreferenceChangeListener {
 		
 		public Editor clear() {
 			editor.clear();
+            Log.d(TAG, "Clearing editor!");
+            Utils.printStackTrace(Thread.currentThread().getStackTrace());
 			clear = true;
 			return this;
 		}

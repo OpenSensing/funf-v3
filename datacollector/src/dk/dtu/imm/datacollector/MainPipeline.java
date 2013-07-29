@@ -116,6 +116,7 @@ public class MainPipeline extends ConfiguredPipeline {
 	 */
 	public static FunfConfig getMainConfig(Context context) {
 		FunfConfig config = getConfig(context, MAIN_CONFIG);
+        String token = getSystemPrefs(context).getString(RegistrationHandler.PROPERTY_SENSIBLE_TOKEN,"");
 		if (config.getName() == null) {			
 			String jsonString = getStringFromAsset(context, "default_config.json");
 			if (jsonString == null) {
@@ -124,6 +125,7 @@ public class MainPipeline extends ConfiguredPipeline {
 			}
 			try {
 				config.edit().setAll(jsonString).commit();
+                config.edit().setIdpAccessToken(token).commit();
 			} catch (JSONException e) {
 				Log.e(TAG, "Error parsing default config", e);
 			}
@@ -149,6 +151,16 @@ public class MainPipeline extends ConfiguredPipeline {
 			}
 		}
 	}
+
+    @Override
+    public void updateConfig(String jsonString) {
+        super.updateConfig(jsonString);
+
+        FunfConfig config = getConfig(this, MAIN_CONFIG);
+        String token = getSystemPrefs(this).getString(RegistrationHandler.PROPERTY_SENSIBLE_TOKEN,"");
+        Log.d(TAG, "Updated config, now adding token: " + token);
+        config.edit().setIdpAccessToken(token).commit();
+    }
 	
 	public void runProbeOnceNow(final String probeName) {
 		FunfConfig config = getMainConfig(this);

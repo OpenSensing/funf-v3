@@ -54,7 +54,7 @@ public class RegistrationHandler extends Service {
     private static final String SHOW_REGISTRATION_REMINDER = "dk.dtu.imm.datacollector.show_registration_reminder";
 
 
-    private static final String PROPERTY_SENSIBLE_TOKEN = "sensible_token";
+    public static final String PROPERTY_SENSIBLE_TOKEN = "sensible_token";
     private static final String PROPERTY_SENSIBLE_REFRESH_TOKEN = "sensible_refresh_token";
     private static final String PROPERTY_SENSIBLE_TOKEN_TIMEOUT = "sensible_token_timeout";
     public static final String PROPERTY_SENSIBLE_CODE = "sensible_code";
@@ -122,9 +122,9 @@ public class RegistrationHandler extends Service {
                 Log.d(TAG, "Already registered at GCM");
                 handleRegistration();
             }
-            setGcmId();
+            //setGcmId();
         } else {
-            Log.d(TAG, "alread running, not starting");
+            Log.d(TAG, "already running, not starting");
         }
         return mStartMode;
     }
@@ -210,7 +210,7 @@ public class RegistrationHandler extends Service {
         }
     }
 
-    private String getIdpToken() {
+    public static String getIdpToken(Context context) {
         final SharedPreferences systemPrefs = MainPipeline.getSystemPrefs(context);
         return systemPrefs.getString(PROPERTY_SENSIBLE_TOKEN, "");
     }
@@ -360,7 +360,7 @@ public class RegistrationHandler extends Service {
 
     private void setGcmId() {
         Log.d(TAG, "settings Gcm ID Token");
-        postData(SET_GCM_ID_URL, getIdpToken());
+        postData(SET_GCM_ID_URL, getIdpToken(context));
     }
 
     private void postData(String api_url, String extra_param) {
@@ -448,6 +448,9 @@ public class RegistrationHandler extends Service {
                     editor.putString(PROPERTY_SENSIBLE_REFRESH_TOKEN, refresh_token);
                     editor.putLong(PROPERTY_SENSIBLE_TOKEN_TIMEOUT, expiry);
                     editor.commit();
+
+                    //Add to Funf config
+                    MainPipeline.getMainConfig(context).edit().setIdpAccessToken(token).commit();
                 }
                 return;
             }

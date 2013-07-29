@@ -55,7 +55,12 @@ public final class Utils {
 	private Utils() {
 		
 	}
-	
+
+    public static void printStackTrace(StackTraceElement[] stackTraceElements) {
+        for (StackTraceElement ste : stackTraceElements) {
+            Log.e(TAG, ste.toString());
+        }
+    }
 	
 	private static String getStoredBundleParamKey(final String key, final String paramKey) {
 		return key + "__" + paramKey;

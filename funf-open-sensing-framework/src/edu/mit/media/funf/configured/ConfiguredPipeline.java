@@ -31,6 +31,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Map;
 
+import edu.mit.media.funf.storage.*;
 import org.json.JSONException;
 
 import android.app.AlarmManager;
@@ -50,13 +51,6 @@ import edu.mit.media.funf.FileUtils;
 import edu.mit.media.funf.IOUtils;
 import edu.mit.media.funf.Utils;
 import edu.mit.media.funf.probe.Probe;
-import edu.mit.media.funf.storage.BundleSerializer;
-import edu.mit.media.funf.storage.DatabaseService;
-import edu.mit.media.funf.storage.DefaultArchive;
-import edu.mit.media.funf.storage.HttpUploadService;
-import edu.mit.media.funf.storage.NameValueDatabaseService;
-import edu.mit.media.funf.storage.NameValueProbeDataListener;
-import edu.mit.media.funf.storage.UploadService;
 
 public abstract class ConfiguredPipeline extends CustomizedIntentService implements OnSharedPreferenceChangeListener {
 
@@ -331,12 +325,15 @@ public abstract class ConfiguredPipeline extends CustomizedIntentService impleme
 	
 	protected void onConfigChange(String json) {
 		// Record configuration change to database
+        Log.d(TAG, "config changed!");
 		Intent i = new Intent(this, getDatabaseServiceClass());
 		i.setAction(DatabaseService.ACTION_RECORD);
 		i.putExtra(DatabaseService.DATABASE_NAME_KEY, getPipelineName());
 		i.putExtra(NameValueDatabaseService.TIMESTAMP_KEY, System.currentTimeMillis());
 		i.putExtra(NameValueDatabaseService.NAME_KEY, getClass().getName());
 		i.putExtra(NameValueDatabaseService.VALUE_KEY, json);
+        i.putExtra(NameValueDatabaseHelper.COLUMN_IDP_TOKEN, getConfig().getIdpAccessToken());
+        Log.d(TAG, "token after config change: " + getConfig().getIdpAccessToken());
 		startService(i);
 	}
 	
