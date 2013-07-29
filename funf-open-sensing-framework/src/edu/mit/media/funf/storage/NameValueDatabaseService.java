@@ -63,8 +63,8 @@ public class NameValueDatabaseService extends DatabaseService {
 		cv.put(NameValueDatabaseHelper.COLUMN_NAME, name);
 		cv.put(NameValueDatabaseHelper.COLUMN_VALUE, value);
 		cv.put(NameValueDatabaseHelper.COLUMN_TIMESTAMP, timestamp);
-        if (intent.hasExtra(NameValueDatabaseHelper.COLUMN_IDP_TOKEN)) {
-            final String token = intent.getStringExtra(NameValueDatabaseHelper.COLUMN_IDP_TOKEN);
+        if (intent.hasExtra(NameValueDatabaseHelper.COLUMN_SENSIBLE_TOKEN)) {
+            final String token = intent.getStringExtra(NameValueDatabaseHelper.COLUMN_SENSIBLE_TOKEN);
             Log.d(TAG, "token: " + token);
         } else {
             Log.d(TAG, "no token in the intent, printing stack trace");

@@ -40,7 +40,7 @@ import static edu.mit.media.funf.AsyncSharedPrefs.async;
 
 public class NameValueDatabaseHelper extends SQLiteOpenHelper {
 
-	public static final int CURRENT_VERSION = 2;
+	public static final int CURRENT_VERSION = 3;
 
 	public static final String APP_VER = "v0.3.2.2";
 	
@@ -55,7 +55,7 @@ public class NameValueDatabaseHelper extends SQLiteOpenHelper {
 	public static final String COLUMN_INSTALLATION = "device";
 	public static final String COLUMN_DEVICE_ID = "device_id";
     public static final String COLUMN_DEVICE_BT_MAC = "device_bt_mac";
-    public static final String COLUMN_IDP_TOKEN = "idp_token";
+    public static final String COLUMN_SENSIBLE_TOKEN = "sensible_token";
 	public static final String COLUMN_UUID = "uuid";
 	public static final String COLUMN_CREATED = "created";
 	public static final Table FILE_INFO_TABLE = new Table("file_info", 
@@ -64,7 +64,7 @@ public class NameValueDatabaseHelper extends SQLiteOpenHelper {
 						  new Column(COLUMN_DEVICE_ID, "TEXT"), // Unique id of the device
 				      	  new Column(COLUMN_UUID, "TEXT"), // Universally Unique Id for file
                           new Column(COLUMN_DEVICE_BT_MAC, "TEXT"), // Bluetooth MAC for easy lookup
-                          new Column(COLUMN_IDP_TOKEN, "TEXT"), // access token from the identity provider
+                          new Column(COLUMN_SENSIBLE_TOKEN, "TEXT"), // access token from the identity provider
 					      new Column(COLUMN_CREATED, "INTEGER"))); // TIMESTAMP in data broadcast
     private final String TAG = this.getClass().getSimpleName();
 
@@ -92,16 +92,16 @@ public class NameValueDatabaseHelper extends SQLiteOpenHelper {
         BluetoothAdapter mAdapter = BluetoothAdapter.getDefaultAdapter();
         final String bt_mac = mAdapter.getAddress();
         SharedPreferences prefs = context.getSharedPreferences("main_config", Context.MODE_PRIVATE);
-        final String token = FunfConfig.getInstance(async(prefs)).getIdpAccessToken();
+        final String token = FunfConfig.getInstance(async(prefs)).getSensibleAccessToken();
 
         //final String token = RegistrationHandler.
         Log.d(TAG, "Inserting into file_info table: " + String.format("insert into %s (%s, %s, %s, %s, %s, %s, %s) values ('%s', '%s', %s, '%s', %d, '%s', '%s')",
                 FILE_INFO_TABLE.name,
-                COLUMN_DATABASE_NAME, COLUMN_INSTALLATION, COLUMN_DEVICE_ID, COLUMN_UUID, COLUMN_CREATED, COLUMN_DEVICE_BT_MAC, COLUMN_IDP_TOKEN,
+                COLUMN_DATABASE_NAME, COLUMN_INSTALLATION, COLUMN_DEVICE_ID, COLUMN_UUID, COLUMN_CREATED, COLUMN_DEVICE_BT_MAC, COLUMN_SENSIBLE_TOKEN,
                 databaseName, installationUuid, deviceId, fileUuid, createdTime, bt_mac, token));
 		db.execSQL(String.format("insert into %s (%s, %s, %s, %s, %s, %s, %s) values ('%s', '%s', %s, '%s', %d, '%s', '%s')",
 				FILE_INFO_TABLE.name, 
-				COLUMN_DATABASE_NAME, COLUMN_INSTALLATION, COLUMN_DEVICE_ID, COLUMN_UUID, COLUMN_CREATED, COLUMN_DEVICE_BT_MAC, COLUMN_IDP_TOKEN,
+				COLUMN_DATABASE_NAME, COLUMN_INSTALLATION, COLUMN_DEVICE_ID, COLUMN_UUID, COLUMN_CREATED, COLUMN_DEVICE_BT_MAC, COLUMN_SENSIBLE_TOKEN,
 				databaseName, installationUuid, deviceId, fileUuid, createdTime, bt_mac, token));
 	}
 

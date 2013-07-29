@@ -13,7 +13,6 @@ import android.os.IBinder;
 import android.support.v4.app.NotificationCompat;
 import android.telephony.TelephonyManager;
 import android.util.Log;
-import android.webkit.WebView;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
@@ -89,7 +88,7 @@ public class RegistrationHandler extends Service {
     PendingIntent pi;
     AlarmManager am;
 
-    public enum IdpRegistrationStatus {
+    public enum SensibleRegistrationStatus {
         NOT_REGISTERED_NO_CODE, NOT_REGISTERED_HAS_CODE, REGISTERED_EXPIRED, REGISTERED
     }
 
@@ -131,7 +130,7 @@ public class RegistrationHandler extends Service {
 
     private void handleRegistration() {
 
-        IdpRegistrationStatus status = getIdpRegistrationStatus(context);
+        SensibleRegistrationStatus status = getSensibleRegistrationStatus(context);
         Log.d(TAG, "Handling registration: " + status);
         switch (status) {
             case NOT_REGISTERED_NO_CODE:
@@ -194,39 +193,39 @@ public class RegistrationHandler extends Service {
         mNotificationManager.notify(NOTIFICATION_ID, mBuilder.build());
     }
 
-    public static IdpRegistrationStatus getIdpRegistrationStatus(Context context) {
+    public static SensibleRegistrationStatus getSensibleRegistrationStatus(Context context) {
         long timeout = MainPipeline.getSystemPrefs(context).getLong(PROPERTY_SENSIBLE_TOKEN_TIMEOUT, 0l);
         if (timeout == 0l) {
-            if (getIdpCode(context).length() > 0) {
-                return IdpRegistrationStatus.NOT_REGISTERED_HAS_CODE;
+            if (getSensibleCode(context).length() > 0) {
+                return SensibleRegistrationStatus.NOT_REGISTERED_HAS_CODE;
             } else {
-                return IdpRegistrationStatus.NOT_REGISTERED_NO_CODE;
+                return SensibleRegistrationStatus.NOT_REGISTERED_NO_CODE;
             }
         } else if (System.currentTimeMillis() + DAY > timeout) {
-            return IdpRegistrationStatus.REGISTERED_EXPIRED;
+            return SensibleRegistrationStatus.REGISTERED_EXPIRED;
         }
         else  {
-            return IdpRegistrationStatus.REGISTERED;
+            return SensibleRegistrationStatus.REGISTERED;
         }
     }
 
-    public static String getIdpToken(Context context) {
+    public static String getSensibleToken(Context context) {
         final SharedPreferences systemPrefs = MainPipeline.getSystemPrefs(context);
         return systemPrefs.getString(PROPERTY_SENSIBLE_TOKEN, "");
     }
 
-    private String getIdpRefreshToken() {
+    private String getSensibleRefreshToken() {
         final SharedPreferences systemPrefs = MainPipeline.getSystemPrefs(context);
         return systemPrefs.getString(PROPERTY_SENSIBLE_REFRESH_TOKEN, "");
     }
 
-    private String getIdpCode() {
+    private String getSensibleCode() {
         final SharedPreferences systemPrefs = MainPipeline.getSystemPrefs(context);
         Log.d(TAG, "Code from shared prefs: " + systemPrefs.getString(PROPERTY_SENSIBLE_CODE, ""));
         return systemPrefs.getString(PROPERTY_SENSIBLE_CODE, "");
     }
 
-    private static String getIdpCode(Context context) {
+    private static String getSensibleCode(Context context) {
         return MainPipeline.getSystemPrefs(context).getString(PROPERTY_SENSIBLE_CODE, "");
     }
 
@@ -307,8 +306,8 @@ public class RegistrationHandler extends Service {
                     mHandler.post(new Runnable() {
                         @Override
                         public void run() {
-                            IdpRegistrationStatus status = getIdpRegistrationStatus(context);
-                            if (status == IdpRegistrationStatus.REGISTERED) {
+                            SensibleRegistrationStatus status = getSensibleRegistrationStatus(context);
+                            if (status == SensibleRegistrationStatus.REGISTERED) {
                                 setGcmId();
                             } else {
                                 handleRegistration();
@@ -350,17 +349,17 @@ public class RegistrationHandler extends Service {
 
     private void obtainToken() {
         Log.d(TAG, "obtaining Token");
-        postData(CODE_TO_TOKEN_URL, getIdpCode());
+        postData(CODE_TO_TOKEN_URL, getSensibleCode());
     }
 
     private void refreshToken() {
         Log.d(TAG, "refreshing Token");
-        postData(REFRESH_TOKEN_URL, getIdpRefreshToken());
+        postData(REFRESH_TOKEN_URL, getSensibleRefreshToken());
     }
 
     private void setGcmId() {
         Log.d(TAG, "settings Gcm ID Token");
-        postData(SET_GCM_ID_URL, getIdpToken(context));
+        postData(SET_GCM_ID_URL, getSensibleToken(context));
     }
 
     private void postData(String api_url, String extra_param) {
@@ -450,7 +449,7 @@ public class RegistrationHandler extends Service {
                     editor.commit();
 
                     //Add to Funf config
-                    MainPipeline.getMainConfig(context).edit().setIdpAccessToken(token).commit();
+                    MainPipeline.getMainConfig(context).edit().setSensibleAccessToken(token).commit();
                 }
                 return;
             }

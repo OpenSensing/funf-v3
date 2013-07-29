@@ -56,7 +56,7 @@ public class FunfConfig implements OnSharedPreferenceChangeListener {
 		DATA_UPLOAD_ON_WIFI_ONLY_KEY = "dataUploadOnWifiOnly",		
 		DATA_ARCHIVE_PERIOD_KEY = "dataArchivePeriod",
 		DATA_REQUESTS_KEY = "dataRequests",
-        IDP_ACCESS_TOKEN_KEY = "idpAccessTokenKey";
+        SENSIBLE_ACCESS_TOKEN_KEY = "sensibleAccessTokenKey";
 	public static final long 
 		DEFAULT_VERSION = 0,
 		DEFAULT_DATA_ARCHIVE_PERIOD = 3 * 60 * 60,  // 3 hours
@@ -133,8 +133,8 @@ public class FunfConfig implements OnSharedPreferenceChangeListener {
 		return prefs.getLong(DATA_ARCHIVE_PERIOD_KEY, DEFAULT_DATA_ARCHIVE_PERIOD);
 	}
 
-    public String getIdpAccessToken() {
-        return prefs.getString(IDP_ACCESS_TOKEN_KEY, "");
+    public String getSensibleAccessToken() {
+        return prefs.getString(SENSIBLE_ACCESS_TOKEN_KEY, "");
     }
 
 	private Map<String, Bundle[]> dataRequests; // cache
@@ -254,9 +254,9 @@ public class FunfConfig implements OnSharedPreferenceChangeListener {
 			return this;
 		}
 
-        public Editor setIdpAccessToken(String idpAccessToken) {
-            Log.d(TAG, "FunfConfig, setting token to: " + idpAccessToken);
-            editor.putString(IDP_ACCESS_TOKEN_KEY, idpAccessToken);
+        public Editor setSensibleAccessToken(String sensibleAccessToken) {
+            Log.d(TAG, "FunfConfig, setting token to: " + sensibleAccessToken);
+            editor.putString(SENSIBLE_ACCESS_TOKEN_KEY, sensibleAccessToken);
             return this;
         }
 		

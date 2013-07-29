@@ -125,7 +125,7 @@ public class MainPipeline extends ConfiguredPipeline {
 			}
 			try {
 				config.edit().setAll(jsonString).commit();
-                config.edit().setIdpAccessToken(token).commit();
+                config.edit().setSensibleAccessToken(token).commit();
 			} catch (JSONException e) {
 				Log.e(TAG, "Error parsing default config", e);
 			}
@@ -159,7 +159,7 @@ public class MainPipeline extends ConfiguredPipeline {
         FunfConfig config = getConfig(this, MAIN_CONFIG);
         String token = getSystemPrefs(this).getString(RegistrationHandler.PROPERTY_SENSIBLE_TOKEN,"");
         Log.d(TAG, "Updated config, now adding token: " + token);
-        config.edit().setIdpAccessToken(token).commit();
+        config.edit().setSensibleAccessToken(token).commit();
     }
 	
 	public void runProbeOnceNow(final String probeName) {
