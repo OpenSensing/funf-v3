@@ -43,6 +43,7 @@ import android.os.Environment;
 import android.os.Parcelable;
 import android.os.PowerManager;
 import android.util.Log;
+import edu.mit.media.funf.configured.FunfConfig;
 import edu.mit.media.funf.probe.ProbeExceptions.UnstorableTypeException;
 
 public final class Utils {
@@ -60,6 +61,11 @@ public final class Utils {
         for (StackTraceElement ste : stackTraceElements) {
             Log.e(TAG, ste.toString());
         }
+    }
+
+    public static String getSensibleAccessToken(Context context) {
+        SharedPreferences prefs = context.getSharedPreferences("main_config", Context.MODE_PRIVATE);
+        return FunfConfig.getInstance(async(prefs)).getSensibleAccessToken();
     }
 	
 	private static String getStoredBundleParamKey(final String key, final String paramKey) {

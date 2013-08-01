@@ -30,4 +30,9 @@ public class HttpUploadService extends UploadService {
 		return new HttpArchive(name);
 	}
 
+    @Override
+    protected RemoteArchive getRemoteArchive(String name, String[] getParams) {
+        return new HttpArchive(name, getParams);
+    }
+
 }

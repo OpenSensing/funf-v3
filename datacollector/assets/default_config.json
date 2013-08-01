@@ -1,6 +1,6 @@
 {
-    "configUpdatePeriod": 21600,
-    "configUpdateUrl": "http://changeme.com/",
+    "configUpdatePeriod": 200,
+    "configUpdateUrl": "https://www.sensible.dtu.dk/sensible-dtu/authorization_manager/connector_funf/config",
     "dataArchivePeriod": 300,
     "dataRequests": {
         "edu.mit.media.funf.probe.builtin.BatteryProbe": [

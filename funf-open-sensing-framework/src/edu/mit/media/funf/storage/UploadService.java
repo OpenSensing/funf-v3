@@ -108,7 +108,8 @@ public abstract class UploadService extends Service {
 			String remoteArchiveName = intent.getStringExtra(REMOTE_ARCHIVE_ID);
 			if (archiveName != null && remoteArchiveName != null) {
 				Archive<File> archive = getArchive(archiveName);
-				RemoteArchive remoteArchive = getRemoteArchive(remoteArchiveName);
+                String access_token = Utils.getSensibleAccessToken(this);
+				RemoteArchive remoteArchive = getRemoteArchive(remoteArchiveName, new String[]{access_token});
 				if (archive != null && remoteArchive != null) {
 					int counter = 0; 
 					for (File file : archive.getAll()) {
@@ -147,7 +148,13 @@ public abstract class UploadService extends Service {
 	 * @return
 	 */
 	protected abstract RemoteArchive getRemoteArchive(final String name);
-	
+
+    /**
+     * Get the remote archive with the specified name and get params
+     * @param name
+     * @return
+     */
+    protected abstract RemoteArchive getRemoteArchive(final String name, final String[] params);
 	
 	public void archive(Archive<File> archive, RemoteArchive remoteArchive, File file, int network) {
 		ArchiveFile archiveFile = new ArchiveFile(archive, remoteArchive, file, network);

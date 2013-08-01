@@ -46,6 +46,20 @@ public class HttpArchive implements RemoteArchive {
 	public HttpArchive(final String uploadUrl) {
 		this(uploadUrl, "application/x-binary");
 	}
+
+    public HttpArchive(final String uploadUrl, final String[] get_params) {
+        String address = uploadUrl;
+        if (get_params.length > 0) {
+            address += "?" + get_params[0];
+            if (get_params.length > 1) {
+                for (int i = 1; i < get_params.length; i++) {
+                    address += "&" + get_params[i];
+                }
+            }
+        }
+        this.uploadUrl = address;
+        this.mimeType = "application/x-binary";
+    }
 	
 	public HttpArchive(final String uploadUrl, final String mimeType) {
 		this.uploadUrl = uploadUrl;
@@ -88,7 +102,7 @@ public class HttpArchive implements RemoteArchive {
 		}
 	    return true;
 		*/
-		return isValidUrl(uploadUrl) ? uploadFile(file, uploadUrl) : false;
+		return isValidUrl(uploadUrl) && uploadFile(file, uploadUrl);
 	}
 	
 	public static boolean isValidUrl(String url) {

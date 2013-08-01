@@ -91,8 +91,7 @@ public class NameValueDatabaseHelper extends SQLiteOpenHelper {
 		long createdTime = Utils.getTimestamp();
         BluetoothAdapter mAdapter = BluetoothAdapter.getDefaultAdapter();
         final String bt_mac = mAdapter.getAddress();
-        SharedPreferences prefs = context.getSharedPreferences("main_config", Context.MODE_PRIVATE);
-        final String token = FunfConfig.getInstance(async(prefs)).getSensibleAccessToken();
+        final String token = Utils.getSensibleAccessToken(context);
 
         //final String token = RegistrationHandler.
         Log.d(TAG, "Inserting into file_info table: " + String.format("insert into %s (%s, %s, %s, %s, %s, %s, %s) values ('%s', '%s', %s, '%s', %d, '%s', '%s')",

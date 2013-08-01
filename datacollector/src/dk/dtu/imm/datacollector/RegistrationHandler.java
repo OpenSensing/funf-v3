@@ -375,15 +375,15 @@ public class RegistrationHandler extends Service {
                     List nameValuePairs = new ArrayList<BasicNameValuePair>();
                     nameValuePairs.add(new BasicNameValuePair("client_id", CLIENT_ID));
                     nameValuePairs.add(new BasicNameValuePair("client_secret", CLIENT_SECRET));
+                    TelephonyManager tm = (TelephonyManager)context.getSystemService(TELEPHONY_SERVICE);
+                    String imei = tm.getDeviceId();
+                    nameValuePairs.add(new BasicNameValuePair("device_id", imei));
                     Log.d(TAG, "Params: " + strings[0] + ", " + strings[1]);
                     if (strings[0].equals(CODE_TO_TOKEN_URL)) {
                         nameValuePairs.add(new BasicNameValuePair("code", strings[1]));
                     } else if (strings[0].equals(REFRESH_TOKEN_URL)) {
                         nameValuePairs.add(new BasicNameValuePair("refresh_token", strings[1]));
                     } else if (strings[0].equals(SET_GCM_ID_URL)) {
-                        TelephonyManager tm = (TelephonyManager)context.getSystemService(TELEPHONY_SERVICE);
-                        String imei = tm.getDeviceId();
-                        nameValuePairs.add(new BasicNameValuePair("device_id", imei));
                         nameValuePairs.add(new BasicNameValuePair("gcm_id", getRegistrationId(context)));
                         nameValuePairs.add(new BasicNameValuePair("bearer_token", strings[1]));
                     }
