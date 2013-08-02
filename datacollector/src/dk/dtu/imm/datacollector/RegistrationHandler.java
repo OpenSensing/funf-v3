@@ -19,11 +19,15 @@ import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.conn.ssl.AllowAllHostnameVerifier;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import javax.net.ssl.*;
+import javax.security.cert.CertificateException;
+import javax.security.cert.X509Certificate;
 import java.io.*;
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -73,8 +77,8 @@ public class RegistrationHandler extends Service {
     public static final long REGISTRATION_EXPIRY_TIME_MS = 7 * DAY;
 
 
-    public static final String CLIENT_ID= "4668ee8fa2e39de6a08d9624c54472";
-    private static final String CLIENT_SECRET = "3fb622782b006dbbb8ef53250e49c6";
+    public static final String CLIENT_ID= "aef91b1f38fbf4e88e266b80387ae2";
+    private static final String CLIENT_SECRET = "adaac7ea79965136361ae9bbe9850e";
 
     GoogleCloudMessaging gcm;
     AtomicInteger msgId = new AtomicInteger();
@@ -92,13 +96,15 @@ public class RegistrationHandler extends Service {
         NOT_REGISTERED_NO_CODE, NOT_REGISTERED_HAS_CODE, REGISTERED_EXPIRED, REGISTERED
     }
 
+    private static final String DOMAIN_URL = "http://54.229.13.160/";
+    //private static final String DOMAIN_URL = "https://www.sensible.dtu.dk/";
 
     //private static final String BASE_URL = "http://ec2-54-229-13-160.eu-west-1.compute.amazonaws.com:8082/authorization_manager/connector_funf/auth/grant/?scope=connector_funf.submit_data&";
 
-    private static final String CODE_TO_TOKEN_URL = "https://www.sensible.dtu.dk/sensible-dtu/authorization_manager/connector_funf/auth/token/";
+    private static final String CODE_TO_TOKEN_URL = DOMAIN_URL + "sensible-dtu/authorization_manager/connector_funf/auth/token/";
     //private static final String CODE_TO_TOKEN_URL = "https://www.sensible.dtu.dk/sensible-dtu/authorization_manager/connector_funf/auth/grant/";
-    private static final String REFRESH_TOKEN_URL = "https://www.sensible.dtu.dk/sensible-dtu/authorization_manager/connector_funf/auth/refresh_token/";
-    private static final String SET_GCM_ID_URL = "https://www.sensible.dtu.dk/sensible-dtu/authorization_manager/connector_funf/auth/gcm/";
+    private static final String REFRESH_TOKEN_URL = DOMAIN_URL + "sensible-dtu/authorization_manager/connector_funf/auth/refresh_token/";
+    private static final String SET_GCM_ID_URL = DOMAIN_URL + "sensible-dtu/authorization_manager/connector_funf/auth/gcm/";
 
 
     public IBinder onBind(Intent intent) {
@@ -367,6 +373,13 @@ public class RegistrationHandler extends Service {
 
             @Override
             protected Double doInBackground(String... strings) {
+                //
+                //HttpClient httpClient = new DefaultHttpClient();
+                //SSLSocketFactory sf = (SSLSocketFactory)httpClient.getConnectionManager()
+                //       .getSchemeRegistry().getScheme("https").getSocketFactory();
+                //sf.setHostnameVerifier(new AllowAllHostnameVerifier());
+                //
+
                 HttpClient httpclient = new DefaultHttpClient();
                 HttpPost httppost = null;
                 httppost = new HttpPost(strings[0]);

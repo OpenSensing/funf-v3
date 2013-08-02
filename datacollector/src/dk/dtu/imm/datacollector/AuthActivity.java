@@ -7,6 +7,7 @@ import android.app.PendingIntent;
 import android.content.*;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.net.http.SslError;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
@@ -14,6 +15,7 @@ import android.support.v4.app.NotificationCompat;
 import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.view.View;
+import android.webkit.SslErrorHandler;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
@@ -49,7 +51,10 @@ public class AuthActivity extends Activity {
 
     WebView wv;
 
-    private static final String BASE_URL = "https://www.sensible.dtu.dk/sensible-dtu/authorization_manager/connector_funf/auth/grant/?scope=connector_funf.submit_data";
+
+    private static final String DOMAIN_URL = "http://54.229.13.160/";
+    //private static final String DOMAIN_URL = "https://www.sensible.dtu.dk/";
+    private static final String BASE_URL = DOMAIN_URL + "sensible-dtu/authorization_manager/connector_funf/auth/grant/?scope=connector_funf.submit_data";
 
 
     public void onCreate(Bundle savedInstanceState) {
@@ -76,6 +81,11 @@ public class AuthActivity extends Activity {
         wv.setWebViewClient(new WebViewClient() {
 
             private boolean serviceStarted = false;
+
+            public void onReceivedSslError (WebView view, SslErrorHandler handler, SslError error) {
+                Log.e(TAG, "SSL Error");
+                handler.proceed() ;
+            }
 
             public boolean shouldOverrideUrlLoading(WebView view, String url){
                 // do your handling codes here, which url is the requested url
