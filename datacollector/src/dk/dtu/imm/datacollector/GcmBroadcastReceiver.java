@@ -15,7 +15,9 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.support.v4.app.NotificationCompat;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
+
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 
 /**
@@ -23,10 +25,13 @@ import com.google.android.gms.gcm.GoogleCloudMessaging;
  */
 public class GcmBroadcastReceiver extends BroadcastReceiver {
     static final String TAG = "AUTH_AuthActivity_broadcastReceiver";
+    public static final String EVENT_MSG_RECEIVED = "EVENT_MSG_RECEIVED";
+    
     public static final int NOTIFICATION_ID = 1;
     private NotificationManager mNotificationManager;
     private NotificationCompat.Builder builder;
     Context ctx;
+    
     @Override
     public void onReceive(Context context, Intent intent) {
         Log.d(TAG, "Received: " + intent.getExtras().toString());
@@ -39,7 +44,10 @@ public class GcmBroadcastReceiver extends BroadcastReceiver {
             sendNotification("Deleted messages on server: " +
                     intent.getExtras().toString());
         } else {
-            sendNotification("Received: " + intent.getExtras().toString());
+        	Intent notifyIntent = new Intent(EVENT_MSG_RECEIVED);
+        	notifyIntent.putExtras(intent.getExtras());
+        	LocalBroadcastManager.getInstance(context).sendBroadcast(notifyIntent);
+            sendNotification(intent.getExtras().getString("title"));
         }
         setResultCode(Activity.RESULT_OK);
     }
@@ -54,7 +62,7 @@ public class GcmBroadcastReceiver extends BroadcastReceiver {
 
         NotificationCompat.Builder mBuilder =
                 new NotificationCompat.Builder(ctx)
-                        .setSmallIcon(R.drawable.icon)
+                        .setSmallIcon(R.drawable.red_logo5)
                         .setContentTitle("GCM Notification")
                         .setStyle(new NotificationCompat.BigTextStyle()
                                 .bigText(msg))
