@@ -113,8 +113,12 @@ public class MainActivity extends Activity {
 	}
 
 	private int getFilesCount() {
-		String[] files = new File(Environment.getExternalStorageDirectory(), "edu.mit.media.funf/mainPipeline/archive")
-				.list();
+		String[] files = null;
+		try {
+			files = new File(Environment.getExternalStorageDirectory(), "edu.mit.media.funf/mainPipeline/archive").list();
+		} catch(Exception ignore) {
+			
+		}
 		return files != null ? files.length : 0;
 	}
 
