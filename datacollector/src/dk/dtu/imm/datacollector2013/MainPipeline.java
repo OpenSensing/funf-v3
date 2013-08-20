@@ -19,7 +19,7 @@
  * You should have received a copy of the GNU Lesser General Public 
  * License along with Funf. If not, see <http://www.gnu.org/licenses/>.
  */
-package dk.dtu.imm.datacollector;
+package dk.dtu.imm.datacollector2013;
 
 import android.content.Context;
 import android.content.Intent;
@@ -74,7 +74,7 @@ public class MainPipeline extends ConfiguredPipeline {
 	@Override
 	public void onDataReceived(Bundle data) {
 		super.onDataReceived(data);
-		Log.i(TAG,getBundleSerializer().serialize(data));
+		//Log.i(TAG,getBundleSerializer().serialize(data));
 		
 	}
 	

@@ -1,4 +1,4 @@
-package dk.dtu.imm.datacollector;
+package dk.dtu.imm.datacollector2013;
 
 /**
  * Created with IntelliJ IDEA.

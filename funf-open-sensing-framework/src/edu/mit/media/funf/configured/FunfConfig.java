@@ -317,8 +317,7 @@ public class FunfConfig implements OnSharedPreferenceChangeListener {
 			JSONObject jsonObject = new JSONObject(jsonString);
 			editor.clear();
             Log.d(TAG, "Clearing editor!");
-            Utils.printStackTrace(Thread.currentThread().getStackTrace());
-			clear = true;
+            clear = true;
 			setString(jsonObject, NAME_KEY);
 			setPositiveLong(jsonObject, VERSION_KEY);
 			setString(jsonObject, CONFIG_UPDATE_URL_KEY);
@@ -342,9 +341,7 @@ public class FunfConfig implements OnSharedPreferenceChangeListener {
 		
 		public Editor setAll(FunfConfig otherConfig) {
 			editor.clear();
-            Log.d(TAG, "Clearing editor!");
-            Utils.printStackTrace(Thread.currentThread().getStackTrace());
-			clear = true;
+            clear = true;
 			for (Map.Entry<String, ?> entry : otherConfig.getPrefs().getAll().entrySet()) {
 				if (entry.getValue() != null) {
 					Utils.putInPrefs(editor, entry.getKey(), entry.getValue());
@@ -355,9 +352,7 @@ public class FunfConfig implements OnSharedPreferenceChangeListener {
 		
 		public Editor clear() {
 			editor.clear();
-            Log.d(TAG, "Clearing editor!");
-            Utils.printStackTrace(Thread.currentThread().getStackTrace());
-			clear = true;
+            clear = true;
 			return this;
 		}
 		

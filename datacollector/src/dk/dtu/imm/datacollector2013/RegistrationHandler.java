@@ -1,4 +1,4 @@
-package dk.dtu.imm.datacollector;
+package dk.dtu.imm.datacollector2013;
 
 import android.app.AlarmManager;
 import android.app.NotificationManager;
@@ -19,19 +19,14 @@ import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpPost;
-import org.apache.http.conn.ssl.AllowAllHostnameVerifier;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import javax.net.ssl.*;
-import javax.security.cert.CertificateException;
-import javax.security.cert.X509Certificate;
 import java.io.*;
 import java.sql.Timestamp;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -54,7 +49,7 @@ public class RegistrationHandler extends Service {
     private static final String PROPERTY_APP_VERSION = "appVersion";
     private static final String PROPERTY_ON_SERVER_EXPIRATION_TIME = "onServerExpirationTimeMs";
 
-    private static final String SHOW_REGISTRATION_REMINDER = "dk.dtu.imm.datacollector.show_registration_reminder";
+    private static final String SHOW_REGISTRATION_REMINDER = "dk.dtu.imm.datacollector2013.show_registration_reminder";
 
 
     public static final String PROPERTY_SENSIBLE_TOKEN = "sensible_token";
@@ -63,13 +58,6 @@ public class RegistrationHandler extends Service {
     public static final String PROPERTY_SENSIBLE_CODE = "sensible_code";
     private static final int NOTIFICATION_ID = 1234;
     public static final long DAY = 24 * 60 * 60 * 1000;
-    //public static final long TEN_MINUTES = 10 * 60 * 1000;
-    public static final long TEN_MINUTES = 30 * 1000;
-
-    // ID: 139736719137
-    // api key: AIzaSyADT3hWojhgcSxfI0FhWB8Cak6DlWs6f_o
-
-    // http://ec2-54-229-13-160.eu-west-1.compute.amazonaws.com:8082/authorization_manager/connector_funf/auth/refresh_token/?refresh_token=41a16ef4b2&client_id=77a102b767a4b9ed0de963903aac32&client_secret=4190e63044c6b4687496261d44469d
 
     /**
      * Default lifespan (7 days) of a reservation until it is considered expired.
@@ -77,8 +65,10 @@ public class RegistrationHandler extends Service {
     public static final long REGISTRATION_EXPIRY_TIME_MS = 7 * DAY;
 
 
-    public static final String CLIENT_ID= "aef91b1f38fbf4e88e266b80387ae2";
-    private static final String CLIENT_SECRET = "adaac7ea79965136361ae9bbe9850e";
+//    public static final String CLIENT_ID= "8b101e169427d65c3e0565c3de6258";
+//    private static final String CLIENT_SECRET = "04ec37445f145097833c8052db553f";
+    public static final String CLIENT_ID= "50181ac46d07a212c1120fe99be8b4";
+    private static final String CLIENT_SECRET = "0a77f66c07a26112869fcc98293349";
 
     GoogleCloudMessaging gcm;
     AtomicInteger msgId = new AtomicInteger();
@@ -96,8 +86,8 @@ public class RegistrationHandler extends Service {
         NOT_REGISTERED_NO_CODE, NOT_REGISTERED_HAS_CODE, REGISTERED_EXPIRED, REGISTERED
     }
 
-    private static final String DOMAIN_URL = "http://54.229.13.160/";
-    //private static final String DOMAIN_URL = "https://www.sensible.dtu.dk/";
+    //private static final String DOMAIN_URL = "http://54.229.13.160/saper/";
+    private static final String DOMAIN_URL = "https://www.sensible.dtu.dk/";
 
     //private static final String BASE_URL = "http://ec2-54-229-13-160.eu-west-1.compute.amazonaws.com:8082/authorization_manager/connector_funf/auth/grant/?scope=connector_funf.submit_data&";
 
@@ -107,6 +97,7 @@ public class RegistrationHandler extends Service {
     private static final String SET_GCM_ID_URL = DOMAIN_URL + "sensible-dtu/authorization_manager/connector_funf/auth/gcm/";
 
 
+
     public IBinder onBind(Intent intent) {
         return null;
     }
@@ -114,7 +105,7 @@ public class RegistrationHandler extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         if (!started) {
-            //started = true;
+            started = true;
             Log.d(TAG, "STARTED!");
             context = getApplicationContext();
 
@@ -142,6 +133,7 @@ public class RegistrationHandler extends Service {
             case NOT_REGISTERED_NO_CODE:
                 setupNotification();
                 startAuthActivity();
+                started = false;
                 break;
             case NOT_REGISTERED_HAS_CODE:
                 obtainToken();
@@ -151,6 +143,7 @@ public class RegistrationHandler extends Service {
                 break;
             case REGISTERED:
                 cancelNotification();
+                started = false;
                 break;
         }
     }
@@ -208,9 +201,11 @@ public class RegistrationHandler extends Service {
                 return SensibleRegistrationStatus.NOT_REGISTERED_NO_CODE;
             }
         } else if (System.currentTimeMillis() + DAY > timeout) {
+            Log.d(TAG, "Expiring in: " + (timeout - System.currentTimeMillis()));
             return SensibleRegistrationStatus.REGISTERED_EXPIRED;
         }
         else  {
+            Log.d(TAG, "Expiring in: " + (timeout - System.currentTimeMillis()));
             return SensibleRegistrationStatus.REGISTERED;
         }
     }
@@ -385,7 +380,7 @@ public class RegistrationHandler extends Service {
                 httppost = new HttpPost(strings[0]);
                 //?code=14e3b14e5759095cc7d74f169eac23&client_id=77a102b767a4b9ed0de963903aac32&client_secret=4190e63044c6b4687496261d44469d
                 try {
-                    List nameValuePairs = new ArrayList<BasicNameValuePair>();
+                    ArrayList<BasicNameValuePair> nameValuePairs = new ArrayList<BasicNameValuePair>();
                     nameValuePairs.add(new BasicNameValuePair("client_id", CLIENT_ID));
                     nameValuePairs.add(new BasicNameValuePair("client_secret", CLIENT_SECRET));
                     TelephonyManager tm = (TelephonyManager)context.getSystemService(TELEPHONY_SERVICE);
@@ -400,6 +395,9 @@ public class RegistrationHandler extends Service {
                         nameValuePairs.add(new BasicNameValuePair("gcm_id", getRegistrationId(context)));
                         nameValuePairs.add(new BasicNameValuePair("bearer_token", strings[1]));
                     }
+                    for (BasicNameValuePair nvp : nameValuePairs) {
+                        Log.d(TAG, nvp.getName() + " : " + nvp.getValue());
+                    }
 
                     httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
                     Log.d(TAG, httppost.toString());
@@ -407,7 +405,7 @@ public class RegistrationHandler extends Service {
                     String responseString = inputStreamToString(response.getEntity().getContent()).toString();
                     //String[] parts = responseString.split("<body>");
                     //Log.d(TAG, "Response: " + parts[1].replace(">",">\n"));
-                    Log.d(TAG, "Responose: " + responseString);
+
 
                     processResponse(strings[0], responseString);
                 } catch (UnsupportedEncodingException e) {
@@ -448,8 +446,7 @@ public class RegistrationHandler extends Service {
                 }
             } else {
                 String token = o.getString("access_token");
-                long expiry = System.currentTimeMillis() + REGISTRATION_EXPIRY_TIME_MS;
-                //long expiry = System.currentTimeMillis();
+                long expiry = System.currentTimeMillis() + 7 * DAY;
                 String refresh_token = o.getString("refresh_token");
 
                 if (token != null) {
@@ -463,16 +460,13 @@ public class RegistrationHandler extends Service {
 
                     //Add to Funf config
                     MainPipeline.getMainConfig(context).edit().setSensibleAccessToken(token).commit();
+                    started = false;
                 }
                 return;
             }
         } catch (JSONException e) {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
         }
-        // the response either contains a token or an error
-
-        // {"access_token": "526914203b", "token_type": "bearer", "expires_in": 3600, "refresh_token": "eb2de2065a", "scope": "connector_funf.submit_data"}
-
     }
 
     private StringBuilder inputStreamToString(InputStream is) {
@@ -485,6 +479,7 @@ public class RegistrationHandler extends Service {
         // Read response until the end
         try {
             while ((line = rd.readLine()) != null) {
+                Log.d(TAG, line);
                 total.append(line);
             }
         } catch (IOException e) {
