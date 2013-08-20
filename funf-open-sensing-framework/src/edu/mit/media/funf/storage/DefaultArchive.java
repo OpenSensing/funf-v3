@@ -51,8 +51,9 @@ public class DefaultArchive implements Archive<File> {
 	private static final String ENCRYPTION_PREFS = "edu.mit.media.funf.configured.ConfiguredEncryption";
 	private static final String ENCRYPTION_KEY = "ENCRYPTION_KEY";
 	private static final String DES_ENCRYPTION = "DES";
-	
-	private static final char[] DEFAULT_PASSWORD = "changeme".toCharArray();
+
+    // TODO set the password for production
+	private static final char[] DEFAULT_PASSWORD = "".toCharArray();
 	
 	private final static byte[] SALT = {
         (byte)0xa6, (byte)0xab, (byte)0x09, (byte)0x93,
