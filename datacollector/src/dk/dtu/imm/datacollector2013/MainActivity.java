@@ -115,7 +115,7 @@ public class MainActivity extends Activity {
 	private int getFilesCount() {
 		String[] files = null;
 		try {
-			files = new File(Environment.getExternalStorageDirectory(), "edu.mit.media.funf/mainPipeline/archive").list();
+			files = new File(Environment.getExternalStorageDirectory(), "dk.dtu.imm.datacollector2013/mainPipeline/archive").list();
 		} catch(Exception ignore) {
 			
 		}
