@@ -64,8 +64,10 @@ public final class Utils {
     }
 
     public static String getSensibleAccessToken(Context context) {
-        SharedPreferences prefs = context.getSharedPreferences("main_config", Context.MODE_PRIVATE);
-        return FunfConfig.getInstance(async(prefs)).getSensibleAccessToken();
+        //SharedPreferences prefs = context.getSharedPreferences("main_config", Context.MODE_PRIVATE);
+        //return FunfConfig.getInstance(async(prefs)).getSensibleAccessToken();
+        SharedPreferences prefs = context.getApplicationContext().getSharedPreferences("sensible_auth", Context.MODE_PRIVATE);
+        return prefs.getString("sensible_token","");
     }
 	
 	private static String getStoredBundleParamKey(final String key, final String paramKey) {

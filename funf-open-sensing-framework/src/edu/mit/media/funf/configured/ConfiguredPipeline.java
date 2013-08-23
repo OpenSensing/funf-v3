@@ -336,8 +336,8 @@ public abstract class ConfiguredPipeline extends CustomizedIntentService impleme
 		i.putExtra(NameValueDatabaseService.TIMESTAMP_KEY, System.currentTimeMillis());
 		i.putExtra(NameValueDatabaseService.NAME_KEY, getClass().getName());
 		i.putExtra(NameValueDatabaseService.VALUE_KEY, json);
-        i.putExtra(NameValueDatabaseHelper.COLUMN_SENSIBLE_TOKEN, getConfig().getSensibleAccessToken());
-        Log.d(TAG, "token after config change: " + getConfig().getSensibleAccessToken());
+        //i.putExtra(NameValueDatabaseHelper.COLUMN_SENSIBLE_TOKEN, getConfig().getSensibleAccessToken());
+        //Log.d(TAG, "token after config change: " + getConfig().getSensibleAccessToken());
 		startService(i);
 	}
 	

@@ -113,7 +113,7 @@ public class AuthActivity extends Activity {
                                 } else {
                                     code = parts[1];
                                 }
-                                SharedPreferences.Editor editor = MainPipeline.getSystemPrefs(context).edit();
+                                SharedPreferences.Editor editor = RegistrationHandler.getAuthPreferences(context).edit();
                                 editor.putString(RegistrationHandler.PROPERTY_SENSIBLE_CODE, code);
                                 editor.commit();
                                 Log.d(TAG, "code = " + code);

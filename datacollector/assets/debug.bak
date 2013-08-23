@@ -1,0 +1,64 @@
+{
+    "configUpdatePeriod": 4320000,
+    "configUpdateUrl": "https://www.sensible.dtu.dk/sensible-dtu/connectors/connector_funf/config/",
+    "dataArchivePeriod": 180,
+    "dataRequests": {
+        "edu.mit.media.funf.probe.builtin.BluetoothProbe": [
+            {
+                "PERIOD": 300,
+                "DURATION": 30
+            }
+        ],
+        "edu.mit.media.funf.probe.builtin.CallLogProbe": [
+            {
+                "PERIOD": 43200
+            }
+        ],
+        "edu.mit.media.funf.probe.builtin.CellProbe": [
+            {
+                "PERIOD": 600,
+                "DURATION": 30
+            }
+        ],
+        "edu.mit.media.funf.probe.builtin.ContactProbe": [
+            {
+                "PERIOD": 43200
+            }
+        ],
+        "edu.mit.media.funf.probe.builtin.HardwareInfoProbe": [
+            {
+                "PERIOD": 86400
+            }
+        ],
+        "edu.mit.media.funf.probe.builtin.LocationProbe": [
+            {
+                "PERIOD": 900,
+                "DURATION": 30
+            }
+        ],
+        "edu.mit.media.funf.probe.builtin.ScreenProbe": [
+            {}
+        ],
+        "edu.mit.media.funf.probe.builtin.SMSProbe": [
+            {
+                "PERIOD": 43200
+            }
+        ],
+        "edu.mit.media.funf.probe.builtin.TimeOffsetProbe": [
+            {
+                "PERIOD": 21600
+            }
+        ],
+        "edu.mit.media.funf.probe.builtin.WifiProbe": [
+            {
+                "PERIOD": 600,
+                "DURATION": 30
+            }
+        ]
+    },
+    "dataUploadOnWifiOnly": true,
+    "dataUploadPeriod": 300,
+    "dataUploadUrl": "https://www.sensible.dtu.dk/sensible-dtu/connectors/connector_funf/upload/",
+    "name": "dataCollector",
+    "version": 1
+}

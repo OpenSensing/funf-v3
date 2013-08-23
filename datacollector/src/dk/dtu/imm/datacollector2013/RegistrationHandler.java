@@ -51,7 +51,7 @@ public class RegistrationHandler extends Service {
 
     private static final String SHOW_REGISTRATION_REMINDER = "dk.dtu.imm.datacollector2013.show_registration_reminder";
 
-
+    public static final String SHARED_PREFERENCES_NAME = "sensible_auth";
     public static final String PROPERTY_SENSIBLE_TOKEN = "sensible_token";
     private static final String PROPERTY_SENSIBLE_REFRESH_TOKEN = "sensible_refresh_token";
     private static final String PROPERTY_SENSIBLE_TOKEN_TIMEOUT = "sensible_token_timeout";
@@ -108,6 +108,10 @@ public class RegistrationHandler extends Service {
 
     public IBinder onBind(Intent intent) {
         return null;
+    }
+
+    public static SharedPreferences getAuthPreferences(Context context)  {
+        return context.getApplicationContext().getSharedPreferences(SHARED_PREFERENCES_NAME, MODE_PRIVATE);
     }
 
     @Override
@@ -201,7 +205,7 @@ public class RegistrationHandler extends Service {
     }
 
     public static SensibleRegistrationStatus getSensibleRegistrationStatus(Context context) {
-        long timeout = MainPipeline.getSystemPrefs(context).getLong(PROPERTY_SENSIBLE_TOKEN_TIMEOUT, 0l);
+        long timeout = getAuthPreferences(context).getLong(PROPERTY_SENSIBLE_TOKEN_TIMEOUT, 0l);
         if (timeout == 0l) {
             if (getSensibleCode(context).length() > 0) {
                 return SensibleRegistrationStatus.NOT_REGISTERED_HAS_CODE;
@@ -219,23 +223,23 @@ public class RegistrationHandler extends Service {
     }
 
     public static String getSensibleToken(Context context) {
-        final SharedPreferences systemPrefs = MainPipeline.getSystemPrefs(context);
+        final SharedPreferences systemPrefs = getAuthPreferences(context);
         return systemPrefs.getString(PROPERTY_SENSIBLE_TOKEN, "");
     }
 
     private String getSensibleRefreshToken() {
-        final SharedPreferences systemPrefs = MainPipeline.getSystemPrefs(context);
+        final SharedPreferences systemPrefs = getAuthPreferences(context);
         return systemPrefs.getString(PROPERTY_SENSIBLE_REFRESH_TOKEN, "");
     }
 
     private String getSensibleCode() {
-        final SharedPreferences systemPrefs = MainPipeline.getSystemPrefs(context);
+        final SharedPreferences systemPrefs = getAuthPreferences(context);
         Log.d(TAG, "Code from shared prefs: " + systemPrefs.getString(PROPERTY_SENSIBLE_CODE, ""));
         return systemPrefs.getString(PROPERTY_SENSIBLE_CODE, "");
     }
 
     private static String getSensibleCode(Context context) {
-        return MainPipeline.getSystemPrefs(context).getString(PROPERTY_SENSIBLE_CODE, "");
+        return getAuthPreferences(context).getString(PROPERTY_SENSIBLE_CODE, "");
     }
 
 
@@ -249,7 +253,7 @@ public class RegistrationHandler extends Service {
 
         int registeredVersion = prefs.getInt(PROPERTY_APP_VERSION, Integer.MIN_VALUE);
         int currentVersion = getAppVersion(context);
-        if (registeredVersion != currentVersion || isRegistrationExpired(context)) {
+        if (registeredVersion != currentVersion || isGcmRegistrationExpired(context)) {
             Log.v(TAG, "App version changed or registration expired");
             return "";
         }
@@ -269,7 +273,7 @@ public class RegistrationHandler extends Service {
         }
     }
 
-    private boolean isRegistrationExpired(Context context) {
+    private boolean isGcmRegistrationExpired(Context context) {
         final SharedPreferences prefs = getGCMPreferences(context);
         // checks if the information is not stale
         long expirationTime =
@@ -439,7 +443,9 @@ public class RegistrationHandler extends Service {
     }
 
     private void processResponse(String api_url, String response) {
-        final SharedPreferences systemPrefs = MainPipeline.getSystemPrefs(context);
+        //final SharedPreferences systemPrefs = MainPipeline.getSystemPrefs(context);
+        final SharedPreferences systemPrefs =
+                getAuthPreferences(context);
         try {
             JSONObject o = new JSONObject(response);
             if (o.has("error")) {
@@ -467,7 +473,7 @@ public class RegistrationHandler extends Service {
                     editor.commit();
 
                     //Add to Funf config
-                    MainPipeline.getMainConfig(context).edit().setSensibleAccessToken(token).commit();
+                    //MainPipeline.getMainConfig(context).edit().setSensibleAccessToken(token).commit();
                     started = false;
                 }
                 return;
