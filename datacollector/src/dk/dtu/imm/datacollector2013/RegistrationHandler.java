@@ -64,11 +64,18 @@ public class RegistrationHandler extends Service {
      */
     public static final long REGISTRATION_EXPIRY_TIME_MS = 7 * DAY;
 
-
-//    public static final String CLIENT_ID= "8b101e169427d65c3e0565c3de6258";
-//    private static final String CLIENT_SECRET = "04ec37445f145097833c8052db553f";
+    /**
+     * SENSIBLE
+     */
     public static final String CLIENT_ID= "50181ac46d07a212c1120fe99be8b4";
     private static final String CLIENT_SECRET = "0a77f66c07a26112869fcc98293349";
+
+
+    /**
+     * JOURNAL
+     */
+    //public static final String CLIENT_ID= "d22ef1ffca06cc69ab8f4cdaddb4a3";
+    //private static final String CLIENT_SECRET = "516bbaa75fd64cdaa9e91df14c4afb";
 
     GoogleCloudMessaging gcm;
     AtomicInteger msgId = new AtomicInteger();
@@ -86,13 +93,14 @@ public class RegistrationHandler extends Service {
         NOT_REGISTERED_NO_CODE, NOT_REGISTERED_HAS_CODE, REGISTERED_EXPIRED, REGISTERED
     }
 
-    //private static final String DOMAIN_URL = "http://54.229.13.160/saper/";
+    //private static final String DOMAIN_URL = "http://54.229.13.160/devel/";
     private static final String DOMAIN_URL = "https://www.sensible.dtu.dk/";
 
     //private static final String BASE_URL = "http://ec2-54-229-13-160.eu-west-1.compute.amazonaws.com:8082/authorization_manager/connector_funf/auth/grant/?scope=connector_funf.submit_data&";
 
     private static final String CODE_TO_TOKEN_URL = DOMAIN_URL + "sensible-dtu/authorization_manager/connector_funf/auth/token/";
-    //private static final String CODE_TO_TOKEN_URL = "https://www.sensible.dtu.dk/sensible-dtu/authorization_manager/connector_funf/auth/grant/";
+    //private static final String CODE_TO_TOKEN_URL = DOMAIN_URL + "sensible-dtu/authorization_manager/connector_raw/v1/auth/token_mobile/";
+
     private static final String REFRESH_TOKEN_URL = DOMAIN_URL + "sensible-dtu/authorization_manager/connector_funf/auth/refresh_token/";
     private static final String SET_GCM_ID_URL = DOMAIN_URL + "sensible-dtu/authorization_manager/connector_funf/auth/gcm/";
 

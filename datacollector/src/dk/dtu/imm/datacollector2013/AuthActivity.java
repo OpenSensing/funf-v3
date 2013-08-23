@@ -9,6 +9,7 @@ import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.webkit.*;
+import android.widget.Toast;
 
 
 /**
@@ -120,6 +121,11 @@ public class AuthActivity extends Activity {
                                 LauncherReceiver.startService(context, RegistrationHandler.class);
                                 serviceStarted = true;
                                 finish();
+                            } else if(url.contains("error=access_denied")) {
+                                Toast.makeText(context,
+                                        "Error: You have to accept the permissions to use the application",
+                                        Toast.LENGTH_LONG).show();
+                                registerWithServer(context, regId);
                             }
                         } /*else if (url.contains(GRANT_ENDPOINT_URL)) {
                             if (!url.contains("client_id")
