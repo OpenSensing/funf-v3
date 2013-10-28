@@ -39,21 +39,22 @@ public class GcmBroadcastReceiver extends BroadcastReceiver {
         ctx = context;
         String messageType = gcm.getMessageType(intent);
         if (GoogleCloudMessaging.MESSAGE_TYPE_SEND_ERROR.equals(messageType)) {
-            sendNotification("Send error: " + intent.getExtras().toString());
+            sendNotification("Error while sending", "Send error: " + intent.getExtras().toString());
         } else if (GoogleCloudMessaging.MESSAGE_TYPE_DELETED.equals(messageType)) {
-            sendNotification("Deleted messages on server: " +
+            sendNotification("Deleted messages", "Deleted messages on server: " +
                     intent.getExtras().toString());
         } else {
         	Intent notifyIntent = new Intent(EVENT_MSG_RECEIVED);
         	notifyIntent.putExtras(intent.getExtras());
         	LocalBroadcastManager.getInstance(context).sendBroadcast(notifyIntent);
-            sendNotification(intent.getExtras().getString("title"));
+            sendNotification(intent.getExtras().getString("title", "SensibleDTU"),
+                    intent.getExtras().getString("message"));
         }
         setResultCode(Activity.RESULT_OK);
     }
 
     // Put the GCM message into a notification and post it.
-    private void sendNotification(String msg) {
+    private void sendNotification(String title, String msg) {
         mNotificationManager = (NotificationManager)
                 ctx.getSystemService(Context.NOTIFICATION_SERVICE);
 
@@ -63,7 +64,7 @@ public class GcmBroadcastReceiver extends BroadcastReceiver {
         NotificationCompat.Builder mBuilder =
                 new NotificationCompat.Builder(ctx)
                         .setSmallIcon(R.drawable.red_logo5)
-                        .setContentTitle("GCM Notification")
+                        .setContentTitle(title)
                         .setStyle(new NotificationCompat.BigTextStyle()
                                 .bigText(msg))
                         .setContentText(msg);
