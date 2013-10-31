@@ -32,7 +32,7 @@ import edu.mit.media.funf.probe.builtin.ProbeKeys.ScreenKeys;
 
 public class ScreenProbe extends Probe implements ScreenKeys {
 	
-	private BroadcastReceiver screenReceiver;
+	private BroadcastReceiver screenReceiver = null;
 	private Boolean screenOn;
 	
 	@Override
@@ -63,25 +63,28 @@ public class ScreenProbe extends Probe implements ScreenKeys {
 		screenOn = null;
 		IntentFilter filter = new IntentFilter(Intent.ACTION_SCREEN_ON);
 		filter.addAction(Intent.ACTION_SCREEN_OFF);
-		screenReceiver = new BroadcastReceiver() {
-			@Override
-			public void onReceive(Context context, Intent intent) {
-				final String action = intent.getAction();
-				if (Intent.ACTION_SCREEN_OFF.equals(action)) {
-					screenOn = false;
-					sendProbeData();
-				} else if (Intent.ACTION_SCREEN_ON.equals(action)) {
-					screenOn = true;
-					sendProbeData();
-				}
-			}
-		};
-		registerReceiver(screenReceiver, filter);
+        if (screenReceiver == null) {
+            screenReceiver = new BroadcastReceiver() {
+                @Override
+                public void onReceive(Context context, Intent intent) {
+                    final String action = intent.getAction();
+                    if (Intent.ACTION_SCREEN_OFF.equals(action)) {
+                        screenOn = false;
+                        sendProbeData();
+                    } else if (Intent.ACTION_SCREEN_ON.equals(action)) {
+                        screenOn = true;
+                        sendProbeData();
+                    }
+                }
+            };
+            registerReceiver(screenReceiver, filter);
+        }
 	}
 
 	@Override
 	protected void onDisable() {
 		unregisterReceiver(screenReceiver);
+        screenReceiver = null;
 	}
 
 
