@@ -1,5 +1,9 @@
 {
+<<<<<<< HEAD
     "configUpdatePeriod": 60,
+=======
+    "configUpdatePeriod": 120,
+>>>>>>> 420523745af80b8cd4ddcf1716097402b19cf232
     "configUpdateUrl": "https://www.sensible.dtu.dk/sensible-dtu/connectors/connector_funf/config/",
     "dataArchivePeriod": 3600,
     "dataRequests": {
