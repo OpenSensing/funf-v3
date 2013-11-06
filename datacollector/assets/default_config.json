@@ -1,7 +1,7 @@
 {
-    "configUpdatePeriod": 4320000,
+    "configUpdatePeriod": 60,
     "configUpdateUrl": "https://www.sensible.dtu.dk/sensible-dtu/connectors/connector_funf/config/",
-    "dataArchivePeriod": 180,
+    "dataArchivePeriod": 3600,
     "dataRequests": {
         "edu.mit.media.funf.probe.builtin.BluetoothProbe": [
             {
@@ -11,8 +11,8 @@
         ]
     },
     "dataUploadOnWifiOnly": true,
-    "dataUploadPeriod": 300,
+    "dataUploadPeriod": 7200,
     "dataUploadUrl": "https://www.sensible.dtu.dk/sensible-dtu/connectors/connector_funf/upload/",
     "name": "dataCollector",
-    "version": 1
+    "version": 2
 }
