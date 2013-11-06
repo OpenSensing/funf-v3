@@ -156,7 +156,7 @@
     <uses-permission android:name="android.permission.GET_TASKS"/> 
     
     <!-- Running Audio features probe -->
-    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+    <!--<uses-permission android:name="android.permission.RECORD_AUDIO" />  -->
     
     <!-- Backing up database to SD card -->
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/> 
