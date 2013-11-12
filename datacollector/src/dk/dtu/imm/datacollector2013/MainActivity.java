@@ -54,6 +54,8 @@ public class MainActivity extends Activity {
 	private MessagesAdapter listAdapter;
 	private ListView listview;
 	private Gson gson;
+	private ImageView imgStatus;
+	private TextView txtFilesCount;
 	
 	@Override
 	protected void onStart() {
@@ -88,16 +90,8 @@ public class MainActivity extends Activity {
 
 		gson = new Gson();
 		
-		ImageView imgStatus = (ImageView) findViewById(R.id.imgStatus);
-		TextView txtFilesCount = (TextView) findViewById(R.id.textFilesCount);
-
-		int filesCount = getFilesCount();
-		if (filesCount > 0) {
-			imgStatus.setImageResource(R.drawable.status_problem);
-		} else {
-			imgStatus.setImageResource(R.drawable.status_ok);
-		}
-		txtFilesCount.setText("" + filesCount);
+		imgStatus = (ImageView) findViewById(R.id.imgStatus);
+		txtFilesCount = (TextView) findViewById(R.id.textFilesCount);
 		listview = (ListView) findViewById(R.id.listMessages);
 		listMsg = new LinkedList<MessageItem>();
 		listAdapter = new MessagesAdapter(this, listMsg);
@@ -123,6 +117,14 @@ public class MainActivity extends Activity {
 	
 	@Override
 	protected void onResume() {
+		int filesCount = getFilesCount();
+		if (filesCount > 4) {
+			imgStatus.setImageResource(R.drawable.status_problem);
+		} else {
+			imgStatus.setImageResource(R.drawable.status_ok);
+		}
+		txtFilesCount.setText("" + filesCount);
+		
 		SharedPreferences prefs = getPreferences(MODE_PRIVATE);
 		String msgJson = prefs.getString(KEY_MESSAGES, "");
         if(msgJson.isEmpty() == false) {
