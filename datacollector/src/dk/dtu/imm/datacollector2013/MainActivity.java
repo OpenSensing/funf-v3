@@ -42,10 +42,10 @@ public class MainActivity extends Activity {
 	private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
 		@Override
 		public void onReceive(Context context, Intent intent) {
-			listMsg.add(0, new MessageItem(
+            listMsg.add(0, new MessageItem(
 					intent.getExtras().getString("title"), 
 					Long.parseLong(intent.getExtras().getString("timestamp")), 
-					intent.getExtras().getString("body"),
+					intent.getExtras().getString("message"),
 					intent.getExtras().getString("url")));
 			listAdapter.notifyDataSetChanged();
 		}
@@ -125,7 +125,7 @@ public class MainActivity extends Activity {
 	protected void onResume() {
 		SharedPreferences prefs = getPreferences(MODE_PRIVATE);
 		String msgJson = prefs.getString(KEY_MESSAGES, "");
-		if(msgJson.isEmpty() == false) {
+        if(msgJson.isEmpty() == false) {
 			listMsg.clear();
 			listMsg.addAll((List<MessageItem>)gson.fromJson(msgJson, new TypeToken<LinkedList<MessageItem>>() {}.getType()));
 			listAdapter.notifyDataSetChanged();
@@ -149,14 +149,14 @@ public class MainActivity extends Activity {
 
 		String title;
 		long timestamp;
-		String body;
+		String message;
 		String url;
 		boolean collapsed = true;
 		
-		public MessageItem(String title, long timestamp, String body, String url) {
+		public MessageItem(String title, long timestamp, String message, String url) {
 			this.title = title;
 			this.timestamp = timestamp;
-			this.body = body;
+			this.message = message;
 			this.url = url;
 		}
 		
@@ -183,7 +183,7 @@ public class MainActivity extends Activity {
 			String date = dateFormat.format(cal.getTime());
 			tvDate.setText(date);
 			final TextView tvBody = (TextView) viewMsg.findViewById(R.id.messageBody);
-			tvBody.setText(values.get(position).body);
+			tvBody.setText(values.get(position).message);
 			tvBody.setVisibility(values.get(position).collapsed ? View.GONE : View.VISIBLE);
 			final ImageView imgCollapse = (ImageView) viewMsg.findViewById(R.id.imgCollapse);
 			imgCollapse.setImageResource(values.get(position).collapsed ? R.drawable.arrow_down : R.drawable.arrow_up);
