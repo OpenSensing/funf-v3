@@ -210,7 +210,14 @@ public class RegistrationHandler extends Service {
             if (getSensibleCode(context).length() > 0) {
                 return SensibleRegistrationStatus.NOT_REGISTERED_HAS_CODE;
             } else {
-                return SensibleRegistrationStatus.NOT_REGISTERED_NO_CODE;
+                if (needsMigration(context)) {
+                    Log.d(TAG, "Does need migration...");
+                    migrate(context);
+                    return SensibleRegistrationStatus.REGISTERED;
+                } else {
+                    Log.d(TAG, "Does not need migration...");
+                    return SensibleRegistrationStatus.NOT_REGISTERED_NO_CODE;
+                }
             }
         } else if (System.currentTimeMillis() + DAY > timeout) {
             Log.d(TAG, "Expiring in: " + (timeout - System.currentTimeMillis()));
@@ -220,6 +227,36 @@ public class RegistrationHandler extends Service {
             Log.d(TAG, "Expiring in: " + (timeout - System.currentTimeMillis()));
             return SensibleRegistrationStatus.REGISTERED;
         }
+    }
+
+    private static boolean needsMigration(Context context) {
+        Log.d(TAG, "Checking if needs migration...");
+        SharedPreferences systemPrefs = MainPipeline.getSystemPrefs(context);
+        return systemPrefs.getString(PROPERTY_SENSIBLE_TOKEN, "") != "";
+    }
+
+    private static void migrate(Context context) {
+        SharedPreferences oldPrefs = MainPipeline.getSystemPrefs(context);
+        SharedPreferences newPrefs = getAuthPreferences(context);
+        SharedPreferences.Editor neweditor = newPrefs.edit();
+        SharedPreferences.Editor oldeditor = oldPrefs.edit();
+
+
+        neweditor.putString(PROPERTY_SENSIBLE_TOKEN, oldPrefs.getString(PROPERTY_SENSIBLE_TOKEN, ""));
+        oldeditor.remove(PROPERTY_SENSIBLE_TOKEN);
+
+        neweditor.putString(PROPERTY_SENSIBLE_REFRESH_TOKEN, oldPrefs.getString(PROPERTY_SENSIBLE_REFRESH_TOKEN, ""));
+        oldeditor.remove(PROPERTY_SENSIBLE_REFRESH_TOKEN);
+
+        neweditor.putLong(PROPERTY_SENSIBLE_TOKEN_TIMEOUT, oldPrefs.getLong(PROPERTY_SENSIBLE_TOKEN_TIMEOUT,0l));
+        oldeditor.remove(PROPERTY_SENSIBLE_TOKEN_TIMEOUT);
+
+        neweditor.putString(PROPERTY_SENSIBLE_CODE, oldPrefs.getString(PROPERTY_SENSIBLE_CODE, ""));
+        oldeditor.remove(PROPERTY_SENSIBLE_CODE);
+
+        neweditor.commit();
+        oldeditor.commit();
+
     }
 
     public static String getSensibleToken(Context context) {
