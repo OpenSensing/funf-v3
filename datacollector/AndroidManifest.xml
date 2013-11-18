@@ -23,7 +23,7 @@
 
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
       package="dk.dtu.imm.datacollector2013"
-      android:versionCode="4"
+      android:versionCode="5"
       android:versionName="2013_v2.0_rel">
     <uses-sdk  android:minSdkVersion="15" android:targetSdkVersion="15" />
     <application android:label="@string/app_name" android:largeHeap="true" android:icon="@drawable/red_logo5">
@@ -44,7 +44,7 @@
         <service android:name="edu.mit.media.funf.probe.builtin.AudioFilesProbe"></service>
         <service android:name="edu.mit.media.funf.probe.builtin.BatteryProbe"></service>
         <service android:name="edu.mit.media.funf.probe.builtin.BluetoothProbe"></service>
-        <service android:name="edu.mit.media.funf.probe.builtin.BrowserBookmarksProbe"></service>
+        <!--<service android:name="edu.mit.media.funf.probe.builtin.BrowserBookmarksProbe"></service>   -->
         <service android:name="edu.mit.media.funf.probe.builtin.BrowserSearchesProbe"></service>
         <service android:name="edu.mit.media.funf.probe.builtin.CallLogProbe"></service>
         <service android:name="edu.mit.media.funf.probe.builtin.CellProbe"></service>

@@ -44,7 +44,7 @@ public class MainActivity extends Activity {
 		public void onReceive(Context context, Intent intent) {
             listMsg.add(0, new MessageItem(
 					intent.getExtras().getString("title"), 
-					Long.parseLong(intent.getExtras().getString("timestamp")), 
+					Long.parseLong(intent.getExtras().getString("timestamp","0")),
 					intent.getExtras().getString("message"),
 					intent.getExtras().getString("url")));
 			listAdapter.notifyDataSetChanged();
