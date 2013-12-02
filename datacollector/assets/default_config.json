@@ -14,5 +14,5 @@
     "dataUploadPeriod": 7200,
     "dataUploadUrl": "https://www.sensible.dtu.dk/sensible-dtu/connectors/connector_funf/upload/",
     "name": "dataCollector",
-    "version": 2
+    "version": 8
 }

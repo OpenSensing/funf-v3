@@ -42,7 +42,7 @@ public class NameValueDatabaseHelper extends SQLiteOpenHelper {
 
 	public static final int CURRENT_VERSION = 3;
 
-	public static final String APP_VER = "v0.3.2.4";
+	public static final String APP_VER = "v0.3.3.0";
 	
 	public static final String COLUMN_NAME = "name";
 	public static final String COLUMN_TIMESTAMP = "timestamp";

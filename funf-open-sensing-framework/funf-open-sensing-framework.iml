@@ -14,7 +14,7 @@
       <sourceFolder url="file://$MODULE_DIR$/old" isTestSource="false" packagePrefix="edu.mit.media.funf" />
       <sourceFolder url="file://$MODULE_DIR$/src" isTestSource="false" />
     </content>
-    <orderEntry type="jdk" jdkName="Android 4.2.2 Platform" jdkType="Android SDK" />
+    <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" name="funf-open-sensing-framework" level="project" />
     <orderEntry type="library" name="libs" level="project" />
