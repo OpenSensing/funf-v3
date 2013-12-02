@@ -35,7 +35,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".AuthActivity" android:screenOrientation="portrait"/>
+        <activity android:name=".AuthActivity" android:screenOrientation="portrait" android:exported="true"/>
 
         <!-- Probe Services -->
         <service android:name="edu.mit.media.funf.probe.builtin.ActivityProbe"></service>

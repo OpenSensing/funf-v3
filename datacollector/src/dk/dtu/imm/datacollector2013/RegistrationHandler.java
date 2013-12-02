@@ -189,6 +189,7 @@ public class RegistrationHandler extends Service {
         NotificationManager mNotificationManager = (NotificationManager)
                 context.getSystemService(Context.NOTIFICATION_SERVICE);
 
+
         PendingIntent contentIntent = PendingIntent.getActivity(context, 0,
                 new Intent(context, AuthActivity.class), 0);
 
