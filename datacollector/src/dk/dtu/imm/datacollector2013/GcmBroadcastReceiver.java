@@ -14,13 +14,20 @@ import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
 import com.google.android.gms.gcm.GoogleCloudMessaging;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  * Handling of GCM messages.
@@ -49,7 +56,12 @@ public class GcmBroadcastReceiver extends BroadcastReceiver {
         	Intent notifyIntent = new Intent(EVENT_MSG_RECEIVED);
             Bundle extras = intent.getExtras();
         	notifyIntent.putExtras(extras);
-        	LocalBroadcastManager.getInstance(context).sendBroadcast(notifyIntent);
+
+            //Save the message to preferences in case the app is in background and can't get
+            //the message through broadcast
+            saveMessage(fromGCMBundle(extras));
+            LocalBroadcastManager.getInstance(context).sendBroadcast(notifyIntent);
+
             if (extras.getString("type", "").equals("url")) {
                 sendUrlNotification(extras.getString("title"),
                         extras.getString("message"),
@@ -60,6 +72,21 @@ public class GcmBroadcastReceiver extends BroadcastReceiver {
             }
         }
         setResultCode(Activity.RESULT_OK);
+    }
+
+    private MessageItem fromGCMBundle(Bundle extras) {
+        return new MessageItem(extras.getString("title"), Long.parseLong(extras.getString("timestamp", Integer.toString((int)(System.currentTimeMillis()) / 1000))), extras.getString("message"), extras.getString("url"));
+    }
+
+    private void saveMessage(MessageItem messageItem) {
+        Gson gson = new Gson();
+        SharedPreferences preferences = ctx.getSharedPreferences("MainActivity", Context.MODE_PRIVATE);
+        List<MessageItem> messageItems = gson.fromJson(preferences.getString(MainActivity.KEY_MESSAGES, ""), new TypeToken<LinkedList<MessageItem>>() {}.getType());
+        messageItems.add(0, messageItem);
+        SharedPreferences.Editor editor = preferences.edit();
+        String msgJson = gson.toJson(messageItems);
+        editor.putString(MainActivity.KEY_MESSAGES, msgJson);
+        editor.commit();
     }
 
     // Put the GCM message into a notification and post it.

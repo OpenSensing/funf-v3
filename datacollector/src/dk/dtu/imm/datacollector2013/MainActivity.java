@@ -7,21 +7,17 @@ import java.util.GregorianCalendar;
 import java.util.LinkedList;
 import java.util.List;
 
+import android.app.AlertDialog;
+import android.content.*;
+import android.os.*;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
-import android.content.BroadcastReceiver;
-import android.content.Context;
-import android.content.Intent;
-import android.content.IntentFilter;
-import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.net.Uri;
-import android.os.Bundle;
-import android.os.Environment;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -35,7 +31,7 @@ import android.widget.TextView;
 
 public class MainActivity extends Activity {
 
-	private static final String KEY_MESSAGES = "MESSAGES";
+	public static final String KEY_MESSAGES = "MESSAGES";
 	private static final String TAG = "AUTH_MainActivity";
 	private static boolean serviceRunning = false;
 
@@ -43,7 +39,7 @@ public class MainActivity extends Activity {
 		@Override
 		public void onReceive(Context context, Intent intent) {
             listMsg.add(0, new MessageItem(
-					intent.getExtras().getString("title"), 
+					intent.getExtras().getString("title"),
 					Long.parseLong(intent.getExtras().getString("timestamp","0")),
 					intent.getExtras().getString("message"),
 					intent.getExtras().getString("url")));
@@ -56,7 +52,7 @@ public class MainActivity extends Activity {
 	private Gson gson;
 	private ImageView imgStatus;
 	private TextView txtFilesCount;
-	
+
 	@Override
 	protected void onStart() {
 		super.onStart();
@@ -89,7 +85,6 @@ public class MainActivity extends Activity {
 		setContentView(R.layout.main_layout);
 
 		gson = new Gson();
-		
 		imgStatus = (ImageView) findViewById(R.id.imgStatus);
 		txtFilesCount = (TextView) findViewById(R.id.textFilesCount);
 		listview = (ListView) findViewById(R.id.listMessages);
@@ -103,19 +98,23 @@ public class MainActivity extends Activity {
 	    super.onConfigurationChanged(newConfig);
 	    setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 	}
-	
+
 	@Override
 	protected void onPause() {
 		LocalBroadcastManager.getInstance(this).unregisterReceiver(broadcastReceiver);
-		SharedPreferences prefs = getPreferences(MODE_PRIVATE);
-	    SharedPreferences.Editor editor = prefs.edit();
-	    String msgJson = gson.toJson(listMsg);
-	    editor.putString(KEY_MESSAGES, msgJson);
-	    editor.commit();
+        saveMessages();
 		super.onPause();
 	}
-	
-	@Override
+
+    private void saveMessages() {
+        SharedPreferences prefs = getPreferences(MODE_PRIVATE);
+        SharedPreferences.Editor editor = prefs.edit();
+        String msgJson = gson.toJson(listMsg);
+        editor.putString(KEY_MESSAGES, msgJson);
+        editor.commit();
+    }
+
+    @Override
 	protected void onResume() {
 		int filesCount = getFilesCount();
 		if (filesCount > 4) {
@@ -124,7 +123,7 @@ public class MainActivity extends Activity {
 			imgStatus.setImageResource(R.drawable.status_ok);
 		}
 		txtFilesCount.setText("" + filesCount);
-		
+
 		SharedPreferences prefs = getPreferences(MODE_PRIVATE);
 		String msgJson = prefs.getString(KEY_MESSAGES, "");
         if(msgJson.isEmpty() == false) {
@@ -133,7 +132,7 @@ public class MainActivity extends Activity {
 			listAdapter.notifyDataSetChanged();
 		}
 		LocalBroadcastManager.getInstance(this).registerReceiver(broadcastReceiver,
-				new IntentFilter(GcmBroadcastReceiver.EVENT_MSG_RECEIVED));
+                new IntentFilter(GcmBroadcastReceiver.EVENT_MSG_RECEIVED));
 		super.onResume();
 	}
 
@@ -142,26 +141,9 @@ public class MainActivity extends Activity {
 		try {
 			files = new File(Environment.getExternalStorageDirectory(), "dk.dtu.imm.datacollector2013/mainPipeline/archive").list();
 		} catch(Exception ignore) {
-			
+
 		}
 		return files != null ? files.length : 0;
-	}
-
-	class MessageItem {
-
-		String title;
-		long timestamp;
-		String message;
-		String url;
-		boolean collapsed = true;
-		
-		public MessageItem(String title, long timestamp, String message, String url) {
-			this.title = title;
-			this.timestamp = timestamp;
-			this.message = message;
-			this.url = url;
-		}
-		
 	}
 
 	class MessagesAdapter extends ArrayAdapter<MessageItem> {
@@ -190,7 +172,7 @@ public class MainActivity extends Activity {
 			final ImageView imgCollapse = (ImageView) viewMsg.findViewById(R.id.imgCollapse);
 			imgCollapse.setImageResource(values.get(position).collapsed ? R.drawable.arrow_down : R.drawable.arrow_up);
 			imgCollapse.setOnClickListener(new OnClickListener() {
-				
+
 				@Override
 				public void onClick(View v) {
 					boolean newCollapsedStatus = !values.get(position).collapsed;
@@ -204,7 +186,7 @@ public class MainActivity extends Activity {
 			final TextView tvTitle = (TextView) viewMsg.findViewById(R.id.messageTitle);
 			tvTitle.setText(values.get(position).title);
 			viewMsg.setOnClickListener(new OnClickListener() {
-				
+
 				@Override
 				public void onClick(View v) {
 					String url = values.get(position).url;
