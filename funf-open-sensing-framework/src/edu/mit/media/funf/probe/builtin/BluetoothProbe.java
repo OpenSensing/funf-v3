@@ -30,6 +30,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
+import android.os.Handler;
+import android.util.Log;
 import edu.mit.media.funf.Utils;
 import edu.mit.media.funf.probe.Probe;
 import edu.mit.media.funf.probe.builtin.ProbeKeys.BluetoothKeys;
@@ -37,11 +39,13 @@ import edu.mit.media.funf.probe.builtin.ProbeKeys.BluetoothKeys;
 
 public class BluetoothProbe extends Probe implements BluetoothKeys {
 
-	private BluetoothAdapter adapter;
+    private static final long BLUETOOTH_TIMEOUT = 15000;
+    public static final String BLUETOOTH_TIMEOUT_EVENT = "edu.mit.media.funf.probe.builtin.BluetoothProbe.BLUETOOTH_TIMEOUT_EVENT";
+    private BluetoothAdapter adapter;
 	private BluetoothScanReceiver receiver;
 	private ArrayList<Bundle> deviceDiscoveries;
-	
-	@Override
+
+    @Override
 	public Parameter[] getAvailableParameters() {
 		return new Parameter[] {
 			new Parameter(Parameter.Builtin.PERIOD, 300L),
@@ -93,11 +97,23 @@ public class BluetoothProbe extends Probe implements BluetoothKeys {
 			startDiscovery();
 		}
 	}
+
 	
 	private void startDiscovery() {
 		if (adapter.isEnabled()) {
 			adapter.startDiscovery();
 		} else {
+            final Handler bluetoothTimeoutHandler = new Handler();
+            final Runnable bluetoothTimeoutAlarm = new Runnable() {
+                @Override
+                public void run() {
+                    Log.i("Radu's test", "runnable called at" + Long.toString(System.currentTimeMillis()));
+                    Intent bluetoothTimeoutIntent = new Intent();
+                    bluetoothTimeoutIntent.setAction(BLUETOOTH_TIMEOUT_EVENT);
+                    sendBroadcast(bluetoothTimeoutIntent);
+                }
+            };
+
 			// TODO: save reference to this receiver to unregister on stop
 			registerReceiver(new BroadcastReceiver() {
 				@Override
@@ -105,11 +121,16 @@ public class BluetoothProbe extends Probe implements BluetoothKeys {
 					int newState = intent.getIntExtra(BluetoothAdapter.EXTRA_STATE, BluetoothAdapter.STATE_OFF);
 					if (newState == BluetoothAdapter.STATE_ON) {
 						context.unregisterReceiver(this);
-						startDiscovery();
+						bluetoothTimeoutHandler.removeCallbacks(bluetoothTimeoutAlarm);
+                        startDiscovery();
 					}
 				}
 			}, new IntentFilter(BluetoothAdapter.ACTION_STATE_CHANGED));
-			adapter.enable();
+
+            adapter.enable();
+
+            bluetoothTimeoutHandler.postDelayed(bluetoothTimeoutAlarm, BLUETOOTH_TIMEOUT);
+            Log.i("Radu's test", "runnable registered at " + Long.toString(System.currentTimeMillis()));
 		}
 	}
 

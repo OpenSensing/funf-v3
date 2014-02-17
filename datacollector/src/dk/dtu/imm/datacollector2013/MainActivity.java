@@ -57,6 +57,11 @@ public class MainActivity extends Activity {
 	protected void onStart() {
 		super.onStart();
 
+        if (getIntent().getAction().equals(BluetoothTimeoutBroadcastReceiver.RESTART_POPUP_ACTION)) {
+            showRestartDialog();
+            return;
+        }
+
 		BluetoothAdapter bt = BluetoothAdapter.getDefaultAdapter();
 		if (!bt.isEnabled()) {
 			bt.enable();
@@ -78,6 +83,19 @@ public class MainActivity extends Activity {
 		}
 
 	}
+
+    private void showRestartDialog() {
+        AlertDialog.Builder alertBuilder = new AlertDialog.Builder(this);
+        alertBuilder.setTitle("Bluetooth cannot be started");
+        alertBuilder.setMessage("Please reboot your phone")
+                .setCancelable(false)
+                .setNeutralButton("OK", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                }).create().show();
+    }
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
