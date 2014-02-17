@@ -23,7 +23,7 @@ org.eclipse.jdt.core.prefs
 # intellij idea project files
 .idea/
 out/
-
+*.iml
 
 # mac files
 .DS_Store

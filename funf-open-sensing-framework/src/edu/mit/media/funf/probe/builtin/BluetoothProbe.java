@@ -107,7 +107,6 @@ public class BluetoothProbe extends Probe implements BluetoothKeys {
             final Runnable bluetoothTimeoutAlarm = new Runnable() {
                 @Override
                 public void run() {
-                    Log.i("Radu's test", "runnable called at" + Long.toString(System.currentTimeMillis()));
                     Intent bluetoothTimeoutIntent = new Intent();
                     bluetoothTimeoutIntent.setAction(BLUETOOTH_TIMEOUT_EVENT);
                     sendBroadcast(bluetoothTimeoutIntent);
@@ -130,7 +129,6 @@ public class BluetoothProbe extends Probe implements BluetoothKeys {
             adapter.enable();
 
             bluetoothTimeoutHandler.postDelayed(bluetoothTimeoutAlarm, BLUETOOTH_TIMEOUT);
-            Log.i("Radu's test", "runnable registered at " + Long.toString(System.currentTimeMillis()));
 		}
 	}
 

@@ -32,8 +32,10 @@ import android.widget.TextView;
 public class MainActivity extends Activity {
 
 	public static final String KEY_MESSAGES = "MESSAGES";
-	private static final String TAG = "AUTH_MainActivity";
-	private static boolean serviceRunning = false;
+    public static final String RESTART_DEVICE_MESSAGE = "På grund af problemer med Android drivers er der et problem med din Bluetooth. Genstart venligst telefonen, så skulle den virke igen. Mange tak!";
+    private static final String TAG = "AUTH_MainActivity";
+    public static final String RESTART_DEVICE_MESSAGE_TITLE = "Bluetooth problem";
+    private static boolean serviceRunning = false;
 
 	private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
 		@Override
@@ -52,15 +54,13 @@ public class MainActivity extends Activity {
 	private Gson gson;
 	private ImageView imgStatus;
 	private TextView txtFilesCount;
+    private boolean restartPopupOn = false;
 
-	@Override
+    @Override
 	protected void onStart() {
 		super.onStart();
 
-        if (getIntent().getAction().equals(BluetoothTimeoutBroadcastReceiver.RESTART_POPUP_ACTION)) {
-            showRestartDialog();
-            return;
-        }
+        if(restartPopupOn) return;
 
 		BluetoothAdapter bt = BluetoothAdapter.getDefaultAdapter();
 		if (!bt.isEnabled()) {
@@ -86,13 +86,14 @@ public class MainActivity extends Activity {
 
     private void showRestartDialog() {
         AlertDialog.Builder alertBuilder = new AlertDialog.Builder(this);
-        alertBuilder.setTitle("Bluetooth cannot be started");
-        alertBuilder.setMessage("Please reboot your phone")
+        alertBuilder.setTitle(RESTART_DEVICE_MESSAGE_TITLE);
+        alertBuilder.setMessage(RESTART_DEVICE_MESSAGE)
                 .setCancelable(false)
                 .setNeutralButton("OK", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         dialog.dismiss();
+                        restartPopupOn = false;
                     }
                 }).create().show();
     }
@@ -109,6 +110,12 @@ public class MainActivity extends Activity {
 		listMsg = new LinkedList<MessageItem>();
 		listAdapter = new MessagesAdapter(this, listMsg);
 		listview.setAdapter(listAdapter);
+
+        String action = getIntent().getAction();
+        if (action != null && action.equals(BluetoothTimeoutBroadcastReceiver.RESTART_POPUP_ACTION)) {
+            showRestartDialog();
+            restartPopupOn = true;
+        }
 	}
 
 	@Override
