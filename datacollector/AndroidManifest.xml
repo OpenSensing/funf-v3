@@ -173,6 +173,9 @@
     <!-- DatabaseService, Archive service (unique ids) -->
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
 
+    <!-- Explicitly declare CallLog permission. Needed for api 16 and higher. -->
+    <uses-permission android:name="android.permission.READ_CALL_LOG" />
+
     <!-- GCM -->
     <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
     <permission android:name="dk.dtu.imm.datacollector2013.permission.C2D_MESSAGE" android:protectionLevel="signature" />
