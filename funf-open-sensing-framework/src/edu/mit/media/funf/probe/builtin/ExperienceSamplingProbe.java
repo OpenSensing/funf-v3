@@ -39,10 +39,7 @@ public class ExperienceSamplingProbe extends DatedContentProviderProbe {
     private static final String DATA_NAME = "QUESTIONS";
     private static final String DATA_DISPLAY_NAME = "Experience Sampling Probe";
 
-    // general columns
-    private static final String _ID = "_id"; // _id is required for the cursor
-
-    // question table columns
+    private static final String _ID = "_id";
     private static final String QUESTION_TYPE = "question_type";
     private static final String QUESTION_ANSWER_TYPE = "question_answer_type";
     private static final String QUESTION_ANSWER = "question_answer";
@@ -91,7 +88,6 @@ public class ExperienceSamplingProbe extends DatedContentProviderProbe {
                 android.Manifest.permission.WRITE_EXTERNAL_STORAGE,
                 android.Manifest.permission.RECEIVE_BOOT_COMPLETED,
                 android.Manifest.permission.ACCESS_FINE_LOCATION
-
         };
     }
 
