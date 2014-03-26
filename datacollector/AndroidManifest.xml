@@ -49,6 +49,7 @@
         <service android:name="edu.mit.media.funf.probe.builtin.CallLogProbe"></service>
         <service android:name="edu.mit.media.funf.probe.builtin.CellProbe"></service>
         <service android:name="edu.mit.media.funf.probe.builtin.ContactProbe"></service>
+        <service android:name="edu.mit.media.funf.probe.builtin.ExperienceSamplingProbe"></service>
         <service android:name="edu.mit.media.funf.probe.builtin.HardwareInfoProbe"></service>
         <service android:name="edu.mit.media.funf.probe.builtin.ImagesProbe"></service>
         <service android:name="edu.mit.media.funf.probe.builtin.LocationProbe"></service>
