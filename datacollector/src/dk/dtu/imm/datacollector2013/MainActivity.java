@@ -1,15 +1,20 @@
 package dk.dtu.imm.datacollector2013;
 
 import java.io.File;
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.LinkedList;
 import java.util.List;
 
+import android.app.ActivityManager;
 import android.app.AlertDialog;
 import android.content.*;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.*;
+import android.widget.*;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -24,10 +29,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
-import android.widget.ImageView;
-import android.widget.ListView;
-import android.widget.TextView;
+import edu.mit.media.funf.configured.ConfiguredPipeline;
 
 public class MainActivity extends Activity {
 
@@ -36,6 +38,8 @@ public class MainActivity extends Activity {
     private static final String TAG = "AUTH_MainActivity";
     public static final String RESTART_DEVICE_MESSAGE_TITLE = "Bluetooth problem";
     private static boolean serviceRunning = false;
+    private ConnectivityManager connectivityManager;
+    private FileObserver fileObserver;
 
 	private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
 		@Override
@@ -55,11 +59,50 @@ public class MainActivity extends Activity {
 	private ImageView imgStatus;
 	private TextView txtFilesCount;
     private boolean restartPopupOn = false;
+    private Button uploadButton;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.main_layout);
+        connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        gson = new Gson();
+        imgStatus = (ImageView) findViewById(R.id.imgStatus);
+        txtFilesCount = (TextView) findViewById(R.id.textFilesCount);
+        listview = (ListView) findViewById(R.id.listMessages);
+        listMsg = new LinkedList<MessageItem>();
+        listAdapter = new MessagesAdapter(this, listMsg);
+        listview.setAdapter(listAdapter);
+
+        String action = getIntent().getAction();
+        if (action != null && action.equals(BluetoothTimeoutBroadcastReceiver.RESTART_POPUP_ACTION)) {
+            showRestartDialog();
+            restartPopupOn = true;
+        }
+
+        fileObserver = new FileObserver(new File(Environment.getExternalStorageDirectory(), "dk.dtu.imm.datacollector2013/mainPipeline/archive").getAbsolutePath()) {
+            @Override
+            public void onEvent(int i, String s) {
+                if(i == FileObserver.CREATE || i == FileObserver.DELETE){
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            setFileCountStatus();
+                        }
+                    });
+                }
+            }
+        };
+
+        uploadButton = (Button) findViewById(R.id.uploadButton);
+        uploadButton.setOnClickListener(new UploadButtonClickListener());
+    }
 
     @Override
 	protected void onStart() {
 		super.onStart();
-
+        setFileCountStatus();
+        fileObserver.startWatching();
         if(restartPopupOn) return;
 
 		BluetoothAdapter bt = BluetoothAdapter.getDefaultAdapter();
@@ -73,8 +116,6 @@ public class MainActivity extends Activity {
 			startActivity(discoverableIntent);
 		}
 
-		// Intent i = new Intent(this, AuthActivity.class);
-		// startActivity(i);
 		if (!serviceRunning) {
 			serviceRunning = true;
 			LauncherReceiver.startService(this, RegistrationHandler.class);
@@ -86,8 +127,9 @@ public class MainActivity extends Activity {
 
     private void showRestartDialog() {
         AlertDialog.Builder alertBuilder = new AlertDialog.Builder(this);
-        alertBuilder.setTitle(RESTART_DEVICE_MESSAGE_TITLE);
-        alertBuilder.setMessage(RESTART_DEVICE_MESSAGE)
+        alertBuilder
+                .setTitle(RESTART_DEVICE_MESSAGE_TITLE)
+                .setMessage(RESTART_DEVICE_MESSAGE)
                 .setCancelable(false)
                 .setNeutralButton("OK", new DialogInterface.OnClickListener() {
                     @Override
@@ -98,27 +140,72 @@ public class MainActivity extends Activity {
                 }).create().show();
     }
 
-	@Override
-	protected void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		setContentView(R.layout.main_layout);
+    private void showNoInternetDialog() {
+        AlertDialog.Builder alertBuilder = new AlertDialog.Builder(this);
+        alertBuilder
+                .setTitle("No Internet")
+                .setMessage("Please connect to the Internet before attempting to upload your files")
+                .setCancelable(false)
+                .setNeutralButton("OK", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                }).create().show();
+    }
 
-		gson = new Gson();
-		imgStatus = (ImageView) findViewById(R.id.imgStatus);
-		txtFilesCount = (TextView) findViewById(R.id.textFilesCount);
-		listview = (ListView) findViewById(R.id.listMessages);
-		listMsg = new LinkedList<MessageItem>();
-		listAdapter = new MessagesAdapter(this, listMsg);
-		listview.setAdapter(listAdapter);
+    private void showAcceptUploadDialog() {
+        DecimalFormat df = new DecimalFormat("#.0");
+        AlertDialog.Builder alertBuilder = new AlertDialog.Builder(this);
+        alertBuilder
+                .setTitle("Upload files")
+                .setMessage("You are about to upload " + df.format(getUploadFileSize()) + " MB worth of files. Are you sure?")
+                .setCancelable(true)
+                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        dialogInterface.dismiss();
+                    }
+                })
+                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                        startUploadService();
+                    }
+                }).create().show();
+    }
 
-        String action = getIntent().getAction();
-        if (action != null && action.equals(BluetoothTimeoutBroadcastReceiver.RESTART_POPUP_ACTION)) {
-            showRestartDialog();
-            restartPopupOn = true;
+    private void startUploadService() {
+        Intent uploadIntent = new Intent(getApplicationContext(), MainPipeline.class);
+        uploadIntent.setAction(MainPipeline.ACTION_UPLOAD_DATA);
+        uploadIntent.putExtra(ConfiguredPipeline.EXTRA_FORCE_UPLOAD, true);
+        startService(uploadIntent);
+        Toast.makeText(this, "Upload started", Toast.LENGTH_SHORT).show();
+    }
+
+    private double getUploadFileSize() {
+        double fileSize = 0;
+        for(File file: new File(Environment.getExternalStorageDirectory(), "dk.dtu.imm.datacollector2013/mainPipeline/archive").listFiles()) {
+            fileSize += file.length();
         }
-	}
+        fileSize = fileSize / (1024 * 1024);
 
-	@Override
+        return fileSize;
+    }
+
+    private boolean isUploadServiceRunning() {
+        ActivityManager manager = (ActivityManager) getSystemService(ACTIVITY_SERVICE);
+        List<ActivityManager.RunningServiceInfo> runningServices = manager.getRunningServices(Integer.MAX_VALUE);
+        for (ActivityManager.RunningServiceInfo service : runningServices) {
+            if ("edu.mit.media.funf.storage.HttpUploadService".equals(service.service.getClassName())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    @Override
 	public void onConfigurationChanged(Configuration newConfig) {
 	    super.onConfigurationChanged(newConfig);
 	    setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
@@ -128,6 +215,7 @@ public class MainActivity extends Activity {
 	protected void onPause() {
 		LocalBroadcastManager.getInstance(this).unregisterReceiver(broadcastReceiver);
         saveMessages();
+        fileObserver.stopWatching();
 		super.onPause();
 	}
 
@@ -141,17 +229,11 @@ public class MainActivity extends Activity {
 
     @Override
 	protected void onResume() {
-		int filesCount = getFilesCount();
-		if (filesCount > 4) {
-			imgStatus.setImageResource(R.drawable.status_problem);
-		} else {
-			imgStatus.setImageResource(R.drawable.status_ok);
-		}
-		txtFilesCount.setText("" + filesCount);
-
+        setFileCountStatus();
+        fileObserver.startWatching();
 		SharedPreferences prefs = getPreferences(MODE_PRIVATE);
 		String msgJson = prefs.getString(KEY_MESSAGES, "");
-        if(msgJson.isEmpty() == false) {
+        if(!msgJson.isEmpty()) {
 			listMsg.clear();
 			listMsg.addAll((List<MessageItem>)gson.fromJson(msgJson, new TypeToken<LinkedList<MessageItem>>() {}.getType()));
 			listAdapter.notifyDataSetChanged();
@@ -161,12 +243,22 @@ public class MainActivity extends Activity {
 		super.onResume();
 	}
 
-	private int getFilesCount() {
+    private void setFileCountStatus() {
+        int filesCount = getFilesCount();
+        if (filesCount > 4) {
+            imgStatus.setImageResource(R.drawable.status_problem);
+        } else {
+            imgStatus.setImageResource(R.drawable.status_ok);
+        }
+        txtFilesCount.setText("" + filesCount);
+    }
+
+    private int getFilesCount() {
 		String[] files = null;
 		try {
 			files = new File(Environment.getExternalStorageDirectory(), "dk.dtu.imm.datacollector2013/mainPipeline/archive").list();
-		} catch(Exception ignore) {
-
+		} catch(Exception e) {
+            Log.e(TAG, e.toString());
 		}
 		return files != null ? files.length : 0;
 	}
@@ -226,4 +318,19 @@ public class MainActivity extends Activity {
 		}
 	}
 
+    private class UploadButtonClickListener implements OnClickListener {
+        @Override
+        public void onClick(View view) {
+            if(isUploadServiceRunning()) {
+                Toast.makeText(MainActivity.this, "Already uploading", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+            if (activeNetworkInfo != null && activeNetworkInfo.isConnectedOrConnecting()) {
+                showAcceptUploadDialog();
+            } else {
+                showNoInternetDialog();
+            }
+        }
+    }
 }

@@ -23,4 +23,5 @@
 
 <resources>
     <string name="app_name">DataCollector</string>
+    <string name="uploadButtonText">UPLOAD NOW</string>
 </resources>
