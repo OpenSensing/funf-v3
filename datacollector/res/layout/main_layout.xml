@@ -18,7 +18,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
-        android:orientation="horizontal" android:weightSum="1">
+        android:orientation="horizontal" android:weightSum="1" android:baselineAligned="true">
 
         <ImageView
             android:id="@+id/imgStatus"
@@ -50,8 +50,8 @@
                 android:textSize="15dp"
                 android:id="@+id/uploadButton" android:layout_marginLeft="20dp"
                 style="@android:style/Widget.DeviceDefault.ActionButton" android:background="#b12231"
-                android:layout_weight="0.33" android:textStyle="bold" android:paddingBottom="10dp"
-                android:textColorHighlight="#d7d7d7"/>
+                android:textStyle="bold"
+                android:textColorHighlight="#d7d7d7" android:layout_gravity="center_vertical"/>
     </LinearLayout>
 
     <TextView
@@ -72,7 +72,7 @@
          android:layout_marginBottom="15dp"
          android:divider="@android:color/transparent"
   		 android:dividerHeight="15.0sp"
-            >
+         android:layout_gravity="center_vertical">
     </ListView>
 
     <RelativeLayout

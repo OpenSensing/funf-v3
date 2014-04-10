@@ -325,6 +325,10 @@ public class MainActivity extends Activity {
                 Toast.makeText(MainActivity.this, "Already uploading", Toast.LENGTH_SHORT).show();
                 return;
             }
+            if(getFilesCount() == 0) {
+                Toast.makeText(MainActivity.this, "No files to upload", Toast.LENGTH_SHORT).show();
+                return;
+            }
             NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
             if (activeNetworkInfo != null && activeNetworkInfo.isConnectedOrConnecting()) {
                 showAcceptUploadDialog();
