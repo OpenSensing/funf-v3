@@ -1,0 +1,50 @@
+<!-- // todo: not necessary when used within the sensible dtu data-collector -->
+<LinearLayout
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_margin="5dp">
+
+    <!--
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/main_button_start"
+        android:id="@+id/main_button_start"
+        android:layout_gravity="center_horizontal" />
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/main_button_stop"
+        android:id="@+id/main_button_stop"
+        android:layout_gravity="center_horizontal" />
+    -->
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/main_button_facebook_explorer"
+        android:id="@+id/main_button_facebook_explorer"
+        android:layout_gravity="center_horizontal" />
+
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/main_edit_accesstoken"/>
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/main_button_facebook"
+        android:id="@+id/main_button_facebook"
+        android:layout_gravity="center_horizontal" />
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/main_button_export_answers"
+        android:id="@+id/main_button_export_answers"
+        android:layout_gravity="center_horizontal" />
+</LinearLayout>

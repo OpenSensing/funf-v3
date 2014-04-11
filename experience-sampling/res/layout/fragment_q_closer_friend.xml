@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="@drawable/rounded_rectangle"
+    android:layout_margin="5dp">
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="5dp"
+        android:textColor="#FFFFFF"
+        android:textSize="20sp"
+        android:text="@string/social_q_closer_friend_text" />
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="5dp"
+        android:textColor="#FFFFFF"
+        android:text="@string/social_q_closer_friend_description" />
+    <LinearLayout
+        android:baselineAligned="false"
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="5dp">
+        <dk.dtu.imm.experiencesampling.custom.ProfilePicture
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:paddingRight="5dp"
+            android:layout_gravity="center_horizontal"
+            android:id="@+id/social_q_profile_picture_one"/>
+        <dk.dtu.imm.experiencesampling.custom.ProfilePicture
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:paddingLeft="5dp"
+            android:layout_gravity="center_horizontal"
+            android:id="@+id/social_q_profile_picture_two"/>
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="5dp"
+        android:orientation="vertical">
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/btn_not_know"
+            android:textColor="#FFFFFF"
+            android:textStyle="bold"
+            android:id="@+id/social_question_btn_not_know" />
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/btn_no_thanks"
+            android:textColor="#FFFFFF"
+            android:textStyle="bold"
+            android:id="@+id/social_question_btn_no_thanks" />
+    </LinearLayout>
+</LinearLayout>

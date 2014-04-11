@@ -1,0 +1,30 @@
+<resources>
+
+    <!-- note: to re-use an existing Android attribute not already used by the superclass, name should have prefix "android:" and do not define a format -->
+    <declare-styleable name="NumberPickerDialogPreference">
+        <attr name="android:max" />
+        <attr name="min" format="integer" />
+    </declare-styleable>
+
+    <declare-styleable name="DateTimeFromSelector">
+        <attr name="titleText" format="string" localization="suggested" />
+        <attr name="borderColor" format="color" />
+    </declare-styleable>
+
+    <declare-styleable name="DateTimeFromToSelector">
+        <attr name="titleText1" format="string" localization="suggested" />
+        <attr name="titleText2" format="string" localization="suggested" />
+    </declare-styleable>
+
+    <declare-styleable name="PlaceSelector">
+        <attr name="title" format="string" localization="suggested" />
+        <attr name="description" format="string" localization="suggested" />
+    </declare-styleable>
+
+    <declare-styleable name="RatingBar">
+        <attr name="ratingTitle" format="string" localization="suggested" />
+        <attr name="ratingLowTitle" format="string" localization="suggested" />
+        <attr name="ratingHighTitle" format="string" localization="suggested" />
+    </declare-styleable>
+
+</resources>

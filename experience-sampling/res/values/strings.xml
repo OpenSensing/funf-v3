@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">Exp Sampling</string>
+    <string name="action_settings">Settings</string>
+
+    <!-- Settings strings -->
+    <string name="settings_question_limit">Questions limit per day</string>
+    <string name="settings_question_limit_dialog">Select daily answer limit</string>
+
+    <string name="main_button_start">Start answer service</string>
+    <string name="main_button_stop">Stop answer service</string>
+    <string name="main_button_facebook">Collect Facebook friendlist</string>
+    <string name="main_button_facebook_explorer">Get access token here</string>
+    <string name="main_button_export_answers">Export answers</string>
+
+    <!-- Answer layout strings -->
+    <string name="question_text">Is this your good friend?</string>
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
+    <!-- Previous location answer -->
+    <string name="location_q_previous_text">Previous location</string>
+    <string name="location_q_previous_text_description">Describe your previous location (e.g. \"home\")</string>
+
+    <!-- Current location answer -->
+    <string name="location_q_current_text">Current location</string>
+    <string name="location_q_current_text_describe">Describe your current place (e.g. \"home\")</string>
+
+    <!-- Date picker description -->
+    <string name="date_time_picker_text_describe_from">Select arrival date- and time</string>
+    <string name="date_time_picker_text_describe_to">Select departure date- and time</string>
+
+    <!-- General location text -->
+    <string name="location_q_from">From</string>
+    <string name="location_q_to">To</string>
+
+    <!-- Closer friend answer -->
+    <string name="social_q_closer_friend_text">Who is a closer friend to you?</string>
+    <string name="social_q_closer_friend_description">Click on a profile picture below to answer</string>
+
+    <!-- Rate own friendship answer -->
+    <string name="social_q_rate_one_friend_text">Rate the strength of your friendship with this person from 1&#8211;5.</string>
+
+    <!-- Rate this friendship answer -->
+    <string name="social_q_rate_two_friends_text">Rate the strength of this friendship from 1&#8211;5.</string>
+
+    <!-- General social answer text -->
+    <string name="social_q_friend_rating">Friendship rating</string>
+    <string name="social_q_friend_rating_weak">Weak</string>
+    <string name="social_q_friend_rating_strong">Strong</string>
+    <string name="social_q_friend_rating_do_not_know">Don\'t know each other</string>
+
+    <!-- General buttons text -->
+    <string name="btn_submit">Submit</string>
+    <string name="btn_not_know">Don\'t know</string>
+    <string name="btn_no_thanks">No thanks</string>
+    <string name="btn_not_now">Not now</string>
+
+    <!-- General content descriptions -->
+    <string name="content_description_image">Image</string>
+
+</resources>

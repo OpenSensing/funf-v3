@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!-- todo: add resources like border color, text color, picker values etc -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:id="@+id/selector_container">
+    <View
+        android:layout_width="fill_parent"
+        android:layout_height="1dp"
+        android:background="#5E647D" />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingTop="10dp"
+        android:paddingBottom="10dp">
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:textSize="20sp"
+            android:textColor="#FFFFFF"
+            android:id="@+id/selector_title"/>
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="4"
+            android:textSize="18sp"
+            android:textColor="#FFFFFF"
+            android:id="@+id/selector_date"
+            android:gravity="right"/>
+    </LinearLayout>
+    <View
+        android:layout_width="fill_parent"
+        android:layout_height="1dp"
+        android:background="#5E647D" />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:visibility="gone"
+        android:id="@+id/selector_picker_container"
+        android:tag="selector_picker_container">
+        <NumberPicker
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:id="@+id/selector_picker_day"
+            android:layout_weight="2"/>
+        <NumberPicker
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:id="@+id/selector_picker_hour"
+            android:layout_weight="1"/>
+        <NumberPicker
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:id="@+id/selector_picker_minute"
+            android:layout_weight="1"/>
+    </LinearLayout>
+</LinearLayout>
