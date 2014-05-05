@@ -43,8 +43,8 @@ public class DatabaseHelper {
 
     // question table columns
     public static final String QUESTION_TYPE = "question_type";
-    public static final String QUESTION_ANSWER_TYPE = "question_answer_type";
-    public static final String QUESTION_ANSWER = "question_answer";
+    public static final String QUESTION_ANSWER_TYPE = "answer_type";
+    public static final String QUESTION_ANSWER = "answer";
     public static final String QUESTION_TIMESTAMP = "question_timestamp";
 
     // pending questions table columns
