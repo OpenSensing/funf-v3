@@ -41,8 +41,8 @@ public class ExperienceSamplingProbe extends DatedContentProviderProbe {
 
     private static final String _ID = "_id";
     private static final String QUESTION_TYPE = "question_type";
-    private static final String QUESTION_ANSWER_TYPE = "question_answer_type";
-    private static final String QUESTION_ANSWER = "question_answer";
+    private static final String QUESTION_ANSWER_TYPE = "answer_type";
+    private static final String QUESTION_ANSWER = "answer";
     private static final String QUESTION_TIMESTAMP = "question_timestamp";
 
     @Override
