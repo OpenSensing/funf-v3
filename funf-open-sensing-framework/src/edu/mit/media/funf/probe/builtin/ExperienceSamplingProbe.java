@@ -32,8 +32,8 @@ import java.util.concurrent.TimeUnit;
 public class ExperienceSamplingProbe extends DatedContentProviderProbe {
 
     // todo: create central FieldContract for the content provider when the experience sampling app is migrated to this.
-    private static final String AUTHORITY = "dk.dtu.locationwidget.questions.contentprovider";
-    private static final String BASE_PATH = "questions";
+    private static final String AUTHORITY = "dk.dtu.imm.experiencesampling.answers.contentprovider";
+    private static final String BASE_PATH = "answers";
     private static final Uri CONTENT_URI = Uri.parse("content://" + AUTHORITY + "/" + BASE_PATH);
 
     private static final String DATA_NAME = "QUESTIONS";

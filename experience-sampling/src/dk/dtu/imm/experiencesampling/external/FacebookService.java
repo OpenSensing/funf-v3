@@ -17,7 +17,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-// todo: not necessary when used within the sensible dtu data-collector
 public class FacebookService {
 
     private static final String TAG = "FacebookService";

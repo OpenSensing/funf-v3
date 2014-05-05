@@ -72,9 +72,9 @@ public class MainActivity extends Activity {
 			discoverableIntent.putExtra(BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION, 0);
 			startActivity(discoverableIntent);
 		}
-
-		// Intent i = new Intent(this, AuthActivity.class);
-		// startActivity(i);
+        
+        // Intent i = new Intent(this, AuthActivity.class);
+        // startActivity(i);
 		if (!serviceRunning) {
 			serviceRunning = true;
 			LauncherReceiver.startService(this, RegistrationHandler.class);

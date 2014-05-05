@@ -46,7 +46,7 @@ public class SensibleDtuService {
         TypeFactory typeFactory = objectMapper.getTypeFactory();
         JavaType javaType = typeFactory.constructCollectionType(List.class, PendingQuestionDto.class);
 
-        String pendingQuestionsJson = generateQuestionsJson(); // todo: call SensibleDtu backend instead of generation json string.
+        String pendingQuestionsJson = generateQuestionsJson();
         Log.d(TAG, "Received pending questions: " + pendingQuestionsJson);
 
         List<PendingQuestionDto> pendingQuestionDtoList = objectMapper.readValue(pendingQuestionsJson, javaType);

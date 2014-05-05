@@ -23,7 +23,6 @@ import java.util.List;
 
 public class DateTimeFromSelector extends LinearLayout {
 
-    // todo: set these dynamically later if needed
     final String[] daysPickerValues = {"Today", "Yesterday", "Two days ago", "Three days ago"};
     final String[] minutesPickerValues = getDisplayedValuesForPicker(0, 45, 15);
     final String[] hoursPickerValues = getDisplayedValuesForPicker(0, 23, 1);

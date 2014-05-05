@@ -114,7 +114,6 @@ public class QuestionSaveService extends Service {
 
             @Override
             public void onProviderDisabled(String provider) {
-                // todo: save info in shared preferences and prompt users when they open the app
                 if (!questionSaved) {
                     ((CurrentLocation) answer).setLocationStatus(LocationStatus.GPS_DISABLED);
                     saveQuestion(answer);

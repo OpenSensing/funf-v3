@@ -5,7 +5,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.List;
 
-// todo: not necessary when used within the sensible dtu data-collector
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class FacebookFriendsResponse {
 

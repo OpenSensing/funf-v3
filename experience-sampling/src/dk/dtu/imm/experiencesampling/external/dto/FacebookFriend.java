@@ -2,7 +2,6 @@ package dk.dtu.imm.experiencesampling.external.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-// todo: not necessary when used within the sensible dtu data-collector
 public class FacebookFriend {
 
     @JsonProperty("id")

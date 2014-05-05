@@ -13,7 +13,7 @@ import java.util.Set;
 
 /**
  * This class receives some json from a server or the database with generated answers
- * Then it schedules the question to be asked. // todo
+ * Then it schedules the question to be asked.
  */
 public class QuestionsPrepareService extends IntentService {
 

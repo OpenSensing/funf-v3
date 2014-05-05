@@ -25,14 +25,21 @@ import android.app.Service;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
- 
+import dk.dtu.imm.experiencesampling.ExperienceSampling;
+
 public class LauncherReceiver extends BroadcastReceiver {
 	
 	private static boolean launched = false;
 	
 	public static void launch(Context context) {
 		startService(context, MainPipeline.class); // Ensure main funf system is running
-		launched = true;
+
+        int questionPerDayLimit = 3000; //24;
+        long scheduleInterval = 1 * 30 * 1000; // 10 minutes - this is not so important as the service is started on all the onReceive events anyways.
+        long gpsTimeout = 30 * 1000; // 30 sec
+        ExperienceSampling.startExperienceSampling(context, RegistrationHandler.SHARED_PREFERENCES_NAME, RegistrationHandler.PROPERTY_SENSIBLE_TOKEN, questionPerDayLimit, scheduleInterval, gpsTimeout);
+
+        launched = true;
 	}
 	
 	public static void startService(Context context, Class<? extends Service> serviceClass) {
