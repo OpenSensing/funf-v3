@@ -13,10 +13,6 @@ import dk.dtu.imm.experiencesampling.db.DatabaseHelper;
 import java.util.Arrays;
 import java.util.HashSet;
 
-
-// todo: example of contractClass:
-// https://thenewcircle.com/s/post/1375/android_content_provider_tutorial
-// http://stackoverflow.com/answers/17451931/how-to-use-a-contract-class-in-android
 public class QuestionsProvider extends ContentProvider {
 
     // database

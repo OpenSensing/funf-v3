@@ -7,12 +7,9 @@ import android.preference.PreferenceManager;
 import android.util.Log;
 import dk.dtu.imm.experiencesampling.ConfigUtils;
 import dk.dtu.imm.experiencesampling.db.DatabaseHelper;
-import dk.dtu.imm.experiencesampling.external.FacebookService;
-import dk.dtu.imm.experiencesampling.models.Friend;
 
 import java.util.Date;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 public class QuestionScheduleService extends Service {
@@ -128,12 +125,18 @@ public class QuestionScheduleService extends Service {
                 } else if (Intent.ACTION_SCREEN_OFF.equals(action)) {
                     Log.d(TAG, "Screen OFF! - launching question");
 
-                    // Start service which collects info and fires the question
-                    Intent serviceIntent = new Intent(context, QuestionLaunchService.class);
-                    context.startService(serviceIntent);
+                    if (dbHelper.getPendingQuestionsCount() > 0) {
+                        // Start service which collects info and fires the question
+                        Intent serviceIntent = new Intent(context, QuestionLaunchService.class);
+                        context.startService(serviceIntent);
 
-                    // Save question attempt timestamp
-                    saveQuestionAttemptTimestamp();
+                        // Save question attempt timestamp
+                        saveQuestionAttemptTimestamp();
+                    } else {
+                        Log.d(TAG, "No more pending questions - starting prepare question service");
+                        Intent prepareQuestionsService = new Intent(context, QuestionsPrepareService.class);
+                        context.startService(prepareQuestionsService);
+                    }
 
                     // Stop service after question is started
                     stopSelf();

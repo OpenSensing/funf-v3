@@ -14,9 +14,7 @@ import dk.dtu.imm.experiencesampling.db.DatabaseHelper;
 import dk.dtu.imm.experiencesampling.enums.AnswerType;
 import dk.dtu.imm.experiencesampling.enums.LocationStatus;
 import dk.dtu.imm.experiencesampling.enums.QuestionType;
-import dk.dtu.imm.experiencesampling.models.answers.CurrentLocation;
-import dk.dtu.imm.experiencesampling.models.answers.PreviousLocation;
-import dk.dtu.imm.experiencesampling.models.answers.Answer;
+import dk.dtu.imm.experiencesampling.models.answers.*;
 
 import java.util.Timer;
 import java.util.TimerTask;
@@ -47,14 +45,16 @@ public class QuestionSaveService extends Service {
                         if (answer.getAnswerType().equals(AnswerType.ANSWERED)) {
                             startLocationSearch();
                         } else {
-                            saveQuestion(answer);
+                            saveAnswer(answer);
                         }
                     } else if (QuestionType.LOCATION_PREVIOUS.equals(answer.getQuestionType())) {
-                        saveQuestion(answer);
+                        saveAnswer(answer);
                         saveOrUpdatePlaceLabel(((PreviousLocation) answer).getPlaceLabel());
                         stopSelf();
                     } else {
-                        saveQuestion(answer);
+                        saveAnswer(answer);
+                        updateFriendConnection(answer);
+                        updateFriend(answer);
                         stopSelf();
                     }
                 }
@@ -66,7 +66,7 @@ public class QuestionSaveService extends Service {
         return super.onStartCommand(intent, flags, startId);
     }
 
-    private void saveQuestion(Answer answer) {
+    private void saveAnswer(Answer answer) {
         DatabaseHelper dbHelper = new DatabaseHelper(this);
         dbHelper.insertAnswer(answer);
         dbHelper.closeDatabase();
@@ -76,6 +76,24 @@ public class QuestionSaveService extends Service {
     private void saveOrUpdatePlaceLabel(String place) {
         DatabaseHelper dbHelper = new DatabaseHelper(this);
         dbHelper.insertPlaceLabel(place);
+        dbHelper.closeDatabase();
+    }
+
+    private void updateFriendConnection(Answer answer) {
+        DatabaseHelper dbHelper = new DatabaseHelper(this);
+        if (QuestionType.SOCIAL_CLOSER_FRIEND.equals(answer.getQuestionType()) && AnswerType.ANSWERED.equals(answer.getAnswerType())) {
+            dbHelper.updateFriendConnectionAnswered(((CloserFriend) answer).getFriendOneId(), ((CloserFriend) answer).getFriendTwoId(), answer.getQuestionType());
+        } else if (QuestionType.SOCIAL_RATE_TWO_FRIENDS.equals(answer.getQuestionType()) && AnswerType.ANSWERED.equals(answer.getAnswerType())) {
+            dbHelper.updateFriendConnectionAnswered(((RateTwoFriends) answer).getFriendOneId(), ((RateTwoFriends) answer).getFriendTwoId(), answer.getQuestionType());
+        }
+        dbHelper.closeDatabase();
+    }
+
+    private void updateFriend(Answer answer) {
+        DatabaseHelper dbHelper = new DatabaseHelper(this);
+        if (QuestionType.SOCIAL_RATE_ONE_FRIEND.equals(answer.getQuestionType()) && AnswerType.ANSWERED.equals(answer.getAnswerType())) {
+            dbHelper.updateFriendAnswered(((RateOneFriend) answer).getFriendId(), answer.getQuestionType());
+        }
         dbHelper.closeDatabase();
     }
 
@@ -91,7 +109,7 @@ public class QuestionSaveService extends Service {
                         ((CurrentLocation) answer).setLongitude(location.getLongitude());
                         ((CurrentLocation) answer).setAccuracy(location.getAccuracy());
                         ((CurrentLocation) answer).setLocationStatus(LocationStatus.OK);
-                        saveQuestion(answer);
+                        saveAnswer(answer);
                         stopLocationSearch();
                         stopSelf();
                     } catch (ClassCastException e) {
@@ -116,7 +134,7 @@ public class QuestionSaveService extends Service {
             public void onProviderDisabled(String provider) {
                 if (!questionSaved) {
                     ((CurrentLocation) answer).setLocationStatus(LocationStatus.GPS_DISABLED);
-                    saveQuestion(answer);
+                    saveAnswer(answer);
                 }
             }
         };
@@ -131,7 +149,7 @@ public class QuestionSaveService extends Service {
             public void run() {
                 if (!questionSaved) {
                     ((CurrentLocation) answer).setLocationStatus(LocationStatus.GPS_TIMEOUT);
-                    saveQuestion(answer);
+                    saveAnswer(answer);
                 }
                 stopLocationSearch();
                 stopSelf();

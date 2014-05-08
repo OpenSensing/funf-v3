@@ -1,6 +1,9 @@
 package dk.dtu.imm.experiencesampling.enums;
 
 
+import java.util.ArrayList;
+import java.util.List;
+
 public enum QuestionType {
 
     SOCIAL_CLOSER_FRIEND,
@@ -18,6 +21,16 @@ public enum QuestionType {
             }
         }
         return UNKNOWN;
+    }
+
+    public static List<QuestionType> getAll() {
+        List<QuestionType> questionTypes = new ArrayList<QuestionType>();
+        for (QuestionType questionType : QuestionType.values()) {
+            if (!UNKNOWN.equals(questionType)) {
+                questionTypes.add(questionType);
+            }
+        }
+        return questionTypes;
     }
 
 }

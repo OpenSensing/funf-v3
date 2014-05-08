@@ -20,6 +20,10 @@ public class PendingQuestionMapper {
 
         // Attach friend data if social question
         if (type.equals(QuestionType.SOCIAL_CLOSER_FRIEND) || type.equals(QuestionType.SOCIAL_RATE_TWO_FRIENDS)) {
+            if (dto.getFriendOne() == null || dto.getFriendTwo() == null) {
+                throw new MissingFieldsException("Missing friends dto fields");
+            }
+
             Friend friendOne = new Friend();
             friendOne.setUserId(dto.getFriendOne().getUid());
             friendOne.setName(dto.getFriendOne().getName());
@@ -35,6 +39,10 @@ public class PendingQuestionMapper {
             ((PendingQuestionTwoFriends) pendingQuestion).setFriendOne(friendOne);
             ((PendingQuestionTwoFriends) pendingQuestion).setFriendTwo(friendTwo);
         } else if (type.equals(QuestionType.SOCIAL_RATE_ONE_FRIEND)) {
+            if (dto.getFriendOne() == null) {
+                throw new MissingFieldsException("Missing friend dto fields");
+            }
+
             Friend friend = new Friend();
             friend.setUserId(dto.getFriendOne().getUid());
             friend.setName(dto.getFriendOne().getName());

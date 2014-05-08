@@ -3,8 +3,7 @@ package dk.dtu.imm.experiencesampling.external;
 import android.util.Log;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import dk.dtu.imm.experiencesampling.exceptions.FacebookException;
-import dk.dtu.imm.experiencesampling.external.dto.FacebookFriend;
-import dk.dtu.imm.experiencesampling.external.dto.FacebookFriendsResponse;
+import dk.dtu.imm.experiencesampling.external.dto.FacebookFriendDto;
 import dk.dtu.imm.experiencesampling.models.Friend;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
@@ -14,51 +13,37 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.util.EntityUtils;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 public class FacebookService {
 
     private static final String TAG = "FacebookService";
-    private static final String BASE_URL = "https://graph.facebook.com";
+    private static final String BASE_URL = "https://graph.facebook.com/v1.0";
 
-    private String accessToken;
-
-    public FacebookService(String accessToken) {
-        this.accessToken = accessToken;
-    }
-
-    public List<Friend> getFriends() throws FacebookException {
-        List<Friend> friends = new ArrayList<Friend>();
-        String url = buildRequest("/me/friends", accessToken);
+    public Friend getFriend(String userId) throws FacebookException {
+        String url = buildRequest(userId);
+        Log.d(TAG, "Getting Facebook friend: " + url);
         try {
             HttpClient client = new DefaultHttpClient();
             HttpGet request = new HttpGet(url);
             HttpResponse response = client.execute(request);
             String jsonResponse = EntityUtils.toString(response.getEntity());
-
             if (response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
                 ObjectMapper mapper = new ObjectMapper();
-                FacebookFriendsResponse fbFriendResponse = mapper.readValue(jsonResponse, FacebookFriendsResponse.class);
-                if (fbFriendResponse != null && fbFriendResponse.getFriends().size() > 0) {
-                    for (FacebookFriend fbFriend : fbFriendResponse.getFriends()) {
-                        Friend friend = new Friend();
-                        friend.setUserId(fbFriend.getUserId());
-                        friend.setName(fbFriend.getName());
-                        friends.add(friend);
-                    }
+                FacebookFriendDto facebookFriendDto = mapper.readValue(jsonResponse, FacebookFriendDto.class);
+                if (facebookFriendDto != null && facebookFriendDto.getName() != null) {
+                    Friend friend = new Friend();
+                    friend.setUserId(userId);
+                    friend.setName(facebookFriendDto.getName());
+                    return friend;
                 }
-            } else {
-                Log.d(TAG, "Error during facebook friend list request: " + jsonResponse);
-                throw new FacebookException("Error during facebook friend list request");
             }
         } catch (IOException e) {
-            throw new FacebookException("Error during facebook friend list request");
+            throw new FacebookException("Error during facebook friend list request: " + e.getMessage());
         }
-        return friends;
+        throw new FacebookException("Error during facebook friend list request");
     }
 
-    private String buildRequest(String action, String accessToken) {
-        return String.format("%s%s?access_token=%s", BASE_URL, action, accessToken);
+    private String buildRequest(String action) {
+        return String.format("%s/%s", BASE_URL, action);
     }
 }

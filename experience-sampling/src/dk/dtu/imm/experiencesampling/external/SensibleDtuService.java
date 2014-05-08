@@ -8,35 +8,52 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.type.TypeFactory;
 import dk.dtu.imm.experiencesampling.db.DatabaseHelper;
 import dk.dtu.imm.experiencesampling.enums.QuestionType;
-import dk.dtu.imm.experiencesampling.exceptions.MissingFieldsException;
-import dk.dtu.imm.experiencesampling.exceptions.NotEnoughFacebookFriendsException;
-import dk.dtu.imm.experiencesampling.external.dto.FriendDto;
-import dk.dtu.imm.experiencesampling.external.dto.PendingQuestionDto;
+import dk.dtu.imm.experiencesampling.exceptions.*;
+import dk.dtu.imm.experiencesampling.external.dto.*;
 import dk.dtu.imm.experiencesampling.mappers.PendingQuestionMapper;
 import dk.dtu.imm.experiencesampling.models.Friend;
 import dk.dtu.imm.experiencesampling.models.questions.PendingQuestion;
+import org.apache.http.HttpResponse;
+import org.apache.http.HttpStatus;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.util.EntityUtils;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 public class SensibleDtuService {
 
     private static final String TAG = "SensibleDtuService";
-
-    // Only used if the questions asked should be totally random. Now it fixed, so they are equally distributed
-    /*
-    private static final int NUMBER_OF_QUESTION_CATEGORIES = 2;
-    private static final int NUMBER_OF_SOCIAL_QUESTIONS = 3;
-    private static final int NUMBER_OF_LOCATION_QUESTIONS = 2;
-    */
+    private static final String BASE_URL = "https://www.sensible.dtu.dk/sensible-dtu/connectors/connector_answer/v1";
 
     Context context;
 
     public SensibleDtuService(Context context) {
         this.context = context;
+    }
+
+    public FriendsResponseDto requestFriendsInfo(String bearerToken) throws SensibleDtuException {
+        String url = buildRequest("/facebook_friends_question/get_friends_connections/", bearerToken);
+        Log.d(TAG, "Getting friends and connections: " + url);
+        try {
+            HttpClient client = new DefaultHttpClient();
+            HttpGet request = new HttpGet(url);
+            HttpResponse response = client.execute(request);
+            String jsonResponse = EntityUtils.toString(response.getEntity());
+            if (response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
+                ObjectMapper mapper = new ObjectMapper();
+                return mapper.readValue(jsonResponse, FriendsResponseDto.class);
+            }
+        } catch (IOException e) {
+            throw new SensibleDtuException("Error during friends and connections request: " + e.getMessage());
+        }
+        throw new SensibleDtuException("Error during friends and connections request");
+    }
+
+    private String buildRequest(String action, String bearerToken) {
+        return String.format("%s/%s?bearer_token=%s", BASE_URL, action, bearerToken);
     }
 
     public Set<PendingQuestion> getPendingQuestions() throws IOException {
@@ -62,15 +79,24 @@ public class SensibleDtuService {
 
     /**
      *
-     * @return 10 equally distributed questions to be asked as a json string.
-     * This method will later be replaced with a GET /answers call to the Sensible DTU backend, which will take care of the "who to ask" logic.
+     * @return 1 of each question as a json string.
+     * This method will later be replaced with a GET /questions call to the Sensible DTU backend, which will take care of the "who to ask" logic.
      */
     private String generateQuestionsJson() {
-        List<PendingQuestionDto> questionDtos = new ArrayList<PendingQuestionDto>();
-        questionDtos.addAll(getQuestionInfo(10));
+        List<PendingQuestionDto> dtos = new ArrayList<PendingQuestionDto>();
+        for (QuestionType questionType : QuestionType.getAll()) {
+            try {
+                dtos.addAll(getPendingQuestionDto(questionType, 1));
+            } catch (NotEnoughFriendsException e) {
+                Log.w(TAG, "Not enough friends for [" + questionType.name() + "] questions.");
+            } catch (NotEnoughFriendConnectionsException e) {
+                Log.w(TAG, "Not enough friend connections for [" + questionType.name() + "] questions.");
+            }
+        }
+
         String jsonQuestionInfo = null;
         try {
-            jsonQuestionInfo = new ObjectMapper().writeValueAsString(questionDtos);
+            jsonQuestionInfo = new ObjectMapper().writeValueAsString(dtos);
         } catch (JsonProcessingException e) {
             Log.e(TAG, "Error during answers info to json");
             e.printStackTrace();
@@ -78,177 +104,38 @@ public class SensibleDtuService {
         return jsonQuestionInfo;
     }
 
-    private List<PendingQuestionDto> getQuestionInfo(int total) {
-        int half = total / 2;
-
-        List<PendingQuestionDto> pendingQuestionDtoList = new ArrayList<PendingQuestionDto>();
-        pendingQuestionDtoList.addAll(getLocationQuestionInfo(half));
-        try {
-            pendingQuestionDtoList.addAll(getSocialQuestionInfo(half));
-        } catch (NotEnoughFacebookFriendsException e) {
-            Log.e(TAG, "Not enough friends for social question. Only location questions returned");
-        }
-        return pendingQuestionDtoList;
-    }
-
-    private List<PendingQuestionDto> getLocationQuestionInfo(int total) {
-        List<PendingQuestionDto> pendingQuestionDtoList = new ArrayList<PendingQuestionDto>();
-        int middle = total / 2;
-        for (int i = 0; i < total; i++) {
-            PendingQuestionDto pendingQuestionDto = new PendingQuestionDto();
-            if (i <= middle) {
-                pendingQuestionDto.setQuestionType(QuestionType.LOCATION_PREVIOUS.name()); // gives one more previous question than current
-            } else {
-                pendingQuestionDto.setQuestionType(QuestionType.LOCATION_CURRENT.name());
-            }
-            pendingQuestionDtoList.add(pendingQuestionDto);
-        }
-        return pendingQuestionDtoList;
-    }
-
-    private List<PendingQuestionDto> getSocialQuestionInfo(int total) throws NotEnoughFacebookFriendsException {
-        List<PendingQuestionDto> pendingQuestionDtoList = new ArrayList<PendingQuestionDto>();
-        int lowerBound = total / 3;
-        int higherBound = total / 3 * 2;
-
+    private List<PendingQuestionDto> getPendingQuestionDto(QuestionType questionType, int number) throws NotEnoughFriendsException, NotEnoughFriendConnectionsException {
+        List<PendingQuestionDto> dtos = new ArrayList<PendingQuestionDto>();
         DatabaseHelper dbHelper = new DatabaseHelper(context);
-        for (int i = 0; i < total; i++) {
-            List<Friend> friends = dbHelper.getRandomFriends(2);
 
-            PendingQuestionDto pendingQuestionDto = new PendingQuestionDto();
-            FriendDto friendOneDto = new FriendDto();
-            FriendDto friendTwoDto = new FriendDto();
-
-            if (i < lowerBound) {
-                pendingQuestionDto.setQuestionType(QuestionType.SOCIAL_RATE_ONE_FRIEND.name());
-                friendOneDto.setUid(friends.get(0).getUserId());
-                friendOneDto.setName(friends.get(0).getName());
-                pendingQuestionDto.setFriendOne(friendOneDto);
-            } else if (i > higherBound) {
-                pendingQuestionDto.setQuestionType(QuestionType.SOCIAL_RATE_TWO_FRIENDS.name());
+        for (int i=0; i < number; i++) {
+            PendingQuestionDto dto = new PendingQuestionDto();
+            dto.setQuestionType(questionType.name());
+            if (QuestionType.SOCIAL_CLOSER_FRIEND.equals(questionType) || QuestionType.SOCIAL_RATE_TWO_FRIENDS.equals(questionType)) {
+                List<Friend> friends = dbHelper.getTwoConnectedFriends(questionType);
+                FriendDto friendOneDto = new FriendDto();
+                FriendDto friendTwoDto = new FriendDto();
 
                 friendOneDto.setUid(friends.get(0).getUserId());
                 friendOneDto.setName(friends.get(0).getName());
-                pendingQuestionDto.setFriendOne(friendOneDto);
 
                 friendTwoDto.setUid(friends.get(1).getUserId());
                 friendTwoDto.setName(friends.get(1).getName());
-                pendingQuestionDto.setFriendTwo(friendTwoDto);
-            } else {
-                pendingQuestionDto.setQuestionType(QuestionType.SOCIAL_CLOSER_FRIEND.name());
 
-                friendOneDto.setUid(friends.get(0).getUserId());
-                friendOneDto.setName(friends.get(0).getName());
-                pendingQuestionDto.setFriendOne(friendOneDto);
+                dto.setFriendOne(friendOneDto);
+                dto.setFriendTwo(friendTwoDto);
+            } else if (QuestionType.SOCIAL_RATE_ONE_FRIEND.equals(questionType)) {
+                Friend friend = dbHelper.getRandomFriend(questionType);
+                FriendDto friendDto = new FriendDto();
 
-                friendTwoDto.setUid(friends.get(1).getUserId());
-                friendTwoDto.setName(friends.get(1).getName());
-                pendingQuestionDto.setFriendTwo(friendTwoDto);
+                friendDto.setUid(friend.getUserId());
+                friendDto.setName(friend.getName());
+
+                dto.setFriendOne(friendDto);
             }
-            pendingQuestionDtoList.add(pendingQuestionDto);
+            dtos.add(dto);
         }
         dbHelper.closeDatabase();
-        return pendingQuestionDtoList;
+        return dtos;
     }
-
-
-    /**
-     *
-     * @return 10 random questions to be asked as a json string.
-     * This method will later be replaced with a GET /answers call to the Sensible DTU backend, which will take care of the "who to ask" logic.
-     */
-    /*
-    private String generateRandomQuestionsJson() {
-        List<PendingQuestionDto> questionDtos = new ArrayList<PendingQuestionDto>();
-        for (int i = 0; i < 10; i++) {
-            questionDtos.add(getRandomQuestionInfo());
-        }
-
-        String jsonQuestionInfo = null;
-        try {
-            jsonQuestionInfo = new ObjectMapper().writeValueAsString(questionDtos);
-        } catch (JsonProcessingException e) {
-            Log.e(TAG, "Error during questions info to json");
-            e.printStackTrace();
-        }
-        return jsonQuestionInfo;
-    }
-
-    // Divides location- and social question categories equally, even if there are more types of social answers.
-    private PendingQuestionDto getRandomQuestionInfo() {
-        PendingQuestionDto pendingQuestionDto;
-        try {
-            int randomNumber = new Random().nextInt(NUMBER_OF_QUESTION_CATEGORIES);
-            switch (randomNumber) {
-                case 0:
-                    pendingQuestionDto = getRandomSocialQuestionInfo();
-                    break;
-                default:
-                    pendingQuestionDto = getRandomLocationQuestionInfo();
-                    break;
-            }
-        } catch (NotEnoughFacebookFriendsException e) {
-            // If not enough friends for social question, then ask location question.
-            pendingQuestionDto = getRandomLocationQuestionInfo();
-        }
-        return pendingQuestionDto;
-    }
-
-    private PendingQuestionDto getRandomSocialQuestionInfo() throws NotEnoughFacebookFriendsException {
-        DatabaseHelper dbHelper = new DatabaseHelper(context);
-        List<Friend> friends = dbHelper.getRandomFriends(2);
-
-        PendingQuestionDto pendingQuestionDto = new PendingQuestionDto();
-        FriendDto friendOneDto = new FriendDto();
-        FriendDto friendTwoDto = new FriendDto();
-
-        int randomNumber = new Random().nextInt(NUMBER_OF_SOCIAL_QUESTIONS);
-        switch (randomNumber) {
-            case 0:
-                pendingQuestionDto.setQuestionType(QuestionType.SOCIAL_RATE_ONE_FRIEND.name());
-                friendOneDto.setUid(friends.get(0).getUserId());
-                friendOneDto.setName(friends.get(0).getName());
-                pendingQuestionDto.setFriendOne(friendOneDto);
-                break;
-            case 1:
-                pendingQuestionDto.setQuestionType(QuestionType.SOCIAL_RATE_TWO_FRIENDS.name());
-
-                friendOneDto.setUid(friends.get(0).getUserId());
-                friendOneDto.setName(friends.get(0).getName());
-                pendingQuestionDto.setFriendOne(friendOneDto);
-
-                friendTwoDto.setUid(friends.get(1).getUserId());
-                friendTwoDto.setName(friends.get(1).getName());
-                pendingQuestionDto.setFriendTwo(friendTwoDto);
-                break;
-            default:
-                pendingQuestionDto.setQuestionType(QuestionType.SOCIAL_CLOSER_FRIEND.name());
-
-                friendOneDto.setUid(friends.get(0).getUserId());
-                friendOneDto.setName(friends.get(0).getName());
-                pendingQuestionDto.setFriendOne(friendOneDto);
-
-                friendTwoDto.setUid(friends.get(1).getUserId());
-                friendTwoDto.setName(friends.get(1).getName());
-                pendingQuestionDto.setFriendTwo(friendTwoDto);
-                break;
-        }
-        dbHelper.closeDatabase();
-        return pendingQuestionDto;
-    }
-
-    private PendingQuestionDto getRandomLocationQuestionInfo() {
-        PendingQuestionDto pendingQuestionDto = new PendingQuestionDto();
-        int randomNumber = new Random().nextInt(NUMBER_OF_LOCATION_QUESTIONS);
-        switch (randomNumber) {
-            case 0:
-                pendingQuestionDto.setQuestionType(QuestionType.LOCATION_CURRENT.name());
-                break;
-            default:
-                pendingQuestionDto.setQuestionType(QuestionType.LOCATION_PREVIOUS.name());
-                break;
-        }
-        return pendingQuestionDto;
-    }
-    */
 }

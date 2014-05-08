@@ -8,7 +8,6 @@ import dk.dtu.imm.experiencesampling.external.SensibleDtuService;
 import dk.dtu.imm.experiencesampling.models.questions.PendingQuestion;
 
 import java.io.IOException;
-import java.util.List;
 import java.util.Set;
 
 /**
@@ -27,12 +26,6 @@ public class QuestionsPrepareService extends IntentService {
 
     @Override
     protected void onHandleIntent(Intent intent) {
-    }
-
-    @Override
-    public void onCreate() {
-        super.onCreate();
-
         dbHelper = new DatabaseHelper(this);
 
         // Receive new pending questions and store them as pending questions

@@ -10,14 +10,14 @@ public class ExperienceSampling {
     private static final String TAG = "ExperienceSampling";
 
     public static void startExperienceSampling(Context context, String authPrefKey, String tokenPrefKey) {
-        Log.e(TAG, "The experience sampling is started");
+        Log.d(TAG, "The experience sampling is started");
         Config config = new Config(authPrefKey, tokenPrefKey);
         ConfigUtils.saveConfigInPrefs(context, config);
         startExperienceSamplingService(context);
     }
 
     public static void startExperienceSampling(Context context, String authPrefKey, String tokenPrefKey, int questionPerDayLimit, long questionScheduleInterval, long gpsTimeout) {
-        Log.e(TAG, "The experience sampling is started with params");
+        Log.d(TAG, "The experience sampling is started with params");
         Config config = new Config(authPrefKey, tokenPrefKey, questionPerDayLimit, questionScheduleInterval, gpsTimeout);
         ConfigUtils.saveConfigInPrefs(context, config);
         startExperienceSamplingService(context);

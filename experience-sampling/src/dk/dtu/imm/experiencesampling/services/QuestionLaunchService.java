@@ -77,11 +77,8 @@ public class QuestionLaunchService extends IntentService {
             if (getApplicationContext() != null) {
                 getApplicationContext().startActivity(questionActivity);
             }
-        } else {
-            Log.d(TAG, "No more pending questions - starting prepare question service");
-            Intent prepareQuestionsService = new Intent(this, QuestionsPrepareService.class);
-            this.startService(prepareQuestionsService);
         }
+
         dbHelper.closeDatabase();
     }
 

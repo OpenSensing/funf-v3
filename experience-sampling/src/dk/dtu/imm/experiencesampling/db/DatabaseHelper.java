@@ -10,8 +10,10 @@ import android.util.Log;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import dk.dtu.imm.experiencesampling.enums.QuestionType;
-import dk.dtu.imm.experiencesampling.exceptions.NotEnoughFacebookFriendsException;
+import dk.dtu.imm.experiencesampling.exceptions.NotEnoughFriendsException;
+import dk.dtu.imm.experiencesampling.exceptions.NotEnoughFriendConnectionsException;
 import dk.dtu.imm.experiencesampling.models.Friend;
+import dk.dtu.imm.experiencesampling.models.FriendConnection;
 import dk.dtu.imm.experiencesampling.models.Place;
 import dk.dtu.imm.experiencesampling.models.answers.*;
 import dk.dtu.imm.experiencesampling.models.questions.PendingQuestion;
@@ -20,6 +22,7 @@ import dk.dtu.imm.experiencesampling.models.questions.PendingQuestionTwoFriends;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
@@ -37,6 +40,7 @@ public class DatabaseHelper {
     private static final String TABLE_PENDING_QUESTION = "pending_questions";
     private static final String TABLE_PLACE = "places";
     private static final String TABLE_FRIEND = "friends";
+    private static final String TABLE_FRIEND_CONNECTION = "friend_connections";
 
     // general columns
     public static final String _ID = "_id"; // _id is required for the cursor
@@ -58,6 +62,13 @@ public class DatabaseHelper {
     // friend list columns
     private static final String FRIEND_FB_UID = "friend_fb_uid";
     private static final String FRIEND_NAME = "friend_name";
+    private static final String FRIEND_RATE_ONE_FRIEND_ANSWERED = "rate_two_friends_answered";
+
+    // friend connection list columns
+    private static final String CONNECTION_FB_UID1 = "friend_fb_uid1";
+    private static final String CONNECTION_FB_UID2 = "friend_fb_uid2";
+    private static final String CONNECTION_CLOSER_FRIEND_ANSWERED = "closer_friend_answered";
+    private static final String CONNECTION_RATE_TWO_FRIENDS_ANSWERED = "rate_two_friends_answered";
 
     private DatabaseOpenHelper openHelper;
     private SQLiteDatabase database;
@@ -84,32 +95,62 @@ public class DatabaseHelper {
     }
 
     /*
-        Facebook friend list
+        Friends
      */
-    // todo: should be removed when the backend takes care of the "who to ask" logic.
-    public List<Friend> getRandomFriends(int number) throws NotEnoughFacebookFriendsException {
-        List<Friend> friends = new ArrayList<Friend>();
-        String buildSQL = "SELECT * FROM " + TABLE_FRIEND + " ORDER BY RANDOM() LIMIT " + number;
+    public Friend getRandomFriend(QuestionType questionType) throws NotEnoughFriendsException {
+        String buildSQL = "SELECT * FROM " + TABLE_FRIEND + " ORDER BY RANDOM() LIMIT 1";
+        if (QuestionType.SOCIAL_RATE_ONE_FRIEND.equals(questionType)) {
+            buildSQL = "SELECT * FROM " + TABLE_FRIEND + " WHERE " + FRIEND_RATE_ONE_FRIEND_ANSWERED + " = 0 ORDER BY RANDOM() LIMIT 1";
+        }
+
         Cursor cursor = database.rawQuery(buildSQL, null);
         try {
-            // There should at least be 2 friends in order to ask social answers.
-            if (cursor.getCount() > 1) {
+            // There should at least be 1 friend in order to ask rate one friend questions.
+            if (cursor.getCount() > 0) {
                 cursor.moveToFirst();
-                while (!cursor.isAfterLast()) {
-                    friends.add(cursorToFriend(cursor));
-                    cursor.moveToNext();
-                }
-            } else {
-                throw new NotEnoughFacebookFriendsException("There is not enough Facebook friends: " + cursor.getCount());
+                return cursorToFriend(cursor);
             }
         } finally {
             cursor.close();
         }
+        throw new NotEnoughFriendsException("There is not enough friends: " + cursor.getCount());
+    }
+
+    private Friend getFriend(String uid) throws NotEnoughFriendsException {
+        String buildSQL = "SELECT * FROM " + TABLE_FRIEND + " WHERE " + FRIEND_FB_UID + "='" + uid + "'";
+        Cursor cursor = database.rawQuery(buildSQL, null);
+        try {
+            // There should at least be 1 friend in order to ask rate one friend questions.
+            if (cursor.getCount() > 0) {
+                cursor.moveToFirst();
+                return cursorToFriend(cursor);
+            }
+        } finally {
+            cursor.close();
+        }
+        throw new NotEnoughFriendsException("There is not enough friends: " + cursor.getCount());
+    }
+
+    public List<Friend> getTwoConnectedFriends(QuestionType questionType) throws NotEnoughFriendConnectionsException, NotEnoughFriendsException {
+        List<Friend> friends = new ArrayList<Friend>();
+        FriendConnection friendConn = getRandomFriendConnection(questionType);
+
+        friends.add(getFriend(friendConn.getUid1()));
+        friends.add(getFriend(friendConn.getUid2()));
         return friends;
     }
 
-    public void insertFriends(List<Friend> friends) {
-        // todo: do batch/bulk insert
+    public void updateFriendAnswered(String uid, QuestionType questionType) {
+        String buildSQL = null;
+        if (QuestionType.SOCIAL_RATE_ONE_FRIEND.equals(questionType)) {
+            buildSQL = String.format("UPDATE %s SET %s = 1 WHERE %s = '%s'", TABLE_FRIEND, FRIEND_RATE_ONE_FRIEND_ANSWERED, FRIEND_FB_UID, uid);
+        }
+        if (buildSQL != null) {
+            database.execSQL(buildSQL);
+        }
+    }
+
+    public void insertFriends(Friend[] friends) {
         for (Friend friend : friends) {
             insertFriend(friend);
         }
@@ -119,7 +160,7 @@ public class DatabaseHelper {
         ContentValues contentValues = new ContentValues();
         contentValues.put(FRIEND_FB_UID, friend.getUserId());
         contentValues.put(FRIEND_NAME, friend.getName());
-        database.insert(TABLE_FRIEND, null, contentValues);
+        database.insertWithOnConflict(TABLE_FRIEND, null, contentValues, SQLiteDatabase.CONFLICT_IGNORE);
     }
 
     private Friend cursorToFriend(Cursor c) {
@@ -127,6 +168,76 @@ public class DatabaseHelper {
         friend.setUserId(c.getString(c.getColumnIndex(FRIEND_FB_UID)));
         friend.setName(c.getString(c.getColumnIndex(FRIEND_NAME)));
         return friend;
+    }
+
+    /*
+        Friend connections
+     */
+    public FriendConnection getRandomFriendConnection(QuestionType questionType) throws NotEnoughFriendConnectionsException {
+        String buildSQL = "SELECT * FROM " + TABLE_FRIEND_CONNECTION + " ORDER BY RANDOM() LIMIT 1";
+
+        if (QuestionType.SOCIAL_CLOSER_FRIEND.equals(questionType)) {
+            buildSQL = "SELECT * FROM " + TABLE_FRIEND_CONNECTION + " WHERE " + CONNECTION_CLOSER_FRIEND_ANSWERED + " = 0 ORDER BY RANDOM() LIMIT 1";
+        } else if (QuestionType.SOCIAL_RATE_TWO_FRIENDS.equals(questionType)) {
+            buildSQL = "SELECT * FROM " + TABLE_FRIEND_CONNECTION + " WHERE " + CONNECTION_RATE_TWO_FRIENDS_ANSWERED + " = 0 ORDER BY RANDOM() LIMIT 1";
+        }
+
+        Cursor cursor = database.rawQuery(buildSQL, null);
+        try {
+            // There should at least be 1 connection in order to ask rate two friends or closer friend questions.
+            if (cursor.getCount() > 0) {
+                cursor.moveToFirst();
+                return cursorToConnection(cursor);
+            }
+        } finally {
+            cursor.close();
+        }
+        throw new NotEnoughFriendConnectionsException("There is not enough friend connections: " + cursor.getCount());
+    }
+
+    public void insertFriendConnections(FriendConnection[] friendConns) {
+        for (FriendConnection friendConn : friendConns) {
+            insertFriendConnection(friendConn);
+        }
+    }
+
+    public void insertFriendConnection(FriendConnection friendConn) {
+        // Sort the uids so that it does not contain two connections in the example: 1111 - 2222 and 2222 - 1111. Now there will always be one as 1111 - 2222
+        List<String> orderedUids = new ArrayList<String>();
+        orderedUids.add(friendConn.getUid1());
+        orderedUids.add(friendConn.getUid2());
+        Collections.sort(orderedUids);
+
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(CONNECTION_FB_UID1, orderedUids.get(0));
+        contentValues.put(CONNECTION_FB_UID2, orderedUids.get(1));
+
+        database.insertWithOnConflict(TABLE_FRIEND_CONNECTION, null, contentValues, SQLiteDatabase.CONFLICT_IGNORE);
+    }
+
+    public void updateFriendConnectionAnswered(String uid1, String uid2, QuestionType questionType) {
+        List<String> orderedUids = new ArrayList<String>();
+        orderedUids.add(uid1);
+        orderedUids.add(uid2);
+        Collections.sort(orderedUids);
+
+        String buildSQL = null;
+        if (QuestionType.SOCIAL_CLOSER_FRIEND.equals(questionType)) {
+            buildSQL = String.format("UPDATE %s SET %s = 1 WHERE %s = '%s' AND %s ='%s'", TABLE_FRIEND_CONNECTION, CONNECTION_CLOSER_FRIEND_ANSWERED, CONNECTION_FB_UID1, orderedUids.get(0), CONNECTION_FB_UID2, orderedUids.get(1));
+        } else if (QuestionType.SOCIAL_RATE_TWO_FRIENDS.equals(questionType)) {
+            buildSQL = String.format("UPDATE %s SET %s = 1 WHERE %s = '%s' AND %s ='%s'", TABLE_FRIEND_CONNECTION, CONNECTION_RATE_TWO_FRIENDS_ANSWERED, CONNECTION_FB_UID1, orderedUids.get(0), CONNECTION_FB_UID2, orderedUids.get(1));
+        }
+
+        if (buildSQL != null) {
+            database.execSQL(buildSQL);
+        }
+    }
+
+    private FriendConnection cursorToConnection(Cursor c) {
+        FriendConnection friendConn = new FriendConnection();
+        friendConn.setUid1(c.getString(c.getColumnIndex(CONNECTION_FB_UID1)));
+        friendConn.setUid2(c.getString(c.getColumnIndex(CONNECTION_FB_UID2)));
+        return friendConn;
     }
 
     /*
@@ -216,6 +327,16 @@ public class DatabaseHelper {
     /*
         Pending questions operations
      */
+    public int getPendingQuestionsCount() {
+        String buildSQL = "SELECT * FROM " + TABLE_PENDING_QUESTION;
+        Cursor cursor = database.rawQuery(buildSQL, null);
+        try {
+            return cursor.getCount();
+        } finally {
+            cursor.close();
+        }
+    }
+
     public void insertPendingQuestions(Set<PendingQuestion> pendingQuestions) {
         for (PendingQuestion pendingQuestion : pendingQuestions) {
             insertPendingQuestion(pendingQuestion);
@@ -411,36 +532,49 @@ public class DatabaseHelper {
             // Create friend table
             buildSQL = "CREATE TABLE " + TABLE_FRIEND + "( " +
                     _ID + " INTEGER PRIMARY KEY, " +
-                    FRIEND_FB_UID + " TEXT, "  +
-                    FRIEND_NAME + " TEXT )";
+                    FRIEND_FB_UID + " TEXT NOT NULL UNIQUE, "  +
+                    FRIEND_NAME + " TEXT, " +
+                    FRIEND_RATE_ONE_FRIEND_ANSWERED + " INTEGER DEFAULT 0 )";
             Log.d(TAG, "onCreate SQL friend table: " + buildSQL);
+            sqLiteDatabase.execSQL(buildSQL);
+
+            // Create friend connection table
+            buildSQL = "CREATE TABLE " + TABLE_FRIEND_CONNECTION + "( " +
+                    _ID + " INTEGER PRIMARY KEY, " +
+                    CONNECTION_FB_UID1 + " TEXT NOT NULL, "  +
+                    CONNECTION_FB_UID2 + " TEXT NOT NULL, " +
+                    CONNECTION_CLOSER_FRIEND_ANSWERED + " INTEGER DEFAULT 0, " +
+                    CONNECTION_RATE_TWO_FRIENDS_ANSWERED + " INTEGER DEFAULT 0, " +
+                    "UNIQUE(" + CONNECTION_FB_UID1 + ", " + CONNECTION_FB_UID2 + ") ON CONFLICT IGNORE )";
+            Log.d(TAG, "onCreate SQL friend connection table: " + buildSQL);
             sqLiteDatabase.execSQL(buildSQL);
         }
 
         @Override
         public void onUpgrade(SQLiteDatabase sqLiteDatabase, int oldVersion, int newVersion) {
             // drop previous question answer table
-            String buildSQL = "DROP TABLE IF EXISTS " + TABLE_QUESTION_ANSWER;
-            Log.d(TAG, "onUpgrade SQL: " + buildSQL);
-            sqLiteDatabase.execSQL(buildSQL);
+            dropTable(sqLiteDatabase, TABLE_QUESTION_ANSWER);
 
             // drop previous pending question table
-            buildSQL = "DROP TABLE IF EXISTS " + TABLE_PENDING_QUESTION;
-            Log.d(TAG, "onUpgrade SQL: " + buildSQL);
-            sqLiteDatabase.execSQL(buildSQL);
+            dropTable(sqLiteDatabase, TABLE_PENDING_QUESTION);
 
             // drop previous place table
-            buildSQL = "DROP TABLE IF EXISTS " + TABLE_PLACE;
-            Log.d(TAG, "onUpgrade SQL: " + buildSQL);
-            sqLiteDatabase.execSQL(buildSQL);
+            dropTable(sqLiteDatabase, TABLE_PLACE);
 
             // drop previous friend table
-            buildSQL = "DROP TABLE IF EXISTS " + TABLE_FRIEND;
-            Log.d(TAG, "onUpgrade SQL: " + buildSQL);
-            sqLiteDatabase.execSQL(buildSQL);
+            dropTable(sqLiteDatabase, TABLE_FRIEND);
+
+            // drop previous friend connection table
+            dropTable(sqLiteDatabase, TABLE_FRIEND_CONNECTION);
 
             // create the tables from the beginning
             onCreate(sqLiteDatabase);
+        }
+
+        private void dropTable(SQLiteDatabase sqLiteDatabase, String table) {
+            String buildSQL = "DROP TABLE IF EXISTS " + table;
+            Log.d(TAG, "onUpgrade SQL: " + buildSQL);
+            sqLiteDatabase.execSQL(buildSQL);
         }
 
     }
