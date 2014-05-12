@@ -11,7 +11,7 @@ import java.io.IOException;
 import java.util.Set;
 
 /**
- * This class receives some json from a server or the database with generated answers
+ * This class receives some json from a server or the database with generated questions
  * Then it schedules the question to be asked.
  */
 public class QuestionsPrepareService extends IntentService {
