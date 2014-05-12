@@ -91,7 +91,7 @@ public class QuestionScheduleService extends Service {
     private boolean isTimeForQuestion() {
         boolean timeForQuestion = false;
 
-        double distributionFactor = 24.0 / ConfigUtils.getConfigFromPrefs(getApplicationContext()).getQuestionPerDayLimit();
+        double distributionFactor = 24.0 / ConfigUtils.getConfigFromPrefs(getApplicationContext()).getDailyQuestionLimit();
         int questionMillisInterval = (int) (distributionFactor * 60 * 60 * 1000); // 24h / answers, to better distribute the answers during the day.
 
         Date now = new Date();
@@ -120,7 +120,7 @@ public class QuestionScheduleService extends Service {
         Log.d(TAG, "Total question timestamps removed: " + oldTimestamps.size());
         timestamps.removeAll(oldTimestamps);
         sharedPrefs.edit().putStringSet(PREF_QUESTION_TIMESTAMPS_KEY, timestamps).commit();
-        return timestamps.size() > ConfigUtils.getConfigFromPrefs(getApplicationContext()).getQuestionPerDayLimit();
+        return timestamps.size() > ConfigUtils.getConfigFromPrefs(getApplicationContext()).getDailyQuestionLimit();
     }
 
     private class ScreenReceiver extends BroadcastReceiver {

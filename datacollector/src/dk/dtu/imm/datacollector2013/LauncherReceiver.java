@@ -34,10 +34,10 @@ public class LauncherReceiver extends BroadcastReceiver {
 	public static void launch(Context context) {
 		startService(context, MainPipeline.class); // Ensure main funf system is running
 
-        int questionPerDayLimit = 1;
-        long scheduleInterval = 10 * 60 * 1000; // 10 minutes
+        long scheduleInterval = 30 * 1000; //10 * 60 * 1000; // 10 minutes
         long gpsTimeout = 30 * 1000; // 30 sec
-        ExperienceSampling.startExperienceSampling(context, RegistrationHandler.SHARED_PREFERENCES_NAME, RegistrationHandler.PROPERTY_SENSIBLE_TOKEN, questionPerDayLimit, scheduleInterval, gpsTimeout);
+        String mainConfigJson = MainPipeline.getMainConfigAsJsonString(context);
+        ExperienceSampling.startExperienceSampling(context, RegistrationHandler.SHARED_PREFERENCES_NAME, RegistrationHandler.PROPERTY_SENSIBLE_TOKEN, scheduleInterval, gpsTimeout, mainConfigJson);
 
         launched = true;
 	}

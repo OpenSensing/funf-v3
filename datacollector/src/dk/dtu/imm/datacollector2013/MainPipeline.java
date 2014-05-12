@@ -25,6 +25,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import edu.mit.media.funf.IOUtils;
 import edu.mit.media.funf.Utils;
@@ -44,6 +45,7 @@ public class MainPipeline extends ConfiguredPipeline {
 	
 	public static final String TAG = "FunfBGCollector";
 	public static final String MAIN_CONFIG = "main_config";
+	public static final String MAIN_CONFIG_FOR_EXPERIENCE_SAMPLING = "raw_json_main_config_for_experience_sampling";
 	public static final String START_DATE_KEY = "START_DATE";
 
 	public static final String ACTION_RUN_ONCE = "RUN_ONCE";
@@ -155,6 +157,7 @@ public class MainPipeline extends ConfiguredPipeline {
     @Override
     public void updateConfig(String jsonString) {
         super.updateConfig(jsonString);
+        setMainConfigAsJsonString(this, jsonString);
 
         FunfConfig config = getConfig(this, MAIN_CONFIG);
         String token = getSystemPrefs(this).getString(RegistrationHandler.PROPERTY_SENSIBLE_TOKEN,"");
@@ -182,6 +185,15 @@ public class MainPipeline extends ConfiguredPipeline {
 		request.putExtra(Probe.REQUESTS_KEY, updatedRequests);
 		startService(request);
 	}
+
+    // Added for use in the experience sampling. The raw config json is just returned in order to keep it decoupled from Funf.
+    public static String getMainConfigAsJsonString(Context context) {
+        return PreferenceManager.getDefaultSharedPreferences(context).getString(MAIN_CONFIG_FOR_EXPERIENCE_SAMPLING, null);
+    }
+
+    public static void setMainConfigAsJsonString(Context context, String jsonString) {
+        PreferenceManager.getDefaultSharedPreferences(context).edit().putString(MAIN_CONFIG_FOR_EXPERIENCE_SAMPLING, jsonString).commit();
+    }
 	
 
 }
