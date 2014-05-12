@@ -37,12 +37,20 @@ public class QuestionScheduleService extends Service {
 
         if (!isDailyQuestionsLimitReached() && isTimeForQuestion()) {
             Log.d(TAG, "Time for question");
-            // Register screen receiver
-            if (mDisplayReceiver == null) {
-                mDisplayReceiver = new ScreenReceiver();
+            // Check if there are pending questions. If not, start prepare service and stop this service.
+            if (dbHelper.getPendingQuestionsCount() < 1) {
+                Log.d(TAG, "No more pending questions - starting prepare question service");
+                Intent prepareQuestionsService = new Intent(this, QuestionsPrepareService.class);
+                this.startService(prepareQuestionsService);
+                stopSelf();
+            } else {
+                // Register screen receiver
+                if (mDisplayReceiver == null) {
+                    mDisplayReceiver = new ScreenReceiver();
+                }
+                registerReceiver(mDisplayReceiver, new IntentFilter(Intent.ACTION_SCREEN_ON));
+                registerReceiver(mDisplayReceiver, new IntentFilter(Intent.ACTION_SCREEN_OFF));
             }
-            registerReceiver(mDisplayReceiver, new IntentFilter(Intent.ACTION_SCREEN_ON));
-            registerReceiver(mDisplayReceiver, new IntentFilter(Intent.ACTION_SCREEN_OFF));
         } else {
             Log.d(TAG, "NOT time for question");
             // Stop service if it is not question time
@@ -125,6 +133,7 @@ public class QuestionScheduleService extends Service {
                 } else if (Intent.ACTION_SCREEN_OFF.equals(action)) {
                     Log.d(TAG, "Screen OFF! - launching question");
 
+                    // double check
                     if (dbHelper.getPendingQuestionsCount() > 0) {
                         // Start service which collects info and fires the question
                         Intent serviceIntent = new Intent(context, QuestionLaunchService.class);
