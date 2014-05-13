@@ -34,7 +34,7 @@ public class ExperienceSampling {
     }
 
     public static Integer getDailyQuestionLimit(String mainConfigJson) {
-        JsonNode jsonNode = getValueFromExperienceSamplingProbeConfig(mainConfigJson, "DAILY_LIMIT");
+        JsonNode jsonNode = getValueFromExperienceSamplingProbeConfig(mainConfigJson, "DAILY_QUESTION_LIMIT");
         if (jsonNode != null && jsonNode.isInt()) {
             return jsonNode.intValue();
         }

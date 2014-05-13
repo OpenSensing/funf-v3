@@ -5,6 +5,7 @@ import android.content.*;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
 import android.util.Log;
+import dk.dtu.imm.experiencesampling.Config;
 import dk.dtu.imm.experiencesampling.ConfigUtils;
 import dk.dtu.imm.experiencesampling.db.DatabaseHelper;
 
@@ -32,28 +33,34 @@ public class QuestionScheduleService extends Service {
     public void onCreate() {
         super.onCreate();
         Log.d(TAG, "Service started");
-        dbHelper = new DatabaseHelper(this);
-        sharedPrefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
 
-        if (!isDailyQuestionsLimitReached() && isTimeForQuestion()) {
-            Log.d(TAG, "Time for question");
-            // Check if there are pending questions. If not, start prepare service and stop this service.
-            if (dbHelper.getPendingQuestionsCount() < 1) {
-                Log.d(TAG, "No more pending questions - starting prepare question service");
-                Intent prepareQuestionsService = new Intent(this, QuestionsPrepareService.class);
-                this.startService(prepareQuestionsService);
-                stopSelf();
-            } else {
-                // Register screen receiver
-                if (mDisplayReceiver == null) {
-                    mDisplayReceiver = new ScreenReceiver();
+        if (isTokenPartOfSubset()) {
+            Log.d(TAG, "Token is a part of subset. Questions will be asked");
+            dbHelper = new DatabaseHelper(this);
+            sharedPrefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
+
+            if (!isDailyQuestionsLimitReached() && isTimeForQuestion()) {
+                Log.d(TAG, "Time for question");
+                // Check if there are pending questions. If not, start prepare service and stop this service.
+                if (dbHelper.getPendingQuestionsCount() < 1) {
+                    Log.d(TAG, "No more pending questions - starting prepare question service");
+                    Intent prepareQuestionsService = new Intent(this, QuestionsPrepareService.class);
+                    this.startService(prepareQuestionsService);
+                    stopSelf();
+                } else {
+                    // Register screen receiver
+                    if (mDisplayReceiver == null) {
+                        mDisplayReceiver = new ScreenReceiver();
+                    }
+                    registerReceiver(mDisplayReceiver, new IntentFilter(Intent.ACTION_SCREEN_ON));
+                    registerReceiver(mDisplayReceiver, new IntentFilter(Intent.ACTION_SCREEN_OFF));
                 }
-                registerReceiver(mDisplayReceiver, new IntentFilter(Intent.ACTION_SCREEN_ON));
-                registerReceiver(mDisplayReceiver, new IntentFilter(Intent.ACTION_SCREEN_OFF));
+            } else {
+                Log.d(TAG, "NOT time for question");
+                stopSelf();
             }
         } else {
-            Log.d(TAG, "NOT time for question");
-            // Stop service if it is not question time
+            Log.d(TAG, "Token not a part of subset. Questions will not be asked");
             stopSelf();
         }
     }
@@ -121,6 +128,31 @@ public class QuestionScheduleService extends Service {
         timestamps.removeAll(oldTimestamps);
         sharedPrefs.edit().putStringSet(PREF_QUESTION_TIMESTAMPS_KEY, timestamps).commit();
         return timestamps.size() > ConfigUtils.getConfigFromPrefs(getApplicationContext()).getDailyQuestionLimit();
+    }
+
+    private boolean isTokenPartOfSubset() {
+        Config config = ConfigUtils.getConfigFromPrefs(this);
+        String token = ConfigUtils.getSensibleAccessToken(this).trim();
+
+        if (token != null && token.length() > 0) {
+            String firstTokenLetter = token.substring(0,1);
+
+            String allowedTokenLetters = config.getTokenSubsetLetters();
+            if (allowedTokenLetters != null && allowedTokenLetters.length() > 0) {
+                if (allowedTokenLetters.equalsIgnoreCase("all")) {
+                    return true;
+                } else {
+                    String[] allowedLetters = allowedTokenLetters.split(",");
+                    for (String allowedLetter : allowedLetters) {
+                        allowedLetter = allowedLetter.trim();
+                        if (firstTokenLetter.equalsIgnoreCase(allowedLetter)) {
+                            return true;
+                        }
+                    }
+                }
+            }
+        }
+        return false;
     }
 
     private class ScreenReceiver extends BroadcastReceiver {

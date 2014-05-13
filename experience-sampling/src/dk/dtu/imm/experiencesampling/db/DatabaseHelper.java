@@ -95,6 +95,19 @@ public class DatabaseHelper {
     }
 
     /*
+        Reset friend/friends asked boolean.
+        Question with the same friend/friends are only asked once, but if this reset is done, then question regarding all the friends will be asked again at some point.
+        Note: The stored answers won't be deleted.
+     */
+    public void resetFriendAskedBooleans() {
+        String buildSQL = String.format("UPDATE %s SET %s = 0, %s = 0", TABLE_FRIEND_CONNECTION, CONNECTION_CLOSER_FRIEND_ANSWERED, CONNECTION_RATE_TWO_FRIENDS_ANSWERED);
+        database.execSQL(buildSQL);
+
+        buildSQL = String.format("UPDATE %s SET %s = 0", TABLE_FRIEND, FRIEND_RATE_ONE_FRIEND_ANSWERED);
+        database.execSQL(buildSQL);
+    }
+
+    /*
         Friends
      */
     public Friend getRandomFriend(QuestionType questionType) throws NotEnoughFriendsException {

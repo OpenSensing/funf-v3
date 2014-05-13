@@ -12,11 +12,6 @@ public class QuestionReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
-
-        Config config = ConfigUtils.getConfigFromPrefs(context);
-        // todo: check access token letter
-        Log.e("Jeppe", "Main config: " + config.getDailyQuestionLimit() + ", " + config.getFriendsUpdateInterval() + ", " + config.getTokenSubsetLetters());
-
         // Receives boot complete- and question intents only.
         Intent scheduleQuestionService = new Intent(context, QuestionScheduleService.class);
         context.startService(scheduleQuestionService);

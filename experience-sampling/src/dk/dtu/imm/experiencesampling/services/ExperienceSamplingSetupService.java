@@ -103,9 +103,9 @@ public class ExperienceSamplingSetupService extends IntentService {
         long now = new Date().getTime();
         long lastDownload = loadDownloadTimestamp();
 
-        // todo: use update interval from config
         // download every 48h
-        if ((now - lastDownload) > 48 * 60 * 60 * 1000) {
+        Config config = ConfigUtils.getConfigFromPrefs(this);
+        if ((now - lastDownload) > config.getFriendsUpdateInterval() * 1000) {
             Log.i(TAG, "download time");
             return true;
         } else {
