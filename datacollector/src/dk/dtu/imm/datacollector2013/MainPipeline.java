@@ -119,7 +119,7 @@ public class MainPipeline extends ConfiguredPipeline {
 	public static FunfConfig getMainConfig(Context context) {
 		FunfConfig config = getConfig(context, MAIN_CONFIG);
         //String token = getSystemPrefs(context).getString(RegistrationHandler.PROPERTY_SENSIBLE_TOKEN,"");
-		if (config.getName() == null) {			
+		if (config.getName() == null) {
 			String jsonString = getStringFromAsset(context, "default_config.json");
 			if (jsonString == null) {
 				Log.e(TAG, "Error loading default config.  Using blank config.");
@@ -127,6 +127,7 @@ public class MainPipeline extends ConfiguredPipeline {
 			}
 			try {
 				config.edit().setAll(jsonString).commit();
+                setMainConfigAsJsonString(context, jsonString);
             //    config.edit().setSensibleAccessToken(token).commit();
 			} catch (JSONException e) {
 				Log.e(TAG, "Error parsing default config", e);
@@ -194,6 +195,5 @@ public class MainPipeline extends ConfiguredPipeline {
     public static void setMainConfigAsJsonString(Context context, String jsonString) {
         PreferenceManager.getDefaultSharedPreferences(context).edit().putString(MAIN_CONFIG_FOR_EXPERIENCE_SAMPLING, jsonString).commit();
     }
-	
 
 }
