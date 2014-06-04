@@ -12,7 +12,6 @@ import dk.dtu.imm.experiencesampling.R;
 import dk.dtu.imm.experiencesampling.custom.DateTimeFromToSelector;
 import dk.dtu.imm.experiencesampling.custom.PlaceSelector;
 import dk.dtu.imm.experiencesampling.enums.AnswerType;
-import dk.dtu.imm.experiencesampling.enums.QuestionType;
 import dk.dtu.imm.experiencesampling.models.Place;
 import dk.dtu.imm.experiencesampling.models.answers.PreviousLocation;
 
@@ -90,7 +89,7 @@ public class QPreviousLocationFragment extends BaseQuestionFragmentLocation {
 
                     int viewId = view.getId();
                     if (viewId == R.id.location_q_btn_submit) {
-                        answerType = AnswerType.ANSWERED;
+                        answerType = AnswerType.ANSWERED_SUBMIT;
                         place = placeSelector.getPlace();
                         from = datesSelector.getFromDate();
                         to = datesSelector.getToDate();
@@ -111,11 +110,11 @@ public class QPreviousLocationFragment extends BaseQuestionFragmentLocation {
                             return;
                         }
                     } else {
-                        answerType = AnswerType.NO_THANKS;
+                        answerType = AnswerType.ANSWERED_NO_THANKS;
                     }
 
                     // Create answer
-                    PreviousLocation answer = new PreviousLocation(QuestionType.LOCATION_PREVIOUS, answerType, place, from, to, startTimestamp, new Date().getTime(), firstSeenTimestamp);
+                    PreviousLocation answer = new PreviousLocation(answerType, place, from, to, startTimestamp, new Date().getTime(), loadedTimestamp);
                     saveQuestion(answer);
                     getActivity().finish();
                 }

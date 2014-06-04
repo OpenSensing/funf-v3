@@ -9,7 +9,7 @@ import java.io.Serializable;
 import java.util.Date;
 
 
-@JsonPropertyOrder({"question_type", "answer_type", "start_timestamp", "end_timestamp", "first_seen_timestamp", "place_label", "from", "to"})
+@JsonPropertyOrder({"question_type", "answer_type", "start_timestamp", "end_timestamp", "loaded_timestamp", "place_label", "from", "to"})
 public class PreviousLocation extends Answer implements Serializable {
 
     @JsonProperty("place_label")
@@ -21,14 +21,19 @@ public class PreviousLocation extends Answer implements Serializable {
 
     public PreviousLocation() {
         super();
+        this.questionType = QuestionType.LOCATION_PREVIOUS;
     }
 
-    public PreviousLocation(QuestionType questionType, AnswerType answerType, String placeLabel, Date from, Date to, long startTimestamp, long endTimestamp, long firstSeenTimestamp) {
-        super(questionType, answerType, startTimestamp, endTimestamp, firstSeenTimestamp);
+    private PreviousLocation(QuestionType questionType, AnswerType answerType, String placeLabel, Date from, Date to, long startTimestamp, long endTimestamp, long loadedTimestamp) {
+        super(questionType, answerType, startTimestamp, endTimestamp, loadedTimestamp);
         this.id = String.format("%s:%s:%s:%s:%s:%s", questionType, answerType, placeLabel, (from != null) ? from.getTime() : null, (to != null) ? to.getTime() : null, endTimestamp);
         this.placeLabel = placeLabel;
         this.from = from;
         this.to = to;
+    }
+
+    public PreviousLocation(AnswerType answerType, String placeLabel, Date from, Date to, long startTimestamp, long endTimestamp, long firstSeenTimestamp) {
+        this(QuestionType.LOCATION_PREVIOUS, answerType, placeLabel, from, to, startTimestamp, endTimestamp, firstSeenTimestamp);
     }
 
     public String getPlaceLabel() {

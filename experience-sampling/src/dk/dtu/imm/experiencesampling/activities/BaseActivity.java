@@ -24,4 +24,5 @@ public abstract class BaseActivity extends Activity {
         // as you specify a parent activity in AndroidManifest.xml.
         return super.onOptionsItemSelected(item);
     }
+
 }

@@ -42,7 +42,7 @@ public class QuestionSaveService extends Service {
                 if (answer != null) {
                     if (QuestionType.LOCATION_CURRENT.equals(answer.getQuestionType())) {
                         saveOrUpdatePlaceLabel(((CurrentLocation) answer).getPlaceLabel());
-                        if (answer.getAnswerType().equals(AnswerType.ANSWERED)) {
+                        if (answer.getAnswerType().equals(AnswerType.ANSWERED_SUBMIT)) {
                             startLocationSearch();
                         } else {
                             saveAnswer(answer);
@@ -81,9 +81,9 @@ public class QuestionSaveService extends Service {
 
     private void updateFriendConnection(Answer answer) {
         DatabaseHelper dbHelper = new DatabaseHelper(this);
-        if (QuestionType.SOCIAL_CLOSER_FRIEND.equals(answer.getQuestionType()) && AnswerType.ANSWERED.equals(answer.getAnswerType())) {
+        if (QuestionType.SOCIAL_CLOSER_FRIEND.equals(answer.getQuestionType()) && AnswerType.ANSWERED_SUBMIT.equals(answer.getAnswerType())) {
             dbHelper.updateFriendConnectionAnswered(((CloserFriend) answer).getFriendOneId(), ((CloserFriend) answer).getFriendTwoId(), answer.getQuestionType());
-        } else if (QuestionType.SOCIAL_RATE_TWO_FRIENDS.equals(answer.getQuestionType()) && AnswerType.ANSWERED.equals(answer.getAnswerType())) {
+        } else if (QuestionType.SOCIAL_RATE_TWO_FRIENDS.equals(answer.getQuestionType()) && AnswerType.ANSWERED_SUBMIT.equals(answer.getAnswerType())) {
             dbHelper.updateFriendConnectionAnswered(((RateTwoFriends) answer).getFriendOneId(), ((RateTwoFriends) answer).getFriendTwoId(), answer.getQuestionType());
         }
         dbHelper.closeDatabase();
@@ -91,7 +91,7 @@ public class QuestionSaveService extends Service {
 
     private void updateFriend(Answer answer) {
         DatabaseHelper dbHelper = new DatabaseHelper(this);
-        if (QuestionType.SOCIAL_RATE_ONE_FRIEND.equals(answer.getQuestionType()) && AnswerType.ANSWERED.equals(answer.getAnswerType())) {
+        if (QuestionType.SOCIAL_RATE_ONE_FRIEND.equals(answer.getQuestionType()) && AnswerType.ANSWERED_SUBMIT.equals(answer.getAnswerType())) {
             dbHelper.updateFriendAnswered(((RateOneFriend) answer).getFriendId(), answer.getQuestionType());
         }
         dbHelper.closeDatabase();

@@ -9,7 +9,6 @@ import dk.dtu.imm.experiencesampling.R;
 import dk.dtu.imm.experiencesampling.custom.ProfilePicture;
 import dk.dtu.imm.experiencesampling.custom.RatingBar;
 import dk.dtu.imm.experiencesampling.enums.AnswerType;
-import dk.dtu.imm.experiencesampling.enums.QuestionType;
 import dk.dtu.imm.experiencesampling.models.Friend;
 import dk.dtu.imm.experiencesampling.models.answers.RateOneFriend;
 
@@ -74,14 +73,14 @@ public class QRateOneFriendFragment extends BaseQuestionFragmentSocial {
 
                     int viewId = view.getId();
                     if (viewId == R.id.social_question_btn_submit) {
-                        answerType = AnswerType.ANSWERED;
+                        answerType = AnswerType.ANSWERED_SUBMIT;
                     } else if (viewId == R.id.social_question_btn_not_know) {
-                        answerType = AnswerType.DONT_KNOW;
+                        answerType = AnswerType.ANSWERED_DONT_KNOW;
                     } else  {
-                        answerType = AnswerType.NO_THANKS;
+                        answerType = AnswerType.ANSWERED_NO_THANKS;
                     }
 
-                    RateOneFriend answer = new RateOneFriend(QuestionType.SOCIAL_RATE_ONE_FRIEND, answerType, friend.getUserId(), rating, startTimestamp, new Date().getTime(), firstSeenTimestamp);
+                    RateOneFriend answer = new RateOneFriend(answerType, friend.getUserId(), rating, startTimestamp, new Date().getTime(), loadedTimestamp);
                     saveQuestion(answer);
                     getActivity().finish();
                 }

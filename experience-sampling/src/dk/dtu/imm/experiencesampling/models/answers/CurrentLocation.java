@@ -10,7 +10,7 @@ import java.io.Serializable;
 import java.util.Date;
 
 
-@JsonPropertyOrder({"question_type", "answer_type", "start_timestamp", "end_timestamp", "first_seen_timestamp", "place_label", "from", "latitude", "longitude", "accuracy", "location_status"})
+@JsonPropertyOrder({"question_type", "answer_type", "start_timestamp", "end_timestamp", "loaded_timestamp", "place_label", "from", "latitude", "longitude", "accuracy", "location_status"})
 public class CurrentLocation extends Answer implements Serializable {
 
     @JsonProperty("place_label")
@@ -28,13 +28,18 @@ public class CurrentLocation extends Answer implements Serializable {
 
     public CurrentLocation() {
         super();
+        this.questionType = QuestionType.LOCATION_CURRENT;
     }
 
-    public CurrentLocation(QuestionType questionType, AnswerType answerType, String placeLabel, Date from, long startTimestamp, long endTimestamp, long firstSeenTimestamp) {
-        super(questionType, answerType, startTimestamp, endTimestamp, firstSeenTimestamp);
+    private CurrentLocation(QuestionType questionType, AnswerType answerType, String placeLabel, Date from, long startTimestamp, long endTimestamp, long loadedTimestamp) {
+        super(questionType, answerType, startTimestamp, endTimestamp, loadedTimestamp);
         this.id = String.format("%s:%s:%s:%s:%s", questionType, answerType, placeLabel, (from != null) ? from.getTime() : null, endTimestamp);
         this.placeLabel = placeLabel;
         this.from = from;
+    }
+
+    public CurrentLocation(AnswerType answerType, String placeLabel, Date from, long startTimestamp, long endTimestamp, long firstSeenTimestamp) {
+        this(QuestionType.LOCATION_CURRENT, answerType, placeLabel, from, startTimestamp, endTimestamp, firstSeenTimestamp);
     }
 
     public String getPlaceLabel() {

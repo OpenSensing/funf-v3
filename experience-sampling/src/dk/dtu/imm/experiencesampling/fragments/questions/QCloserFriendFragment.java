@@ -8,7 +8,6 @@ import android.widget.Button;
 import dk.dtu.imm.experiencesampling.R;
 import dk.dtu.imm.experiencesampling.custom.ProfilePicture;
 import dk.dtu.imm.experiencesampling.enums.AnswerType;
-import dk.dtu.imm.experiencesampling.enums.QuestionType;
 import dk.dtu.imm.experiencesampling.models.Friend;
 import dk.dtu.imm.experiencesampling.models.answers.CloserFriend;
 
@@ -75,18 +74,18 @@ public class QCloserFriendFragment extends BaseQuestionFragmentSocial {
                     // As of sdk r14 these IDs cannot be treated as constants in library modules, and therefore switch case cannot be used.
                     int viewId = view.getId();
                     if (viewId == R.id.social_q_profile_picture_one) {
-                        answerType = AnswerType.ANSWERED;
+                        answerType = AnswerType.ANSWERED_SUBMIT;
                         choice = friendOne.getUserId();
                     } else if (viewId == R.id.social_q_profile_picture_two) {
-                        answerType = AnswerType.ANSWERED;
+                        answerType = AnswerType.ANSWERED_SUBMIT;
                         choice = friendOne.getUserId();
                     } else if (viewId == R.id.social_question_btn_not_know) {
-                        answerType = AnswerType.DONT_KNOW;
+                        answerType = AnswerType.ANSWERED_DONT_KNOW;
                     } else {
-                        answerType = AnswerType.NO_THANKS;
+                        answerType = AnswerType.ANSWERED_NO_THANKS;
                     }
 
-                    CloserFriend answer = new CloserFriend(QuestionType.SOCIAL_CLOSER_FRIEND, answerType, friendOne.getUserId(), friendTwo.getUserId(), choice, startTimestamp, new Date().getTime(), firstSeenTimestamp);
+                    CloserFriend answer = new CloserFriend(answerType, friendOne.getUserId(), friendTwo.getUserId(), choice, startTimestamp, new Date().getTime(), loadedTimestamp);
                     saveQuestion(answer);
                     getActivity().finish();
                 }

@@ -8,7 +8,7 @@ import dk.dtu.imm.experiencesampling.enums.QuestionType;
 
 import java.io.Serializable;
 
-@JsonPropertyOrder({"question_type", "answer_type", "start_timestamp", "end_timestamp", "first_seen_timestamp", "friend_uid", "rating"})
+@JsonPropertyOrder({"question_type", "answer_type", "start_timestamp", "end_timestamp", "loaded_timestamp", "friend_uid", "rating"})
 public class RateOneFriend extends Answer implements Serializable {
 
     @JsonProperty("friend_uid")
@@ -18,13 +18,18 @@ public class RateOneFriend extends Answer implements Serializable {
 
     public RateOneFriend() {
         super();
+        this.questionType = QuestionType.SOCIAL_RATE_ONE_FRIEND;
     }
 
-    public RateOneFriend(QuestionType questionType, AnswerType answerType, String friendId, int rating, long startTimestamp, long endTimestamp, long firstSeenTimestamp) {
-        super(questionType, answerType, startTimestamp, endTimestamp, firstSeenTimestamp);
+    private RateOneFriend(QuestionType questionType, AnswerType answerType, String friendId, int rating, long startTimestamp, long endTimestamp, long loadedTimestamp) {
+        super(questionType, answerType, startTimestamp, endTimestamp, loadedTimestamp);
         this.id = String.format("%s:%s:%s:%s", questionType, answerType, friendId, endTimestamp);
         this.friendId = friendId;
         this.rating = rating;
+    }
+
+    public RateOneFriend(AnswerType answerType, String friendId, int rating, long startTimestamp, long endTimestamp, long firstSeenTimestamp) {
+        this(QuestionType.SOCIAL_RATE_ONE_FRIEND, answerType, friendId, rating, startTimestamp, endTimestamp, firstSeenTimestamp);
     }
 
     public String getFriendId() {

@@ -17,7 +17,7 @@ public class QuestionScheduleService extends Service {
 
     private static final String TAG = "QuestionScheduleService";
 
-    private static final String PREF_QUESTION_TIMESTAMPS_KEY = "question_timestamps";
+    public static final String PREF_QUESTION_TIMESTAMPS_KEY = "question_timestamps";
     private static final int TWENTY_FOUR_HOURS = 24 * 60 * 60 * 1000;
 
     private DatabaseHelper dbHelper;

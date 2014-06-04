@@ -4,6 +4,7 @@ import android.app.Fragment;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,7 +17,9 @@ import java.util.Date;
 
 public abstract class BaseQuestionFragment extends Fragment {
 
-    protected long firstSeenTimestamp;
+    private boolean answered;
+
+    protected long loadedTimestamp;
     protected long startTimestamp;
 
     protected Button btnSubmit;
@@ -26,8 +29,8 @@ public abstract class BaseQuestionFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        if (firstSeenTimestamp == 0) {
-            firstSeenTimestamp = new Date().getTime();
+        if (loadedTimestamp == 0) {
+            loadedTimestamp = new Date().getTime();
         }
         this.startTimestamp = new Date().getTime();
     }
@@ -44,6 +47,7 @@ public abstract class BaseQuestionFragment extends Fragment {
             Intent saveIntent = new Intent(getActivity(), QuestionSaveService.class);
             saveIntent.putExtra("answer", answer);
             getActivity().startService(saveIntent);
+            answered = true;
         }
     }
 
@@ -59,6 +63,14 @@ public abstract class BaseQuestionFragment extends Fragment {
                 btnSubmit.setTextColor(getResources().getColor(R.color.disable_date_color));
             }
         }
+    }
+
+    public boolean isAnswered() {
+        return answered;
+    }
+
+    public long getLoadedTimestamp() {
+        return loadedTimestamp;
     }
 
 }

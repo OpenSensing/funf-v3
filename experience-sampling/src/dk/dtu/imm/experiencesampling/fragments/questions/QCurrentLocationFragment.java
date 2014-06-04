@@ -12,7 +12,6 @@ import dk.dtu.imm.experiencesampling.R;
 import dk.dtu.imm.experiencesampling.custom.DateTimeFromSelector;
 import dk.dtu.imm.experiencesampling.custom.PlaceSelector;
 import dk.dtu.imm.experiencesampling.enums.AnswerType;
-import dk.dtu.imm.experiencesampling.enums.QuestionType;
 import dk.dtu.imm.experiencesampling.models.Place;
 import dk.dtu.imm.experiencesampling.models.answers.CurrentLocation;
 
@@ -90,7 +89,7 @@ public class QCurrentLocationFragment extends BaseQuestionFragmentLocation {
                     int viewId = view.getId();
                     if (viewId == R.id.location_q_btn_submit) {
                         // Get info from view and add to answer
-                        answerType = AnswerType.ANSWERED;
+                        answerType = AnswerType.ANSWERED_SUBMIT;
                         from = dateSelector.getSelectedDate();
 
                         // If place is empty, show error message and return
@@ -104,11 +103,11 @@ public class QCurrentLocationFragment extends BaseQuestionFragmentLocation {
                             return;
                         }
                     } else {
-                        answerType = AnswerType.NO_THANKS;
+                        answerType = AnswerType.ANSWERED_NO_THANKS;
                     }
 
                     // Create answer
-                    CurrentLocation answer = new CurrentLocation(QuestionType.LOCATION_CURRENT, answerType, place, from, startTimestamp, new Date().getTime(), firstSeenTimestamp);
+                    CurrentLocation answer = new CurrentLocation(answerType, place, from, startTimestamp, new Date().getTime(), loadedTimestamp);
                     saveQuestion(answer);
                     getActivity().finish();
                 }

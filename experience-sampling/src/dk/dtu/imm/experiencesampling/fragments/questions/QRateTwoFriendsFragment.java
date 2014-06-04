@@ -9,7 +9,6 @@ import dk.dtu.imm.experiencesampling.R;
 import dk.dtu.imm.experiencesampling.custom.ProfilePicture;
 import dk.dtu.imm.experiencesampling.custom.RatingBar;
 import dk.dtu.imm.experiencesampling.enums.AnswerType;
-import dk.dtu.imm.experiencesampling.enums.QuestionType;
 import dk.dtu.imm.experiencesampling.models.Friend;
 import dk.dtu.imm.experiencesampling.models.answers.RateTwoFriends;
 
@@ -83,14 +82,14 @@ public class QRateTwoFriendsFragment extends BaseQuestionFragmentSocial {
 
                     int viewId = view.getId();
                     if (viewId == R.id.social_question_btn_submit) {
-                        answerType = AnswerType.ANSWERED;
+                        answerType = AnswerType.ANSWERED_SUBMIT;
                     } else if (viewId == R.id.social_question_btn_not_know) {
-                        answerType = AnswerType.DONT_KNOW;
+                        answerType = AnswerType.ANSWERED_DONT_KNOW;
                     } else {
-                        answerType = AnswerType.NO_THANKS;
+                        answerType = AnswerType.ANSWERED_NO_THANKS;
                     }
 
-                    RateTwoFriends answer = new RateTwoFriends(QuestionType.SOCIAL_RATE_TWO_FRIENDS, answerType, friendOne.getUserId(), friendTwo.getUserId(), rating, startTimestamp, new Date().getTime(), firstSeenTimestamp);
+                    RateTwoFriends answer = new RateTwoFriends(answerType, friendOne.getUserId(), friendTwo.getUserId(), rating, startTimestamp, new Date().getTime(), loadedTimestamp);
                     saveQuestion(answer);
                     getActivity().finish();
                 }
