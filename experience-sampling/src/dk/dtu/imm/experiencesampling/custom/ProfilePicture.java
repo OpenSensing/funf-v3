@@ -2,6 +2,7 @@ package dk.dtu.imm.experiencesampling.custom;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.PorterDuff;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -50,6 +51,10 @@ public class ProfilePicture extends FrameLayout {
 
     public void setProfileImage(String pictureUrl) {
         imageLoader.displayImage(pictureUrl, imageView, new ProgressImageLoadingListener());
+    }
+
+    public void setImageClicked() {
+        imageView.setColorFilter(0xff33b5e5, PorterDuff.Mode.MULTIPLY);
     }
 
     private class ProgressImageLoadingListener implements ImageLoadingListener {

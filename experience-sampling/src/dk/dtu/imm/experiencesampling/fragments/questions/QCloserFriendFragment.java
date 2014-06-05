@@ -54,12 +54,12 @@ public class QCloserFriendFragment extends BaseQuestionFragmentSocial {
         super.onViewCreated(view, savedInstanceState);
 
         // Set friend 1 info
-        ProfilePicture profilePictureOne = (ProfilePicture) view.findViewById(R.id.social_q_profile_picture_one);
+        final ProfilePicture profilePictureOne = (ProfilePicture) view.findViewById(R.id.social_q_profile_picture_one);
         profilePictureOne.setProfileImage(getFacebookImageUrl(friendOne.getUserId()));
         profilePictureOne.setProfileName(friendOne.getName());
 
         // Set friend 2 info
-        ProfilePicture profilePictureTwo = (ProfilePicture) view.findViewById(R.id.social_q_profile_picture_two);
+        final ProfilePicture profilePictureTwo = (ProfilePicture) view.findViewById(R.id.social_q_profile_picture_two);
         profilePictureTwo.setProfileImage(getFacebookImageUrl(friendTwo.getUserId()));
         profilePictureTwo.setProfileName(friendTwo.getName());
 
@@ -74,11 +74,13 @@ public class QCloserFriendFragment extends BaseQuestionFragmentSocial {
                     // As of sdk r14 these IDs cannot be treated as constants in library modules, and therefore switch case cannot be used.
                     int viewId = view.getId();
                     if (viewId == R.id.social_q_profile_picture_one) {
+                        profilePictureOne.setImageClicked();
                         answerType = AnswerType.ANSWERED_SUBMIT;
                         choice = friendOne.getUserId();
                     } else if (viewId == R.id.social_q_profile_picture_two) {
+                        profilePictureTwo.setImageClicked();
                         answerType = AnswerType.ANSWERED_SUBMIT;
-                        choice = friendOne.getUserId();
+                        choice = friendTwo.getUserId();
                     } else if (viewId == R.id.social_question_btn_not_know) {
                         answerType = AnswerType.ANSWERED_DONT_KNOW;
                     } else {
