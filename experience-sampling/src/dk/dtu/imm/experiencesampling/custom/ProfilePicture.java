@@ -54,7 +54,8 @@ public class ProfilePicture extends FrameLayout {
     }
 
     public void setImageClicked() {
-        imageView.setColorFilter(0xff33b5e5, PorterDuff.Mode.MULTIPLY);
+        //imageView.setColorFilter(0xff939393, PorterDuff.Mode.MULTIPLY);
+        imageView.setColorFilter(0x7f939393, PorterDuff.Mode.LIGHTEN);
     }
 
     private class ProgressImageLoadingListener implements ImageLoadingListener {
