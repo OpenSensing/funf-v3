@@ -103,60 +103,62 @@ public class QuestionActivity extends BaseActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        BaseQuestionFragment baseQuestionFragment = (BaseQuestionFragment) getFragmentManager().findFragmentById(questionFragment.getId());
-        if (baseQuestionFragment != null && !baseQuestionFragment.isAnswered()) {
-            AnswerType answerType;
-            if (hasBeenVisible) {
-                Log.d(TAG, "Question destroyed: " + AnswerType.NOT_ANSWERED);
-                answerType = AnswerType.NOT_ANSWERED;
-            } else {
-                Log.d(TAG, "Question destroyed: " + AnswerType.NEVER_SEEN);
-                answerType = AnswerType.NEVER_SEEN;
-                removeLatestQuestionTimestamp();
-            }
-
-            // Save question with empty fields
-            Answer answer = null;
-            if (type != null) {
-                switch (type) {
-                    case SOCIAL_CLOSER_FRIEND:
-                        CloserFriend closerFriend = new CloserFriend();
-                        closerFriend.setAnswerType(answerType);
-                        closerFriend.setLoadedTimestamp(baseQuestionFragment.getLoadedTimestamp());
-                        answer = closerFriend;
-                        break;
-                    case SOCIAL_RATE_ONE_FRIEND:
-                        RateOneFriend rateOneFriend = new RateOneFriend();
-                        rateOneFriend.setAnswerType(answerType);
-                        rateOneFriend.setLoadedTimestamp(baseQuestionFragment.getLoadedTimestamp());
-                        answer = rateOneFriend;
-                        break;
-                    case SOCIAL_RATE_TWO_FRIENDS:
-                        RateTwoFriends rateTwoFriends = new RateTwoFriends();
-                        rateTwoFriends.setAnswerType(answerType);
-                        rateTwoFriends.setLoadedTimestamp(baseQuestionFragment.getLoadedTimestamp());
-                        answer = rateTwoFriends;
-                        break;
-                    case LOCATION_CURRENT:
-                        CurrentLocation currentLocation = new CurrentLocation();
-                        currentLocation.setAnswerType(answerType);
-                        currentLocation.setLoadedTimestamp(baseQuestionFragment.getLoadedTimestamp());
-                        answer = currentLocation;
-                        break;
-                    case LOCATION_PREVIOUS:
-                        PreviousLocation previousLocation = new PreviousLocation();
-                        previousLocation.setAnswerType(answerType);
-                        previousLocation.setLoadedTimestamp(baseQuestionFragment.getLoadedTimestamp());
-                        answer = previousLocation;
-                        break;
-                    default:
-                        questionFragment = null;
-                        break;
+        if (questionFragment != null) {
+            BaseQuestionFragment baseQuestionFragment = (BaseQuestionFragment) getFragmentManager().findFragmentById(questionFragment.getId());
+            if (baseQuestionFragment != null && !baseQuestionFragment.isAnswered()) {
+                AnswerType answerType;
+                if (hasBeenVisible) {
+                    Log.d(TAG, "Question destroyed: " + AnswerType.NOT_ANSWERED);
+                    answerType = AnswerType.NOT_ANSWERED;
+                } else {
+                    Log.d(TAG, "Question destroyed: " + AnswerType.NEVER_SEEN);
+                    answerType = AnswerType.NEVER_SEEN;
+                    removeLatestQuestionTimestamp();
                 }
-                saveQuestion(answer);
+
+                // Save question with empty fields
+                Answer answer = null;
+                if (type != null) {
+                    switch (type) {
+                        case SOCIAL_CLOSER_FRIEND:
+                            CloserFriend closerFriend = new CloserFriend();
+                            closerFriend.setAnswerType(answerType);
+                            closerFriend.setLoadedTimestamp(baseQuestionFragment.getLoadedTimestamp());
+                            answer = closerFriend;
+                            break;
+                        case SOCIAL_RATE_ONE_FRIEND:
+                            RateOneFriend rateOneFriend = new RateOneFriend();
+                            rateOneFriend.setAnswerType(answerType);
+                            rateOneFriend.setLoadedTimestamp(baseQuestionFragment.getLoadedTimestamp());
+                            answer = rateOneFriend;
+                            break;
+                        case SOCIAL_RATE_TWO_FRIENDS:
+                            RateTwoFriends rateTwoFriends = new RateTwoFriends();
+                            rateTwoFriends.setAnswerType(answerType);
+                            rateTwoFriends.setLoadedTimestamp(baseQuestionFragment.getLoadedTimestamp());
+                            answer = rateTwoFriends;
+                            break;
+                        case LOCATION_CURRENT:
+                            CurrentLocation currentLocation = new CurrentLocation();
+                            currentLocation.setAnswerType(answerType);
+                            currentLocation.setLoadedTimestamp(baseQuestionFragment.getLoadedTimestamp());
+                            answer = currentLocation;
+                            break;
+                        case LOCATION_PREVIOUS:
+                            PreviousLocation previousLocation = new PreviousLocation();
+                            previousLocation.setAnswerType(answerType);
+                            previousLocation.setLoadedTimestamp(baseQuestionFragment.getLoadedTimestamp());
+                            answer = previousLocation;
+                            break;
+                        default:
+                            questionFragment = null;
+                            break;
+                    }
+                    saveQuestion(answer);
+                }
+            } else {
+                Log.e(TAG, "Question destroyed: answered correct");
             }
-        } else {
-            Log.e(TAG, "Question destroyed: answered correct");
         }
     }
 
