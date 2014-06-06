@@ -158,7 +158,11 @@ public class MainPipeline extends ConfiguredPipeline {
     @Override
     public void updateConfig(String jsonString) {
         super.updateConfig(jsonString);
-        setMainConfigAsJsonString(this, jsonString);
+
+        if (jsonString != null) {
+            Log.e(TAG, "Updating config in SharedPrefs for the experience sampling");
+            setMainConfigAsJsonString(this, jsonString);
+        }
 
         FunfConfig config = getConfig(this, MAIN_CONFIG);
         String token = getSystemPrefs(this).getString(RegistrationHandler.PROPERTY_SENSIBLE_TOKEN,"");
