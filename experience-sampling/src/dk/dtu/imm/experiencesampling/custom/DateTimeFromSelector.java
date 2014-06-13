@@ -173,6 +173,8 @@ public class DateTimeFromSelector extends LinearLayout {
 
         // Minutes number picker
         NumberPicker npMinutes = (NumberPicker) pickerContainer.findViewById(R.id.selector_picker_minute);
+        npMinutes.setSaveFromParentEnabled(false);
+        npMinutes.setSaveEnabled(true);
         npMinutes.setMaxValue(minutesPickerValues.length - 1);
         npMinutes.setMinValue(0);
         npMinutes.setValue(minuteValue);
@@ -181,6 +183,8 @@ public class DateTimeFromSelector extends LinearLayout {
 
         // Hours number picker
         NumberPicker npHours = (NumberPicker) pickerContainer.findViewById(R.id.selector_picker_hour);
+        npHours.setSaveFromParentEnabled(false);
+        npHours.setSaveEnabled(true);
         npHours.setMaxValue(hoursPickerValues.length - 1);
         npHours.setMinValue(0);
         npHours.setValue(hourValue);
@@ -189,6 +193,8 @@ public class DateTimeFromSelector extends LinearLayout {
 
         // Days number picker
         NumberPicker npDays = (NumberPicker) pickerContainer.findViewById(R.id.selector_picker_day);
+        npDays.setSaveFromParentEnabled(false);
+        npDays.setSaveEnabled(true);
         npDays.setMaxValue(daysPickerValues.length - 1);
         npDays.setMinValue(dayValue);
         npDays.setValue(dayValue);
