@@ -530,7 +530,8 @@ public class DatabaseHelper {
             buildSQL = "CREATE TABLE " + TABLE_PENDING_QUESTION + "( " +
                     _ID + " INTEGER PRIMARY KEY, " +
                     PENDING_QUESTION_TYPE + " TEXT, "  +
-                    PENDING_QUESTION_DATA + " TEXT )";
+                    PENDING_QUESTION_DATA + " TEXT, " +
+                    "UNIQUE(" + PENDING_QUESTION_TYPE + ", " + PENDING_QUESTION_DATA + ") ON CONFLICT IGNORE )";
             Log.d(TAG, "onCreate SQL pending question table: " + buildSQL);
             sqLiteDatabase.execSQL(buildSQL);
 
