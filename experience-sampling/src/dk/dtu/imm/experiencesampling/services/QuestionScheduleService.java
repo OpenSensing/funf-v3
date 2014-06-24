@@ -20,7 +20,6 @@ public class QuestionScheduleService extends Service {
     public static final String PREF_QUESTION_TIMESTAMPS_KEY = "question_timestamps";
     private static final int TWENTY_FOUR_HOURS = 24 * 60 * 60 * 1000;
 
-    private DatabaseHelper dbHelper;
     private BroadcastReceiver mDisplayReceiver;
     private SharedPreferences sharedPrefs;
 
@@ -36,25 +35,38 @@ public class QuestionScheduleService extends Service {
 
         if (isTokenPartOfSubset()) {
             Log.d(TAG, "Token is a part of subset. Questions will be asked");
-            dbHelper = new DatabaseHelper(this);
             sharedPrefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
 
             if (!isDailyQuestionsLimitReached() && isTimeForQuestion()) {
                 Log.d(TAG, "Time for question");
-                // Check if there are pending questions. If not, start prepare service and stop this service.
-                if (dbHelper.getPendingQuestionsCount() < 1) {
-                    Log.d(TAG, "No more pending questions - starting prepare question service");
-                    Intent prepareQuestionsService = new Intent(this, QuestionsPrepareService.class);
-                    this.startService(prepareQuestionsService);
-                    stopSelf();
-                } else {
-                    // Register screen receiver
-                    if (mDisplayReceiver == null) {
-                        mDisplayReceiver = new ScreenReceiver();
+
+                // Check database
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (getApplicationContext() != null) {
+                            DatabaseHelper dbHelper = new DatabaseHelper(getApplicationContext());
+
+                            // Check if there are pending questions. If not, start prepare service and stop this service.
+                            if (dbHelper.getPendingQuestionsCount() < 1) {
+                                Log.d(TAG, "No more pending questions - starting prepare question service");
+                                Intent prepareQuestionsService = new Intent(getApplicationContext(), QuestionsPrepareService.class);
+                                getApplicationContext().startService(prepareQuestionsService);
+                                dbHelper.closeDatabase();
+                                stopSelf();
+                            } else {
+                                // Register screen receiver
+                                if (mDisplayReceiver == null) {
+                                    mDisplayReceiver = new ScreenReceiver();
+                                }
+                                registerReceiver(mDisplayReceiver, new IntentFilter(Intent.ACTION_SCREEN_ON));
+                                registerReceiver(mDisplayReceiver, new IntentFilter(Intent.ACTION_SCREEN_OFF));
+                            }
+                            dbHelper.closeDatabase();
+                        }
                     }
-                    registerReceiver(mDisplayReceiver, new IntentFilter(Intent.ACTION_SCREEN_ON));
-                    registerReceiver(mDisplayReceiver, new IntentFilter(Intent.ACTION_SCREEN_OFF));
-                }
+                }).start();
+
             } else {
                 Log.d(TAG, "NOT time for question");
                 stopSelf();
@@ -72,15 +84,12 @@ public class QuestionScheduleService extends Service {
         if (mDisplayReceiver != null) {
             unregisterReceiver(mDisplayReceiver);
         }
-        if (dbHelper != null) {
-            dbHelper.closeDatabase();
-        }
     }
 
     private void saveQuestionAttemptTimestamp() {
         Set<String> timestamps = new HashSet<String>(sharedPrefs.getStringSet(PREF_QUESTION_TIMESTAMPS_KEY, new HashSet<String>()));
         timestamps.add(Long.toString(new Date().getTime()));
-        sharedPrefs.edit().putStringSet(PREF_QUESTION_TIMESTAMPS_KEY, timestamps).commit();
+        sharedPrefs.edit().putStringSet(PREF_QUESTION_TIMESTAMPS_KEY, timestamps).apply();
     }
 
     private long getLatestQuestionAttemptTimestamp() {
@@ -165,19 +174,12 @@ public class QuestionScheduleService extends Service {
                 } else if (Intent.ACTION_SCREEN_OFF.equals(action)) {
                     Log.d(TAG, "Screen OFF! - launching question");
 
-                    // double check
-                    if (dbHelper.getPendingQuestionsCount() > 0) {
-                        // Start service which collects info and fires the question
-                        Intent serviceIntent = new Intent(context, QuestionLaunchService.class);
-                        context.startService(serviceIntent);
+                    // Start service which collects info and fires the question
+                    Intent serviceIntent = new Intent(context, QuestionLaunchService.class);
+                    context.startService(serviceIntent);
 
-                        // Save question attempt timestamp
-                        saveQuestionAttemptTimestamp();
-                    } else {
-                        Log.d(TAG, "No more pending questions - starting prepare question service");
-                        Intent prepareQuestionsService = new Intent(context, QuestionsPrepareService.class);
-                        context.startService(prepareQuestionsService);
-                    }
+                    // Save question attempt timestamp
+                    saveQuestionAttemptTimestamp();
 
                     // Stop service after question is started
                     stopSelf();

@@ -33,7 +33,7 @@ public class ConfigUtils {
         Log.d(TAG, "Saving experience sampling config: " + json);
 
         SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(context);
-        sharedPrefs.edit().putString(PREF_CONFIG__KEY, json).commit();
+        sharedPrefs.edit().putString(PREF_CONFIG__KEY, json).apply(); // apply is async where commit is not
     }
 
     public static Config getConfigFromPrefs(Context context) {

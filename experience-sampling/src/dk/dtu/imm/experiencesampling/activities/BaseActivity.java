@@ -1,7 +1,6 @@
 package dk.dtu.imm.experiencesampling.activities;
 
 import android.app.Activity;
-import android.content.Intent;
 import android.view.Menu;
 import android.view.MenuItem;
 import dk.dtu.imm.experiencesampling.R;

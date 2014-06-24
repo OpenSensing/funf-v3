@@ -86,6 +86,7 @@ public class QuestionActivity extends BaseActivity {
                         .add(R.id.container, questionFragment)
                         .commit();
             } else {
+                Log.w(TAG, "The fragment was null - Shouldn't be a problem, but check the log if the application crashed");
                 finish(); // finish activity if there is no question fragment - should never happen, because current- or previous place can always be asked.
             }
         }
@@ -183,7 +184,7 @@ public class QuestionActivity extends BaseActivity {
             break;
         }
         timestamps.removeAll(oldTimestamps);
-        sharedPrefs.edit().putStringSet(QuestionScheduleService.PREF_QUESTION_TIMESTAMPS_KEY, timestamps).commit();
+        sharedPrefs.edit().putStringSet(QuestionScheduleService.PREF_QUESTION_TIMESTAMPS_KEY, timestamps).apply(); // changed to apply instead of commit, because apply is async
         Log.d(TAG, "Latest launched question timestamp removed because the question was never shown");
     }
 
