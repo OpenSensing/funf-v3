@@ -4,10 +4,9 @@ import android.app.Fragment;
 import android.app.KeyguardManager;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.util.Log;
+import dk.dtu.imm.experiencesampling.QuestionScheduleUtils;
 import dk.dtu.imm.experiencesampling.R;
 import dk.dtu.imm.experiencesampling.enums.AnswerType;
 import dk.dtu.imm.experiencesampling.enums.QuestionType;
@@ -16,12 +15,8 @@ import dk.dtu.imm.experiencesampling.models.Friend;
 import dk.dtu.imm.experiencesampling.models.Place;
 import dk.dtu.imm.experiencesampling.models.answers.*;
 import dk.dtu.imm.experiencesampling.services.QuestionSaveService;
-import dk.dtu.imm.experiencesampling.services.QuestionScheduleService;
 
 import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.TreeSet;
 
 public class QuestionActivity extends BaseActivity {
 
@@ -39,6 +34,8 @@ public class QuestionActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_question);
+
+        Log.i(TAG, "Question launched");
 
         if (savedInstanceState == null) {
             Bundle extras = (getIntent() != null) ? getIntent().getBundleExtra("info") : null;
@@ -114,7 +111,11 @@ public class QuestionActivity extends BaseActivity {
                 } else {
                     Log.d(TAG, "Question destroyed: " + AnswerType.NEVER_SEEN);
                     answerType = AnswerType.NEVER_SEEN;
-                    removeLatestQuestionTimestamp();
+                    try {
+                        QuestionScheduleUtils.addASAPQuestionTime(getBaseContext());
+                    } catch (Exception e) {
+                        Log.e(TAG, "Could not add ASAP question: " + e.getMessage());
+                    }
                 }
 
                 // Save question with empty fields
@@ -169,23 +170,6 @@ public class QuestionActivity extends BaseActivity {
             saveIntent.putExtra("answer", answer);
             startService(saveIntent);
         }
-    }
-
-    // Remove latest timestamp from SharedPrefs because it was never shown. therefore show new as soon as possible.
-    private void removeLatestQuestionTimestamp() {
-        SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
-
-        Set<String> timestamps = new HashSet<String>(sharedPrefs.getStringSet(QuestionScheduleService.PREF_QUESTION_TIMESTAMPS_KEY, new HashSet<String>()));
-        Set<String> sortedTimestamps = new TreeSet<String>(timestamps).descendingSet();
-
-        Set<String> oldTimestamps = new HashSet<String>();
-        for (String timestamp : sortedTimestamps) {
-            oldTimestamps.add(timestamp);
-            break;
-        }
-        timestamps.removeAll(oldTimestamps);
-        sharedPrefs.edit().putStringSet(QuestionScheduleService.PREF_QUESTION_TIMESTAMPS_KEY, timestamps).apply(); // changed to apply instead of commit, because apply is async
-        Log.d(TAG, "Latest launched question timestamp removed because the question was never shown");
     }
 
 }

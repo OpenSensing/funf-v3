@@ -1,27 +1,22 @@
 package dk.dtu.imm.experiencesampling.services;
 
 import android.app.Service;
-import android.content.*;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.IBinder;
-import android.preference.PreferenceManager;
 import android.util.Log;
 import dk.dtu.imm.experiencesampling.Config;
 import dk.dtu.imm.experiencesampling.ConfigUtils;
+import dk.dtu.imm.experiencesampling.QuestionScheduleUtils;
 import dk.dtu.imm.experiencesampling.db.DatabaseHelper;
-
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
 
 public class QuestionScheduleService extends Service {
 
     private static final String TAG = "QuestionScheduleService";
 
-    public static final String PREF_QUESTION_TIMESTAMPS_KEY = "question_timestamps";
-    private static final int TWENTY_FOUR_HOURS = 24 * 60 * 60 * 1000;
-
     private BroadcastReceiver mDisplayReceiver;
-    private SharedPreferences sharedPrefs;
 
     @Override
     public IBinder onBind(Intent intent) {
@@ -35,9 +30,20 @@ public class QuestionScheduleService extends Service {
 
         if (isTokenPartOfSubset()) {
             Log.d(TAG, "Token is a part of subset. Questions will be asked");
-            sharedPrefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
 
-            if (!isDailyQuestionsLimitReached() && isTimeForQuestion()) {
+            boolean questionTime = false;
+            try {
+                // Schedules question for the next day if they are not already scheduled.
+                QuestionScheduleUtils.scheduleNextDayQuestions(getBaseContext());
+
+                // Checks if it is question time.
+                questionTime = QuestionScheduleUtils.isQuestionTime(getBaseContext());
+            } catch (Exception e) {
+                Log.e(TAG, "Error while scheduling or checking question time:" + e.getMessage());
+                e.printStackTrace();
+            }
+
+            if (questionTime) {
                 Log.d(TAG, "Time for question");
 
                 // Check database
@@ -86,59 +92,6 @@ public class QuestionScheduleService extends Service {
         }
     }
 
-    private void saveQuestionAttemptTimestamp() {
-        Set<String> timestamps = new HashSet<String>(sharedPrefs.getStringSet(PREF_QUESTION_TIMESTAMPS_KEY, new HashSet<String>()));
-        timestamps.add(Long.toString(new Date().getTime()));
-        sharedPrefs.edit().putStringSet(PREF_QUESTION_TIMESTAMPS_KEY, timestamps).apply();
-    }
-
-    private long getLatestQuestionAttemptTimestamp() {
-        Set<String> timestamps = new HashSet<String>(sharedPrefs.getStringSet(PREF_QUESTION_TIMESTAMPS_KEY, new HashSet<String>()));
-        long latestTimestamp = 0;
-        for (String strTimestamp : timestamps) {
-            long timestamp = Long.parseLong(strTimestamp);
-            if (timestamp > latestTimestamp) {
-                latestTimestamp = timestamp;
-            }
-        }
-        return latestTimestamp;
-    }
-
-    private boolean isTimeForQuestion() {
-        boolean timeForQuestion = false;
-
-        double distributionFactor = 24.0 / ConfigUtils.getConfigFromPrefs(getApplicationContext()).getDailyQuestionLimit();
-        int questionMillisInterval = (int) (distributionFactor * 60 * 60 * 1000); // 24h / answers, to better distribute the answers during the day.
-
-        Date now = new Date();
-        Date lastQuestion = new Date(getLatestQuestionAttemptTimestamp());
-
-        long diff = now.getTime() - lastQuestion.getTime();
-        if (diff > questionMillisInterval) {
-            timeForQuestion = true;
-        }
-        return timeForQuestion;
-    }
-
-    private boolean isDailyQuestionsLimitReached() {
-        Set<String> timestamps = new HashSet<String>(sharedPrefs.getStringSet(PREF_QUESTION_TIMESTAMPS_KEY, new HashSet<String>()));
-        Log.d(TAG, "Questions timestamps within 24 hours: " + timestamps.size());
-        Date now = new Date();
-        Set<String> oldTimestamps = new HashSet<String>();
-
-        // Removes all old timestamps if diff > 24h.
-        for (String timestamp : timestamps) {
-            Date oldestQuestionDate = new Date(Long.parseLong(timestamp));
-            if (now.getTime() - oldestQuestionDate.getTime() > TWENTY_FOUR_HOURS) {
-                oldTimestamps.add(timestamp);
-            }
-        }
-        Log.d(TAG, "Total question timestamps removed: " + oldTimestamps.size());
-        timestamps.removeAll(oldTimestamps);
-        sharedPrefs.edit().putStringSet(PREF_QUESTION_TIMESTAMPS_KEY, timestamps).commit();
-        return timestamps.size() > ConfigUtils.getConfigFromPrefs(getApplicationContext()).getDailyQuestionLimit();
-    }
-
     private boolean isTokenPartOfSubset() {
         Config config = ConfigUtils.getConfigFromPrefs(this);
         String token = ConfigUtils.getSensibleAccessToken(this).trim();
@@ -177,9 +130,6 @@ public class QuestionScheduleService extends Service {
                     // Start service which collects info and fires the question
                     Intent serviceIntent = new Intent(context, QuestionLaunchService.class);
                     context.startService(serviceIntent);
-
-                    // Save question attempt timestamp
-                    saveQuestionAttemptTimestamp();
 
                     // Stop service after question is started
                     stopSelf();
