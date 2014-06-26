@@ -160,7 +160,6 @@ public class MainPipeline extends ConfiguredPipeline {
         super.updateConfig(jsonString);
 
         if (jsonString != null) {
-            Log.e(TAG, "Updating config in SharedPrefs for the experience sampling");
             setMainConfigAsJsonString(this, jsonString);
         }
 
@@ -197,6 +196,7 @@ public class MainPipeline extends ConfiguredPipeline {
     }
 
     public static void setMainConfigAsJsonString(Context context, String jsonString) {
+        Log.i(TAG, "Updating config in SharedPrefs for the experience sampling");
         PreferenceManager.getDefaultSharedPreferences(context).edit().putString(MAIN_CONFIG_FOR_EXPERIENCE_SAMPLING, jsonString).commit();
     }
 
