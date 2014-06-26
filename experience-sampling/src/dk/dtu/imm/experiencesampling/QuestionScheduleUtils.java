@@ -22,12 +22,6 @@ public class QuestionScheduleUtils {
 
         if (todaysQuestionSchedule != null) {
 
-            //
-            Collections.sort(todaysQuestionSchedule);
-            for (long time : todaysQuestionSchedule) {
-                Log.i(TAG, "Today's scheduled questions: " + new Date(time));
-            }
-
             Iterator<Long> it = todaysQuestionSchedule.iterator();
             while(it.hasNext()) {
                 Long time = it.next();
@@ -36,6 +30,12 @@ public class QuestionScheduleUtils {
                     // remove the time from the list
                     it.remove();
                 }
+            }
+
+            // Just to print when it's question time
+            Collections.sort(todaysQuestionSchedule);
+            for (long time : todaysQuestionSchedule) {
+                Log.i(TAG, "Today's scheduled questions: " + new Date(time));
             }
 
             // Only save the list if question times have been removed - this only happens if it is question time.
