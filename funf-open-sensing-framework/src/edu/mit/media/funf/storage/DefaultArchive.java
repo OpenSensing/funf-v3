@@ -52,8 +52,7 @@ public class DefaultArchive implements Archive<File> {
 	private static final String ENCRYPTION_KEY = "ENCRYPTION_KEY";
 	private static final String DES_ENCRYPTION = "DES";
 
-    // TODO set the password for production
-	private static final char[] DEFAULT_PASSWORD = "CHANGEME".toCharArray();
+	private static final char[] DEFAULT_PASSWORD = SECURE_encryptionKey.KEY.toCharArray();
 	
 	private final static byte[] SALT = {
         (byte)0xa6, (byte)0xab, (byte)0x09, (byte)0x93,
