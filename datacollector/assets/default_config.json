@@ -1,14 +1,18 @@
 {
     "configUpdatePeriod": 60,
-    "configUpdateUrl": "https://www.sensible.dtu.dk/sensible-dtu/connectors/connector_funf/config/",
     "dataArchivePeriod": 3600,
+    "configUpdateUrl": "http://raman.imm.dtu.dk/config_funf_epi",
     "dataRequests": {
         "edu.mit.media.funf.probe.builtin.BluetoothProbe": [
             {
-                "PERIOD": 300,
-                "DURATION": 30
+                "PERIOD": 120,
+                "DURATION": 60
             }
+        ],
+        "edu.mit.media.funf.probe.builtin.EpidemicProbe": [
+            {}
         ]
+
     },
     "dataUploadOnWifiOnly": true,
     "dataUploadPeriod": 7200,

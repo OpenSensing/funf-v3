@@ -83,6 +83,13 @@ public class ProbeKeys {
 		LOW_ACTIVITY_INTERVALS = "LOW_ACTIVITY_INTERVALS",
 		HIGH_ACTIVITY_INTERVALS = "HIGH_ACTIVITY_INTERVALS";
 	}
+
+    public static interface EpidemicsKeys extends BaseProbeKeys {
+        public static final String
+        TYPE = "TYPE";
+
+
+    }
 	
 	public static interface AndroidInfoKeys extends BaseProbeKeys {
 		public static final String 

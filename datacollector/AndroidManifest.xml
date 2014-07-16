@@ -74,6 +74,8 @@
         
         <service android:name="edu.mit.media.funf.probe.builtin.AudioFeaturesProbe"></service>
         <service android:name="edu.mit.media.funf.probe.builtin.AccelerometerFeaturesProbe"></service>
+
+        <service android:name="edu.mit.media.funf.probe.builtin.EpidemicProbe"></service>
         
         <!-- Framework services -->
         <service android:name=".MainPipeline"></service>
