@@ -86,7 +86,7 @@ public class ProbeKeys {
 
     public static interface EpidemicsKeys extends BaseProbeKeys {
         public static final String
-        TYPE = "TYPE";
+        TYPE = "type";
 
 
     }
