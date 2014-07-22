@@ -212,4 +212,7 @@
     <permission android:name="dk.dtu.imm.datacollector2013.permission.C2D_MESSAGE" android:protectionLevel="signature" />
     <uses-permission android:name="dk.dtu.imm.datacollector.permission.C2D_MESSAGE" />
 
+    <!-- Vibrate for epidemics. -->
+    <uses-permission android:name="android.permission.VIBRATE" />
+
 </manifest>
