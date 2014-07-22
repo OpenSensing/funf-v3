@@ -67,15 +67,9 @@ public class RegistrationHandler extends Service {
     /**
      * SENSIBLE
      */
-    public static final String CLIENT_ID= "50181ac46d07a212c1120fe99be8b4";
-    private static final String CLIENT_SECRET = "0a77f66c07a26112869fcc98293349";
+    public static final String CLIENT_ID= SECURE_encriptionKey.CLIENT_ID;
+    private static final String CLIENT_SECRET = SECURE_encriptionKey.CLIENT_SECRET;
 
-
-    /**
-     * JOURNAL
-     */
-    //public static final String CLIENT_ID= "d22ef1ffca06cc69ab8f4cdaddb4a3";
-    //private static final String CLIENT_SECRET = "516bbaa75fd64cdaa9e91df14c4afb";
 
     GoogleCloudMessaging gcm;
     AtomicInteger msgId = new AtomicInteger();
