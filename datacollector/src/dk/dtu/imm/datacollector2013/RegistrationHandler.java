@@ -67,8 +67,8 @@ public class RegistrationHandler extends Service {
     /**
      * SENSIBLE
      */
-    public static final String CLIENT_ID= SECURE_encriptionKey.CLIENT_ID;
-    private static final String CLIENT_SECRET = SECURE_encriptionKey.CLIENT_SECRET;
+    public static final String CLIENT_ID= SECURE_encryptionKey.CLIENT_ID;
+    private static final String CLIENT_SECRET = SECURE_encryptionKey.CLIENT_SECRET;
 
 
     GoogleCloudMessaging gcm;
