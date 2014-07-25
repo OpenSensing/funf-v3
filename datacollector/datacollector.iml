@@ -17,6 +17,7 @@
     <orderEntry type="library" name="libs" level="project" />
     <orderEntry type="module" module-name="funf-open-sensing-framework" />
     <orderEntry type="module" module-name="experience-sampling" />
+    <orderEntry type="module" module-name="facebook" />
   </component>
 </module>
 

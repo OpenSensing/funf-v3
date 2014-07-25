@@ -47,6 +47,7 @@ import edu.mit.media.funf.probe.SensorProbe;
 import edu.mit.media.funf.probe.CursorCell;
 import edu.mit.media.funf.probe.DatedContentProviderProbe;
 import edu.mit.media.funf.probe.edu.mit.media.funf.activity.EpiDescriptionActivity;
+import edu.mit.media.funf.probe.edu.mit.media.funf.activity.EpiStateActivity;
 
 /**
  * Created by arks on 15/07/14.
@@ -177,7 +178,7 @@ public class EpidemicProbe extends Probe implements ProbeKeys.EpidemicsKeys {
 
         public void handleBluetoothData(Bundle data) {
 
-                showDescription();
+               // showDescription();
 
 
                 runData = new Bundle();
@@ -847,14 +848,22 @@ public class EpidemicProbe extends Probe implements ProbeKeys.EpidemicsKeys {
         }
 
         void showDescription() {
-            if (HIDDEN_MODE) return;
-            if (!SHOW_WELCOME_DIALOG) return;
-            SharedPreferences settings = getSharedPreferences(OWN_NAME, 0);
-            if (settings.getBoolean(EPI_DIALOG_PREF_PREFIX+"understood", false)) return;
+           if (HIDDEN_MODE) return;
+           if (!SHOW_WELCOME_DIALOG) return;
+           SharedPreferences settings = getSharedPreferences(OWN_NAME, 0);
+           if (settings.getBoolean(EPI_DIALOG_PREF_PREFIX+"understood", false)) return;
 
             Intent dialogIntent = new Intent(getBaseContext(), EpiDescriptionActivity.class);
             dialogIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivity(dialogIntent);
+        }
+
+        void showState() {
+            if (HIDDEN_MODE) return;
+            Intent dialogIntent = new Intent(getBaseContext(), EpiStateActivity.class);
+            dialogIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(dialogIntent);
+
         }
 
 
