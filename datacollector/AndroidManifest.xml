@@ -35,6 +35,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".AuthActivity" android:screenOrientation="portrait"/>
+        <activity android:name="edu.mit.media.funf.probe.edu.mit.media.funf.activity.EpiDescriptionActivity" android:screenOrientation="portrait"/>
 
         <!-- Probe Services -->
         <service android:name="edu.mit.media.funf.probe.builtin.ActivityProbe"></service>

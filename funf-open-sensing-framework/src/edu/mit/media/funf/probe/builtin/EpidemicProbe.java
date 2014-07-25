@@ -46,6 +46,7 @@ import edu.mit.media.funf.probe.SensorProbe;
 
 import edu.mit.media.funf.probe.CursorCell;
 import edu.mit.media.funf.probe.DatedContentProviderProbe;
+import edu.mit.media.funf.probe.edu.mit.media.funf.activity.EpiDescriptionActivity;
 
 /**
  * Created by arks on 15/07/14.
@@ -55,13 +56,14 @@ public class EpidemicProbe extends Probe implements ProbeKeys.EpidemicsKeys {
 
 
     private static final String DELEGATE_PROBE_NAME = BluetoothProbe.class.getName();
-    private static final String OWN_NAME = "edu.mit.media.funf.probe.builtin.EpidemicProbe";
+    public static final String OWN_NAME = "edu.mit.media.funf.probe.builtin.EpidemicProbe";
     private Handler handler;
     private Epidemic epidemic = null;
 
-    private String EPI_TAG = "EPI_TAG";
+    public static final String EPI_TAG = "EPI_TAG";
+    public static final String EPI_DIALOG_PREF_PREFIX = "epi_dialog_";
 
-    private enum SelfState { S, I, V};
+    private enum SelfState { S, E, I, R, V};
 
     private boolean firstRun = true;
     private Bundle runData = null;
@@ -153,22 +155,29 @@ public class EpidemicProbe extends Probe implements ProbeKeys.EpidemicsKeys {
         BluetoothAdapter mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
         private String INFECTED_TAG = "00xbad1dea";
         private Float INFECTION_PROBABILITY = 0.0f;
+        private Long EXPOSED_DURATION = 30 * 60 * 1000l;
+        private Long RECOVERED_DURATION = 60 * 60 * 1000l;
+
         private HashMap<Long, String> STATES = null;
         private HashMap<Long, String> INFECTED_TAGS = null;
         private HashMap<Long, Float> INFECTION_PROBABILITIES = null;
         private long SCAN_DELTA = 250 * 1000;
         private long TIME_LIMIT = 12 * 60 * 60 * 1000;
         private SelfState selfState = SelfState.S;
+
+
         private boolean SILENT_NIGHT = true;
-
-
         private float POPUP_PROBABILITY = 0.0f;
         private float VIBRATE_PROBABILITY = 0.0f;
+
+        private SelfState STATE_AFTER_INFECTED = SelfState.R;
+        private boolean HIDDEN_MODE = true; //don't show any dialogs
+        private boolean SHOW_WELCOME_DIALOG = false;
 
 
         public void handleBluetoothData(Bundle data) {
 
-
+                showDescription();
 
 
                 runData = new Bundle();
@@ -187,8 +196,13 @@ public class EpidemicProbe extends Probe implements ProbeKeys.EpidemicsKeys {
                 Log.d(EPI_TAG, selfState.toString() + " " + scanResults.toString());
 
 
-                if (selfState.equals(SelfState.I)) {
+                if (selfState.equals(SelfState.E)) {
+                    setSusceptibleName();
+                    infect();
+                }
+                else if (selfState.equals(SelfState.I)) {
                     setInfectedName(); //just in case
+                    recover();
                 } else if (selfState.equals(SelfState.V)) {
                     setSusceptibleName(); //just in case
                 } else if (selfState.equals(SelfState.S)) {
@@ -200,7 +214,7 @@ public class EpidemicProbe extends Probe implements ProbeKeys.EpidemicsKeys {
                         for (String device_id : scanResults.keySet()) {
                             if (scanResults.get(device_id) == null) continue;
                             if (isInfection(device_id, scanResults.get(device_id))) {
-                                setInfected(device_id, scanResults.get(device_id));
+                                setExposed(device_id, scanResults.get(device_id));
                                 break;
                             }
 
@@ -225,6 +239,25 @@ public class EpidemicProbe extends Probe implements ProbeKeys.EpidemicsKeys {
 
         }
 
+        private void infect() {
+            SharedPreferences settings = getSharedPreferences(OWN_NAME, 0);
+            Long toInfectTime = settings.getLong("to_infect_time", 0L);
+            String infectingDevice = settings.getString("infecting_device", "");
+            String infectingName = settings.getString("infecting_name", "");
+            if (toInfectTime == 0) return;
+
+            if (System.currentTimeMillis() >= toInfectTime) {
+                setInfected(infectingDevice, infectingName);
+            }
+
+        }
+
+
+        private Long calculateToInfectTime() {
+            Long toInfectTime = System.currentTimeMillis() + EXPOSED_DURATION;
+            return toInfectTime;
+        }
+
         private HashMap<String, String> bundleToHash(Bundle data){
             HashMap<String, String> devices = new HashMap<String, String>();
 
@@ -238,12 +271,32 @@ public class EpidemicProbe extends Probe implements ProbeKeys.EpidemicsKeys {
         }
 
 
+        private void recover() {
+            SharedPreferences settings = getSharedPreferences(OWN_NAME, 0);
+            Long toRecoverTime = settings.getLong("to_recover_time", 0L);
+            Log.d(EPI_TAG, "Trying to recover! "+System.currentTimeMillis() + " "+toRecoverTime+" "+STATE_AFTER_INFECTED);
+            if (toRecoverTime == 0) return;
+            if (System.currentTimeMillis() >= toRecoverTime) {
+               setRecovered();
+            }
+
+        }
+
+        private Long calculateToRecoverTime() {
+            Long toRecoverTime = System.currentTimeMillis() + RECOVERED_DURATION;
+            return  toRecoverTime;
+        }
+
+
         private void getCurrentState() {
             SharedPreferences settings = getSharedPreferences(OWN_NAME, 0);
             String state = settings.getString("self_state", "S");
             if (state.equals("S")) selfState = SelfState.S;
             if (state.equals("I")) selfState = SelfState.I;
             if (state.equals("V")) selfState = SelfState.V;
+            if (state.equals("E")) selfState = SelfState.E;
+            if (state.equals("R")) selfState = SelfState.R;
+
         }
 
         private void setCurrentState(SelfState state) {
@@ -251,7 +304,8 @@ public class EpidemicProbe extends Probe implements ProbeKeys.EpidemicsKeys {
             if (state.equals(SelfState.S)) saveLocalSharedPreference("self_state", "S");
             if (state.equals(SelfState.I)) saveLocalSharedPreference("self_state", "I");
             if (state.equals(SelfState.V)) saveLocalSharedPreference("self_state", "V");
-
+            if (state.equals(SelfState.E)) saveLocalSharedPreference("self_state", "E");
+            if (state.equals(SelfState.R)) saveLocalSharedPreference("self_state", "R");
 
         }
 
@@ -284,8 +338,12 @@ public class EpidemicProbe extends Probe implements ProbeKeys.EpidemicsKeys {
 
         private void setInfected(String device_id, String device_name) {
             if (selfState.equals(SelfState.I)) return;
-            Log.i(EPI_TAG, "infected! "+device_id+" "+device_name);
-            runData.putString("state", "infection_" + device_id + "_" + device_name);
+            Log.i(EPI_TAG, "infected! " + device_id + " " + device_name);
+            runData.putString("state", "infected_" + device_id + "_" + device_name);
+            saveLocalSharedPreference("to_infect_time", 0l);
+            saveLocalSharedPreference("to_recover_time", calculateToRecoverTime());
+            saveLocalSharedPreference("infecting_device", "");
+            saveLocalSharedPreference("infecting_name", "");
             setCurrentState(SelfState.I);
             setInfectedName();
         }
@@ -294,6 +352,10 @@ public class EpidemicProbe extends Probe implements ProbeKeys.EpidemicsKeys {
             if (selfState.equals(SelfState.S)) return;
             Log.i(EPI_TAG, "susceptible!");
             runData.putString("state", "susceptible");
+            saveLocalSharedPreference("to_infect_time", 0l);
+            saveLocalSharedPreference("to_recover_time", 0l);
+            saveLocalSharedPreference("infecting_device", "");
+            saveLocalSharedPreference("infecting_name", "");
             setCurrentState(SelfState.S);
             setSusceptibleName();
         }
@@ -302,7 +364,35 @@ public class EpidemicProbe extends Probe implements ProbeKeys.EpidemicsKeys {
             if (selfState.equals(SelfState.V)) return;
             Log.i(EPI_TAG, "vaccinated!");
             runData.putString("state", "vaccinated");
+            saveLocalSharedPreference("to_infect_time", 0l);
+            saveLocalSharedPreference("to_recover_time", 0l);
+            saveLocalSharedPreference("infecting_device", "");
+            saveLocalSharedPreference("infecting_name", "");
             setCurrentState(SelfState.V);
+            setSusceptibleName();
+        }
+
+        private void setExposed(String device_id, String device_name) {
+            if (selfState.equals(SelfState.E)) return;
+            Log.i(EPI_TAG, "exposed! "+device_id+" "+device_name);
+            runData.putString("state", "exposed_" + device_id + "_" + device_name);
+            saveLocalSharedPreference("to_infect_time", calculateToInfectTime());
+            saveLocalSharedPreference("to_recover_time", 0l);
+            saveLocalSharedPreference("infecting_device", device_id);
+            saveLocalSharedPreference("infecting_name", device_name);
+            setCurrentState(SelfState.E);
+            setInfectedName();
+        }
+
+        private void setRecovered() {
+            if (selfState.equals(SelfState.R)) return;
+            Log.i(EPI_TAG, "recovered!");
+            runData.putString("state", "recovered");
+            saveLocalSharedPreference("to_infect_time", 0l);
+            saveLocalSharedPreference("to_recover_time", 0l);
+            saveLocalSharedPreference("infecting_device", "");
+            saveLocalSharedPreference("infecting_name", "");
+            setCurrentState(STATE_AFTER_INFECTED);
             setSusceptibleName();
         }
 
@@ -399,6 +489,15 @@ public class EpidemicProbe extends Probe implements ProbeKeys.EpidemicsKeys {
             }
             catch (JSONException e) {}
 
+            try {
+                EXPOSED_DURATION = probeConfig.getLong("EXPOSED_DURATION") * 60 * 1000;
+            }
+            catch (JSONException e) {}
+
+            try {
+                RECOVERED_DURATION = probeConfig.getLong("RECOVERED_DURATION") * 60 * 1000;
+            }
+            catch (JSONException e) {}
 
             try {
                 SCAN_DELTA = probeConfig.getInt("SCAN_DELTA") * 1000;
@@ -422,6 +521,31 @@ public class EpidemicProbe extends Probe implements ProbeKeys.EpidemicsKeys {
 
             try {
                 SILENT_NIGHT = probeConfig.getBoolean("SILENT_NIGHT");
+            }
+            catch (JSONException e) {}
+
+            try {
+                HIDDEN_MODE = probeConfig.getBoolean("HIDDEN_MODE");
+            }
+            catch (JSONException e) {}
+
+            try {
+                SHOW_WELCOME_DIALOG = probeConfig.getBoolean("SHOW_WELCOME_DIALOG");
+            }
+            catch (JSONException e) {}
+
+            try {
+                String tempString =  probeConfig.getString("STATE_AFTER_INFECTED");
+                if (tempString.equals("S")) {
+                    STATE_AFTER_INFECTED = SelfState.S;
+                }
+                else if (tempString.equals("R")) {
+                    STATE_AFTER_INFECTED = SelfState.R;
+                }
+
+
+
+
             }
             catch (JSONException e) {}
 
@@ -643,7 +767,7 @@ public class EpidemicProbe extends Probe implements ProbeKeys.EpidemicsKeys {
             if (type.equals("S")) setSusceptible();
             if (type.equals("I")) setInfected("000000", "00_server_00");
             if (type.equals("V")) setVaccinated();
-            if (type.contains("R")) {
+            if (type.contains("RA_")) {
                 double probability = Double.parseDouble(type.split("_")[1]);
                 if (Math.random() < probability) {
                     setInfected("000000", "00_server_00");
@@ -703,7 +827,7 @@ public class EpidemicProbe extends Probe implements ProbeKeys.EpidemicsKeys {
         }
 
         private void showPopup() {
-
+            Log.d(EPI_TAG, "showing popup?");
             Context context = getApplicationContext();
             CharSequence text = "Sensible DTU: You are infected!";
             int duration = Toast.LENGTH_LONG;
@@ -718,11 +842,25 @@ public class EpidemicProbe extends Probe implements ProbeKeys.EpidemicsKeys {
             int currentHour = Calendar.getInstance().get(Calendar.HOUR_OF_DAY);
             Log.d(EPI_TAG, "showing symptoms! "+currentHour+" "+SILENT_NIGHT+" "+VIBRATE_PROBABILITY+" "+POPUP_PROBABILITY);
             if (SILENT_NIGHT && currentHour < 8) return;
-            if (Math.random() > VIBRATE_PROBABILITY) vibrate();
-            if (Math.random() > POPUP_PROBABILITY) showPopup();
+            if (Math.random() < VIBRATE_PROBABILITY) vibrate();
+            if (Math.random() < POPUP_PROBABILITY) showPopup();
         }
 
+        void showDescription() {
+            if (HIDDEN_MODE) return;
+            if (!SHOW_WELCOME_DIALOG) return;
+            SharedPreferences settings = getSharedPreferences(OWN_NAME, 0);
+            if (settings.getBoolean(EPI_DIALOG_PREF_PREFIX+"understood", false)) return;
+
+            Intent dialogIntent = new Intent(getBaseContext(), EpiDescriptionActivity.class);
+            dialogIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(dialogIntent);
+        }
+
+
     }
+
+
 
 
 
@@ -740,7 +878,14 @@ public class EpidemicProbe extends Probe implements ProbeKeys.EpidemicsKeys {
             startActivity(discoverableIntent);
         }
 
+
+
     }
 
+
+
+
+
 }
+
 

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="This is a game of Epidemics from Sensible DTU. The game works like this... Now that we know who you are, I know who I am. I'm not a mistake! It all makes sense! In a comic, you know how you can tell who the arch-villain's going to be? He's the exact opposite of the hero. And most times they're friends, like you and me! I should've known way back when... You know why, David? Because of the kids. They called me Mr Glass."
+        android:id="@+id/textView"
+        android:layout_gravity="center_horizontal"
+        android:layout_margin="10dp" />
+
+    <Button android:id="@+id/understand_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Got it!"
+        android:layout_gravity="center_horizontal"
+        android:onClick="understand"
+        />
+</LinearLayout>
