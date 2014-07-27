@@ -32,3 +32,4 @@ out/
 *.swp
 
 SECURE_keystore
+SECURE_*
