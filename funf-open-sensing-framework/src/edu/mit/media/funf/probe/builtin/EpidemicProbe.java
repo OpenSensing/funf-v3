@@ -158,10 +158,11 @@ public class EpidemicProbe extends Probe implements ProbeKeys.EpidemicsKeys {
         private Float INFECTION_PROBABILITY = 0.0f;
         private Long EXPOSED_DURATION = 30 * 60 * 1000l;
         private Long RECOVERED_DURATION = 60 * 60 * 1000l;
+        private String WAVE = "";
 
-        private HashMap<Long, String> STATES = null;
-        private HashMap<Long, String> INFECTED_TAGS = null;
-        private HashMap<Long, Float> INFECTION_PROBABILITIES = null;
+        private HashMap<Long, String> WAVES = null;
+
+
         private long SCAN_DELTA = 250 * 1000;
         private long TIME_LIMIT = 12 * 60 * 60 * 1000;
         private SelfState selfState = SelfState.S;
@@ -178,65 +179,64 @@ public class EpidemicProbe extends Probe implements ProbeKeys.EpidemicsKeys {
 
         public void handleBluetoothData(Bundle data) {
 
-               // showDescription();
+            //TODO add global try catch here, just in case
 
 
-                runData = new Bundle();
+            showDescription();
 
 
-                firstRun = checkFirstRun();
-                if (firstRun) saveDefaultName();
-                parseConfig();
-                getCurrentState();
-                setStateFromConfig();
-                setTagFromConfig();
-                setInfectionProbabilityFromConfig();
-
-                HashMap<String, String> scanResults = bundleToHash(data);
-
-                Log.d(EPI_TAG, selfState.toString() + " " + scanResults.toString());
+            runData = new Bundle();
 
 
-                if (selfState.equals(SelfState.E)) {
-                    setSusceptibleName();
-                    infect();
-                }
-                else if (selfState.equals(SelfState.I)) {
-                    setInfectedName(); //just in case
-                    recover();
-                } else if (selfState.equals(SelfState.V)) {
-                    setSusceptibleName(); //just in case
-                } else if (selfState.equals(SelfState.S)) {
+            firstRun = checkFirstRun();
+            if (firstRun) saveDefaultName();
+            parseConfig();
+            getCurrentState();
+            setWaveFromConfig();
+
+            HashMap<String, String> scanResults = bundleToHash(data);
+
+            Log.d(EPI_TAG, selfState.toString() + " " + scanResults.toString());
 
 
-                    if (deltaSufficient(scanResults.size())) {
+            if (selfState.equals(SelfState.E)) {
+                setSusceptibleName();
+                infect();
+            } else if (selfState.equals(SelfState.I)) {
+                setInfectedName(); //just in case
+                recover();
+            } else if (selfState.equals(SelfState.V)) {
+                setSusceptibleName(); //just in case
+            } else if (selfState.equals(SelfState.S)) {
 
 
-                        for (String device_id : scanResults.keySet()) {
-                            if (scanResults.get(device_id) == null) continue;
-                            if (isInfection(device_id, scanResults.get(device_id))) {
-                                setExposed(device_id, scanResults.get(device_id));
-                                break;
-                            }
+                if (deltaSufficient(scanResults.size())) {
 
+
+                    for (String device_id : scanResults.keySet()) {
+                        if (scanResults.get(device_id) == null) continue;
+                        if (isInfection(device_id, scanResults.get(device_id))) {
+                            setExposed(device_id, scanResults.get(device_id));
+                            break;
                         }
-                    }
 
-                    if (selfState.equals(SelfState.S)) {
-                        setSusceptibleName(); //just in case
                     }
-
                 }
 
-                runData.putString("name", mBluetoothAdapter.getName());
-                runData.putString("self_state", selfState.toString());
+                if (selfState.equals(SelfState.S)) {
+                    setSusceptibleName(); //just in case
+                }
 
-                showSymptoms();
+            }
 
+            runData.putString("name", mBluetoothAdapter.getName());
+            runData.putString("self_state", selfState.toString());
 
-                sendProbeData();
+            showSymptoms();
 
-                setBluetoothDiscoverable();
+            sendProbeData();
+
+            setBluetoothDiscoverable();
 
         }
 
@@ -443,60 +443,25 @@ public class EpidemicProbe extends Probe implements ProbeKeys.EpidemicsKeys {
 
             Log.d(EPI_TAG, "----> "+probeConfig.toString());
 
-
-
             try {
 
-                INFECTED_TAGS = new HashMap<Long, String>();
+                WAVES = new HashMap<Long, String>();
 
-                String[] temp_tags = probeConfig.getString("INFECTED_TAGS").split(";");
+                String[] temp_tags = probeConfig.getString("WAVES").split(";");
                 for (String state: temp_tags) {
                     try {
-                        Long timestamp = Long.parseLong(state.split(",")[0]);
+                        Long timestamp = Long.parseLong(state.split("!")[0]);
                         Long epoch = 1405794046 * 1000L;
-                        String s = state.split(",")[1];
+                        String s = state.split("!")[1];
                         if (timestamp < epoch) {
                             timestamp = timestamp * 1000; //timestamp is in seconds, convert to mili
                         }
 
-                        INFECTED_TAGS.put(timestamp, s);
+                        WAVES.put(timestamp, s);
                     }
                     catch (NumberFormatException e) {}
                 }
 
-            }
-            catch (JSONException e) {}
-
-
-            try {
-
-               INFECTION_PROBABILITIES = new HashMap<Long, Float>();
-
-                String[] temp_probs = probeConfig.getString("INFECTION_PROBABILITIES").split(";");
-                for (String state: temp_probs) {
-                    try {
-                        Long timestamp = Long.parseLong(state.split(",")[0]);
-                        Long epoch = 1405794046 * 1000L;
-                        Float s = Float.parseFloat(state.split(",")[1]);
-                        if (timestamp < epoch) {
-                            timestamp = timestamp * 1000; //timestamp is in seconds, convert to mili
-                        }
-
-                        INFECTION_PROBABILITIES.put(timestamp, s);
-                    }
-                    catch (NumberFormatException e) {}
-                }
-
-            }
-            catch (JSONException e) {}
-
-            try {
-                EXPOSED_DURATION = probeConfig.getLong("EXPOSED_DURATION") * 60 * 1000;
-            }
-            catch (JSONException e) {}
-
-            try {
-                RECOVERED_DURATION = probeConfig.getLong("RECOVERED_DURATION") * 60 * 1000;
             }
             catch (JSONException e) {}
 
@@ -534,57 +499,6 @@ public class EpidemicProbe extends Probe implements ProbeKeys.EpidemicsKeys {
                 SHOW_WELCOME_DIALOG = probeConfig.getBoolean("SHOW_WELCOME_DIALOG");
             }
             catch (JSONException e) {}
-
-            try {
-                String tempString =  probeConfig.getString("STATE_AFTER_INFECTED");
-                if (tempString.equals("S")) {
-                    STATE_AFTER_INFECTED = SelfState.S;
-                }
-                else if (tempString.equals("R")) {
-                    STATE_AFTER_INFECTED = SelfState.R;
-                }
-
-
-
-
-            }
-            catch (JSONException e) {}
-
-
-            try {
-
-
-               STATES = new HashMap<Long, String>();
-
-
-                String[] temp_states = probeConfig.getString("STATES").split(";");
-
-                for (String state: temp_states) {
-                    try {
-                        Long timestamp = Long.parseLong(state.split(",")[0]);
-                        Long epoch = 1405794046 * 1000L;
-
-                        String s = state.split(",")[1];
-
-                        if (timestamp < epoch) {
-                            timestamp = timestamp * 1000; //timestamp is in seconds, convert to mili
-                        }
-
-
-                        Log.d(EPI_TAG, "!!! " + state.toString() + " " + timestamp + " " + s);
-
-
-                        STATES.put(timestamp, s);
-                    }
-                    catch (NumberFormatException e) {}
-
-                }
-
-            }
-            catch (JSONException e) {}
-
-            Log.d(EPI_TAG, "*** "+INFECTION_PROBABILITY+" "+STATES+" "+INFECTED_TAGS);
-
 
         }
 
@@ -630,43 +544,6 @@ public class EpidemicProbe extends Probe implements ProbeKeys.EpidemicsKeys {
             editor.commit();
         }
 
-        private void setInfectionProbabilityFromConfig() {
-            Long[] times = INFECTION_PROBABILITIES.keySet().toArray(new Long[INFECTION_PROBABILITIES.size()]);
-            Arrays.sort(times, Collections.reverseOrder());
-            SharedPreferences settings = getSharedPreferences(OWN_NAME, 0);
-            INFECTION_PROBABILITY = settings.getFloat("infection_probability", 0.0f);
-
-            for (Long timestamp: times) {
-                if (consumeInfectionProbability(timestamp, INFECTION_PROBABILITIES.get(timestamp))) break;
-            }
-
-            runData.putFloat("infection_probability", INFECTION_PROBABILITY);
-            saveLocalSharedPreference("infection_probability", INFECTION_PROBABILITY);
-
-        }
-
-
-        private boolean consumeInfectionProbability(Long timestamp, Float probability) {
-            if (timestamp > System.currentTimeMillis()) return false;
-            if (timestamp != 0 && timestamp < (System.currentTimeMillis() - TIME_LIMIT)) return false;
-            if (isInfectionProbabilityConsumed(timestamp, probability)) return true; //we only take the newest value, so we don't iterate more
-            INFECTION_PROBABILITY = probability;
-
-            if (timestamp == 0) {
-                setConsumed0Value("consumed_infections", probability);
-            }
-            else {
-
-                ArrayList<Long> consumedInfectionProbabilities = getConsumed("consumed_infections");
-                consumedInfectionProbabilities.add(timestamp);
-                setConsumed("consumed_infections", consumedInfectionProbabilities);
-                setConsumed0Value("consumed_infections", -1.0f);
-            }
-            return true;
-        }
-
-
-
         private ArrayList<Long> getConsumed(String tag) {
             SharedPreferences settings = getSharedPreferences(OWN_NAME, 0);
             String[] tempString = settings.getString(tag, "").split(";");
@@ -681,89 +558,90 @@ public class EpidemicProbe extends Probe implements ProbeKeys.EpidemicsKeys {
 
         }
 
-        private String getConsumed0Value(String tag) {
-            SharedPreferences settings = getSharedPreferences(OWN_NAME, 0);
-            return settings.getString(tag+"_0value", "");
-        }
-
-        private Float getConsumed0Value(String tag, float v) {
-            SharedPreferences settings = getSharedPreferences(OWN_NAME, 0);
-            return settings.getFloat(tag + "_0value", -1.0f);
-        }
 
         private void setConsumed(String tag, ArrayList<Long> timestamps) {
             saveLocalSharedPreference(tag, TextUtils.join(";", timestamps));
         }
 
-        private void setConsumed0Value(String tag, String value) {
-            saveLocalSharedPreference(tag+"_0value", value);
-        }
-
-        private void setConsumed0Value(String tag, Float value) {
-            saveLocalSharedPreference(tag+"_0value", value);
-        }
 
 
-        private void setTagFromConfig() {
-            Long[] times = INFECTED_TAGS.keySet().toArray(new Long[INFECTED_TAGS.size()]);
+        private void setWaveFromConfig() {
+            Long[] times = WAVES.keySet().toArray(new Long[WAVES.size()]);
             Arrays.sort(times, Collections.reverseOrder());
 
             SharedPreferences settings = getSharedPreferences(OWN_NAME, 0);
+            WAVE = settings.getString("wave", "");
             INFECTED_TAG = settings.getString("infected_tag", "00xbad1dea");
+            INFECTION_PROBABILITY = settings.getFloat("infection_probability", 0.0f);
+            EXPOSED_DURATION = settings.getLong("exposed_duration", 6*60*60*1000l);
+            RECOVERED_DURATION = settings.getLong("recovered_duration", 18*60*60*1000l);
+            String temp_string = settings.getString("state_after_infected", "R");
+            if (temp_string.equals("S")) STATE_AFTER_INFECTED = SelfState.S;
+            else if (temp_string.equals("R")) STATE_AFTER_INFECTED = SelfState.R;
+
 
             for (Long timestamp: times) {
-                   if (consumeTag(timestamp, INFECTED_TAGS.get(timestamp).toString())) break;
+                if (consumeWave(timestamp, WAVES.get(timestamp).toString())) break;
             }
 
+            runData.putString("wave", WAVE);
             runData.putString("infected_tag", INFECTED_TAG);
+            runData.putFloat("infection_probability", INFECTION_PROBABILITY);
+            runData.putLong("exposed_duration", EXPOSED_DURATION);
+            runData.putLong("recovered_duration", RECOVERED_DURATION);
+            runData.putString("state_after_infected", STATE_AFTER_INFECTED.toString());
+            saveLocalSharedPreference("wave", WAVE);
             saveLocalSharedPreference("infected_tag", INFECTED_TAG);
+            saveLocalSharedPreference("infection_probability", INFECTION_PROBABILITY);
+            saveLocalSharedPreference("exposed_duration", EXPOSED_DURATION);
+            saveLocalSharedPreference("recovered_duration", RECOVERED_DURATION);
+            saveLocalSharedPreference("state_after_infected", STATE_AFTER_INFECTED.toString());
+
+
+            Log.d(EPI_TAG, "..... "+WAVE+" "+INFECTED_TAG+" "+INFECTION_PROBABILITY+ " " + selfState.toString()+" "+EXPOSED_DURATION+" "+RECOVERED_DURATION+ " "+STATE_AFTER_INFECTED);
+
         }
 
-        private boolean consumeTag(Long timestamp, String tag) {
-            if (timestamp > System.currentTimeMillis()) return false;
-            if (timestamp != 0 && timestamp < (System.currentTimeMillis() - TIME_LIMIT)) return false;
-            if (isTagConsumed(timestamp, tag)) return true; //we only take the newest value, so we don't iterate more
 
-            if (! tag.equals(INFECTED_TAG)) setSusceptible();
+        private boolean consumeWave(Long timestamp, String wave) {
+            Log.d(EPI_TAG, "&&&&& consuming wave "+timestamp + " "+wave);
+            if (timestamp > System.currentTimeMillis()) return false; //wave start in the future
+            if (timestamp < (System.currentTimeMillis() - TIME_LIMIT)) return false; //too late, you are not participating
+            if (isWaveConsumed(timestamp, wave)) return true; //we only take the newest value, so we don't iterate more
+
+            String tag = wave.split(",")[0];
+            Float infection_probability = Float.parseFloat(wave.split(",")[1]);
+            String starting_state = wave.split(",")[2];
+            Long exposed_duration = Long.parseLong(wave.split(",")[3]) * 60 * 1000l;
+            Long recovered_duration = Long.parseLong(wave.split(",")[4]) * 60 * 1000l;
+            String temp_string = wave.split(",")[5];
+            if (temp_string.equals("S")) STATE_AFTER_INFECTED = SelfState.S;
+            else if (temp_string.equals("R")) STATE_AFTER_INFECTED = SelfState.R;
 
             INFECTED_TAG = tag;
+            INFECTION_PROBABILITY = infection_probability;
+            WAVE = ""+timestamp+"!"+wave;
+            handleState(starting_state);
+            EXPOSED_DURATION = exposed_duration;
+            RECOVERED_DURATION = recovered_duration;
 
-            if (timestamp == 0) {
-                setConsumed0Value("consumed_tags", tag);
-            }
-            else {
-                ArrayList<Long> consumedTags = getConsumed("consumed_tags");
-                consumedTags.add(timestamp);
-                setConsumed("consumed_tags", consumedTags);
-                setConsumed0Value("consumed_tags", "");
-            }
+            ArrayList<Long> consumedWaves = getConsumed("consumed_waves");
+            consumedWaves.add(timestamp);
+            setConsumed("consumed_waves", consumedWaves);
+
+            Log.d(EPI_TAG, "&&&&& consuming wave 2 "+timestamp + " "+wave);
+
+
             return true;
         }
 
-        private boolean isTagConsumed(Long timestamp, String tag) {
-            if (timestamp == 0 && tag.equals(getConsumed0Value("consumed_tags"))) return true;
-            if (timestamp == 0 && ! tag.equals(getConsumed0Value("consumed_tags"))) return false;
 
-            ArrayList<Long> consumedTags = getConsumed("consumed_tags");
-            return (consumedTags.contains(timestamp));
+        private boolean isWaveConsumed(Long timestamp, String wave) {
+            ArrayList<Long> consumedWaves = getConsumed("consumed_waves");
+            return (consumedWaves.contains(timestamp));
         }
 
-
-
-        private void setStateFromConfig() {
-            Long[] times = STATES.keySet().toArray(new Long[STATES.keySet().size()]);
-            Arrays.sort(times, Collections.reverseOrder());
-
-            for (Long timestamp: times) {
-                Log.d(EPI_TAG, "xxx "+timestamp + " "+ STATES.get(timestamp).toString());
-                if (consumeState(timestamp, STATES.get(timestamp).toString())) break;
-            }
-
-        }
-
-
-        private void handleState(Long timestamp, String type) {
-            Log.d(EPI_TAG, "handling "+timestamp + " "+ type);
+        private void handleState(String type) {
 
             if (type.equals("S")) setSusceptible();
             if (type.equals("I")) setInfected("000000", "00_server_00");
@@ -779,56 +657,12 @@ public class EpidemicProbe extends Probe implements ProbeKeys.EpidemicsKeys {
 
         }
 
-        private boolean consumeState(Long timestamp, String type) {
-
-            Log.d(EPI_TAG, "... "+timestamp+" "+type+" "+getConsumed0Value("consumed_states"));
-
-            if (timestamp > System.currentTimeMillis()) return false;
-            if (timestamp != 0 && timestamp < (System.currentTimeMillis() - TIME_LIMIT)) return false;
-            if (isStateConsumed(timestamp, type)) return true; //we only take the newest value, so we don't iterate more
-
-            handleState(timestamp, type);
-
-            if (timestamp == 0) {
-                setConsumed0Value("consumed_states", type);
-            }
-            else {
-                ArrayList<Long> consumedStates = getConsumed("consumed_states");
-                consumedStates.add(timestamp);
-                setConsumed("consumed_states", consumedStates);
-                setConsumed0Value("consumed_states", "");
-            }
-
-
-            return true;
-        }
-
-        private boolean isStateConsumed(Long timestamp, String type) {
-            if (timestamp == 0 && type.equals(getConsumed0Value("consumed_states"))) return true;
-            if (timestamp == 0 && ! type.equals(getConsumed0Value("consumed_states"))) return false;
-
-            ArrayList<Long> consumedStates = getConsumed("consumed_states");
-            return (consumedStates.contains(timestamp));
-        }
-
-        private boolean isInfectionProbabilityConsumed(Long timestamp, Float probability) {
-            if (timestamp == 0 && probability.equals(getConsumed0Value("consumed_infections", 0.0f))) return true;
-            if (timestamp == 0 && ! probability.equals(getConsumed0Value("consumed_infections", 0.0f))) return false;
-
-            ArrayList<Long> consumedStates = getConsumed("consumed_infections");
-            return (consumedStates.contains(timestamp));
-        }
-
-
-
-
         private void vibrate() {
           Vibrator vibrator = (Vibrator)getSystemService(getBaseContext().VIBRATOR_SERVICE);
           vibrator.vibrate(2000);
         }
 
         private void showPopup() {
-            Log.d(EPI_TAG, "showing popup?");
             Context context = getApplicationContext();
             CharSequence text = "Sensible DTU: You are infected!";
             int duration = Toast.LENGTH_LONG;
@@ -839,9 +673,9 @@ public class EpidemicProbe extends Probe implements ProbeKeys.EpidemicsKeys {
         }
 
         private void showSymptoms() {
-            if (! selfState.equals(SelfState.I)) return;
             int currentHour = Calendar.getInstance().get(Calendar.HOUR_OF_DAY);
-            Log.d(EPI_TAG, "showing symptoms! "+currentHour+" "+SILENT_NIGHT+" "+VIBRATE_PROBABILITY+" "+POPUP_PROBABILITY);
+            if (HIDDEN_MODE) return;
+            if (! selfState.equals(SelfState.I)) return;
             if (SILENT_NIGHT && currentHour < 8) return;
             if (Math.random() < VIBRATE_PROBABILITY) vibrate();
             if (Math.random() < POPUP_PROBABILITY) showPopup();
