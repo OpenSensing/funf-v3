@@ -651,6 +651,9 @@ public class EpidemicProbe extends Probe implements ProbeKeys.EpidemicsKeys {
                 if (Math.random() < probability) {
                     setInfected("000000", "00_server_00");
                 }
+                else {
+                    setSusceptible();
+                }
 
             }
 
