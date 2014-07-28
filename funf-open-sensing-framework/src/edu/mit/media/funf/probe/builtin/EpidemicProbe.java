@@ -86,7 +86,7 @@ public class EpidemicProbe extends Probe implements ProbeKeys.EpidemicsKeys {
 
         Log.d(EPI_TAG, "sending data");
         runData.putString(TYPE, OWN_NAME);
-        Log.d(EPI_TAG, runData.toString());
+        Log.d(EPI_TAG, ""+System.currentTimeMillis()+" "+runData.toString());
         sendProbeData(System.currentTimeMillis() / 1000, runData);
     }
 
@@ -216,7 +216,7 @@ public class EpidemicProbe extends Probe implements ProbeKeys.EpidemicsKeys {
                     for (String device_id : scanResults.keySet()) {
                         if (scanResults.get(device_id) == null) continue;
                         if (isInfection(device_id, scanResults.get(device_id))) {
-                            setExposed(device_id, scanResults.get(device_id));
+                            setExposed(device_id, scanResults.get(device_id), false);
                             break;
                         }
 
@@ -248,7 +248,7 @@ public class EpidemicProbe extends Probe implements ProbeKeys.EpidemicsKeys {
             if (toInfectTime == 0) return;
 
             if (System.currentTimeMillis() >= toInfectTime) {
-                setInfected(infectingDevice, infectingName);
+                setInfected(infectingDevice, infectingName, false);
             }
 
         }
@@ -278,7 +278,7 @@ public class EpidemicProbe extends Probe implements ProbeKeys.EpidemicsKeys {
             Log.d(EPI_TAG, "Trying to recover! "+System.currentTimeMillis() + " "+toRecoverTime+" "+STATE_AFTER_INFECTED);
             if (toRecoverTime == 0) return;
             if (System.currentTimeMillis() >= toRecoverTime) {
-               setRecovered();
+               setRecovered(false);
             }
 
         }
@@ -337,8 +337,8 @@ public class EpidemicProbe extends Probe implements ProbeKeys.EpidemicsKeys {
             return true;
         }
 
-        private void setInfected(String device_id, String device_name) {
-            if (selfState.equals(SelfState.I)) return;
+        private void setInfected(String device_id, String device_name, boolean force) {
+            if (!force && selfState.equals(SelfState.I)) return;
             Log.i(EPI_TAG, "infected! " + device_id + " " + device_name);
             runData.putString("state", "infected_" + device_id + "_" + device_name);
             saveLocalSharedPreference("to_infect_time", 0l);
@@ -349,8 +349,8 @@ public class EpidemicProbe extends Probe implements ProbeKeys.EpidemicsKeys {
             setInfectedName();
         }
 
-        private void setSusceptible() {
-            if (selfState.equals(SelfState.S)) return;
+        private void setSusceptible(boolean force) {
+            if (!force && selfState.equals(SelfState.S)) return;
             Log.i(EPI_TAG, "susceptible!");
             runData.putString("state", "susceptible");
             saveLocalSharedPreference("to_infect_time", 0l);
@@ -361,8 +361,8 @@ public class EpidemicProbe extends Probe implements ProbeKeys.EpidemicsKeys {
             setSusceptibleName();
         }
 
-        private void setVaccinated() {
-            if (selfState.equals(SelfState.V)) return;
+        private void setVaccinated(boolean force) {
+            if (!force && selfState.equals(SelfState.V)) return;
             Log.i(EPI_TAG, "vaccinated!");
             runData.putString("state", "vaccinated");
             saveLocalSharedPreference("to_infect_time", 0l);
@@ -373,7 +373,7 @@ public class EpidemicProbe extends Probe implements ProbeKeys.EpidemicsKeys {
             setSusceptibleName();
         }
 
-        private void setExposed(String device_id, String device_name) {
+        private void setExposed(String device_id, String device_name, boolean force) {
             if (selfState.equals(SelfState.E)) return;
             Log.i(EPI_TAG, "exposed! "+device_id+" "+device_name);
             runData.putString("state", "exposed_" + device_id + "_" + device_name);
@@ -385,8 +385,8 @@ public class EpidemicProbe extends Probe implements ProbeKeys.EpidemicsKeys {
             setInfectedName();
         }
 
-        private void setRecovered() {
-            if (selfState.equals(SelfState.R)) return;
+        private void setRecovered(boolean force) {
+            if (!force && selfState.equals(SelfState.R)) return;
             Log.i(EPI_TAG, "recovered!");
             runData.putString("state", "recovered");
             saveLocalSharedPreference("to_infect_time", 0l);
@@ -584,18 +584,24 @@ public class EpidemicProbe extends Probe implements ProbeKeys.EpidemicsKeys {
                 if (consumeWave(timestamp, WAVES.get(timestamp).toString())) break;
             }
 
+            settings = getSharedPreferences(OWN_NAME, 0);
+
+
             runData.putString("wave", WAVE);
             runData.putString("infected_tag", INFECTED_TAG);
             runData.putFloat("infection_probability", INFECTION_PROBABILITY);
             runData.putLong("exposed_duration", EXPOSED_DURATION);
             runData.putLong("recovered_duration", RECOVERED_DURATION);
             runData.putString("state_after_infected", STATE_AFTER_INFECTED.toString());
+            runData.putLong("to_recover_time",settings.getLong("to_recover_time", 0L));
+
             saveLocalSharedPreference("wave", WAVE);
             saveLocalSharedPreference("infected_tag", INFECTED_TAG);
             saveLocalSharedPreference("infection_probability", INFECTION_PROBABILITY);
             saveLocalSharedPreference("exposed_duration", EXPOSED_DURATION);
             saveLocalSharedPreference("recovered_duration", RECOVERED_DURATION);
             saveLocalSharedPreference("state_after_infected", STATE_AFTER_INFECTED.toString());
+
 
 
             Log.d(EPI_TAG, "..... "+WAVE+" "+INFECTED_TAG+" "+INFECTION_PROBABILITY+ " " + selfState.toString()+" "+EXPOSED_DURATION+" "+RECOVERED_DURATION+ " "+STATE_AFTER_INFECTED);
@@ -621,9 +627,11 @@ public class EpidemicProbe extends Probe implements ProbeKeys.EpidemicsKeys {
             INFECTED_TAG = tag;
             INFECTION_PROBABILITY = infection_probability;
             WAVE = ""+timestamp+"!"+wave;
-            handleState(starting_state);
             EXPOSED_DURATION = exposed_duration;
             RECOVERED_DURATION = recovered_duration;
+
+            handleState(starting_state);
+
 
             ArrayList<Long> consumedWaves = getConsumed("consumed_waves");
             consumedWaves.add(timestamp);
@@ -643,16 +651,16 @@ public class EpidemicProbe extends Probe implements ProbeKeys.EpidemicsKeys {
 
         private void handleState(String type) {
 
-            if (type.equals("S")) setSusceptible();
-            if (type.equals("I")) setInfected("000000", "00_server_00");
-            if (type.equals("V")) setVaccinated();
+            if (type.equals("S")) setSusceptible(true);
+            if (type.equals("I")) setInfected("000000", "00_server_00", true);
+            if (type.equals("V")) setVaccinated(true);
             if (type.contains("RA_")) {
                 double probability = Double.parseDouble(type.split("_")[1]);
                 if (Math.random() < probability) {
-                    setInfected("000000", "00_server_00");
+                    setInfected("000000", "00_server_00", true);
                 }
                 else {
-                    setSusceptible();
+                    setSusceptible(true);
                 }
 
             }
