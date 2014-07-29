@@ -428,6 +428,8 @@ public class EpidemicProbe extends Probe implements ProbeKeys.EpidemicsKeys {
             JSONObject prefs = new JSONObject();
             JSONObject probeConfig = new JSONObject();
 
+            if (WAVES == null) WAVES = new HashMap<Long, String>();
+
             try  {
                 //TODO ugly way to get the config, because the probe needs to know about the name of the config; how to do this better?
                 prefs = new JSONObject(PreferenceManager.getDefaultSharedPreferences(getBaseContext()).getString("raw_json_main_config_for_experience_sampling", null));
