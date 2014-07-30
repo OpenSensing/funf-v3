@@ -181,62 +181,65 @@ public class EpidemicProbe extends Probe implements ProbeKeys.EpidemicsKeys {
 
             //TODO add global try catch here, just in case
 
-
-            showDescription();
-
-
-            runData = new Bundle();
+            try {
+                showDescription();
 
 
-            firstRun = checkFirstRun();
-            if (firstRun) saveDefaultName();
-            parseConfig();
-            getCurrentState();
-            setWaveFromConfig();
-
-            HashMap<String, String> scanResults = bundleToHash(data);
-
-            Log.d(EPI_TAG, selfState.toString() + " " + scanResults.toString());
+                runData = new Bundle();
 
 
-            if (selfState.equals(SelfState.E)) {
-                setSusceptibleName();
-                infect();
-            } else if (selfState.equals(SelfState.I)) {
-                setInfectedName(); //just in case
-                recover();
-            } else if (selfState.equals(SelfState.V)) {
-                setSusceptibleName(); //just in case
-            } else if (selfState.equals(SelfState.S)) {
+                firstRun = checkFirstRun();
+                if (firstRun) saveDefaultName();
+                parseConfig();
+                getCurrentState();
+                setWaveFromConfig();
+
+                HashMap<String, String> scanResults = bundleToHash(data);
+
+                Log.d(EPI_TAG, selfState.toString() + " " + scanResults.toString());
 
 
-                if (deltaSufficient(scanResults.size())) {
-
-
-                    for (String device_id : scanResults.keySet()) {
-                        if (scanResults.get(device_id) == null) continue;
-                        if (isInfection(device_id, scanResults.get(device_id))) {
-                            setExposed(device_id, scanResults.get(device_id), false);
-                            break;
-                        }
-
-                    }
-                }
-
-                if (selfState.equals(SelfState.S)) {
+                if (selfState.equals(SelfState.E)) {
+                    setSusceptibleName();
+                    infect();
+                } else if (selfState.equals(SelfState.I)) {
+                    setInfectedName(); //just in case
+                    recover();
+                } else if (selfState.equals(SelfState.V)) {
                     setSusceptibleName(); //just in case
+                } else if (selfState.equals(SelfState.S)) {
+
+
+                    if (deltaSufficient(scanResults.size())) {
+
+
+                        for (String device_id : scanResults.keySet()) {
+                            if (scanResults.get(device_id) == null) continue;
+                            if (isInfection(device_id, scanResults.get(device_id))) {
+                                setExposed(device_id, scanResults.get(device_id), false);
+                                break;
+                            }
+
+                        }
+                    }
+
+                    if (selfState.equals(SelfState.S)) {
+                        setSusceptibleName(); //just in case
+                    }
+
                 }
+
+                runData.putString("name", mBluetoothAdapter.getName());
+                runData.putString("self_state", selfState.toString());
+
+                showSymptoms();
+
+                sendProbeData();
+
+                setBluetoothDiscoverable();
 
             }
-
-            runData.putString("name", mBluetoothAdapter.getName());
-            runData.putString("self_state", selfState.toString());
-
-            showSymptoms();
-
-            sendProbeData();
-
-            setBluetoothDiscoverable();
+           catch (Exception e) {}
 
         }
 
