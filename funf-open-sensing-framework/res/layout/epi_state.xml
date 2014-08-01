@@ -6,27 +6,68 @@
     android:layout_height="fill_parent"
     android:background="#FFF"
     >
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="SensibleDTU EpiGame"
+        android:id="@+id/titleTextView"
+        android:layout_gravity="center_horizontal"
+        android:textColor="@android:color/black"
+        android:typeface="normal"
+        android:textStyle="bold"
+        android:textSize="30dp"
+        android:layout_marginTop="@dimen/com_facebook_loginview_padding_right" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:id="@+id/statusTextView"
+        android:layout_gravity="center_horizontal"
+        android:text="You are..."
+        android:textColor="@android:color/black"
+        android:layout_marginBottom="@dimen/com_facebook_loginview_padding_right"
+        android:layout_marginTop="@dimen/com_facebook_profilepictureview_preset_size_normal"
+        android:textStyle="bold" />
+
     <LinearLayout android:orientation="vertical"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:background="#FFF"
         android:id="@+id/main_ui_container">
-        <com.facebook.widget.LoginButton
-            android:id="@+id/login_button"
+
+    <Button
+        android:id="@+id/postStatusUpdateButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Share this on Facebook"
+        android:textStyle="bold"
+        android:layout_gravity="center_horizontal"
+        android:textSize="20dp" />
+
+        <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="5dp"
-            facebook:confirm_logout="false"
-            facebook:fetch_user_info="true"
-            android:layout_gravity="center_horizontal" />
-            <Button
-                android:id="@+id/postStatusUpdateButton"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:text="Post Status Update"
-                />
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:text="Small Text"
+            android:id="@+id/postTextView"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginBottom="@dimen/com_facebook_loginview_padding_bottom"
+            android:textColor="#cc000000" />
+
+        <com.facebook.widget.LoginButton
+        android:id="@+id/login_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        facebook:confirm_logout="false"
+        facebook:fetch_user_info="true"
+        android:layout_gravity="center_horizontal" />
 
     </LinearLayout>
+
     <FrameLayout
         android:id="@+id/fragment_container"
         android:layout_width="fill_parent"

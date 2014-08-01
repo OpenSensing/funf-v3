@@ -32,7 +32,7 @@
     <string name="success">Success</string>
     <string name="successfully_posted_post">Success!</string>
     <string name="error">Error</string>
-    <string name="status_update">Updating status for %1$s at %2$s</string>
+    <string name="status_update">I am now %1$s in the SensibleDTU EpiGame!</string>
     <string name="app_id">355198514515820</string>
     <string name="exception">Exception: %1$s</string>
 

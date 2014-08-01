@@ -5,6 +5,9 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
 import android.app.Fragment;
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.content.Context;
@@ -17,6 +20,7 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import android.os.Vibrator;
 import android.preference.PreferenceManager;
+import android.support.v4.app.NotificationCompat;
 import android.text.TextUtils;
 import android.util.Base64;
 import android.util.Log;
@@ -64,7 +68,7 @@ public class EpidemicProbe extends Probe implements ProbeKeys.EpidemicsKeys {
     public static final String EPI_TAG = "EPI_TAG";
     public static final String EPI_DIALOG_PREF_PREFIX = "epi_dialog_";
 
-    private enum SelfState { S, E, I, R, V};
+    private enum SelfState { S, E, I, R, V, A};
 
     private boolean firstRun = true;
     private Bundle runData = null;
@@ -176,13 +180,17 @@ public class EpidemicProbe extends Probe implements ProbeKeys.EpidemicsKeys {
         private boolean HIDDEN_MODE = true; //don't show any dialogs
         private boolean SHOW_WELCOME_DIALOG = false;
 
+        private String last_state_change = "";
+
 
         public void handleBluetoothData(Bundle data) {
 
             //TODO add global try catch here, just in case
 
-            try {
-                showDescription();
+                //FIXME for testing only
+                HIDDEN_MODE = false;
+
+                showDialogs();
 
 
                 runData = new Bundle();
@@ -232,14 +240,19 @@ public class EpidemicProbe extends Probe implements ProbeKeys.EpidemicsKeys {
                 runData.putString("name", mBluetoothAdapter.getName());
                 runData.putString("self_state", selfState.toString());
 
+                SharedPreferences settings = getSharedPreferences(OWN_NAME, 0);
+                last_state_change = settings.getString("last_state_change", "");
+                runData.putString("last_state_change", last_state_change);
+
+
+
+
                 showSymptoms();
 
                 sendProbeData();
 
                 setBluetoothDiscoverable();
 
-            }
-           catch (Exception e) {}
 
         }
 
@@ -310,6 +323,7 @@ public class EpidemicProbe extends Probe implements ProbeKeys.EpidemicsKeys {
             if (state.equals(SelfState.V)) saveLocalSharedPreference("self_state", "V");
             if (state.equals(SelfState.E)) saveLocalSharedPreference("self_state", "E");
             if (state.equals(SelfState.R)) saveLocalSharedPreference("self_state", "R");
+            vibrate();
 
         }
 
@@ -350,6 +364,7 @@ public class EpidemicProbe extends Probe implements ProbeKeys.EpidemicsKeys {
             saveLocalSharedPreference("infecting_name", "");
             setCurrentState(SelfState.I);
             setInfectedName();
+            saveLocalSharedPreference("last_state_change", ""+System.currentTimeMillis()+"_I_"+device_id+"_"+device_name);
         }
 
         private void setSusceptible(boolean force) {
@@ -362,6 +377,7 @@ public class EpidemicProbe extends Probe implements ProbeKeys.EpidemicsKeys {
             saveLocalSharedPreference("infecting_name", "");
             setCurrentState(SelfState.S);
             setSusceptibleName();
+            saveLocalSharedPreference("last_state_change", ""+System.currentTimeMillis()+"_S");
         }
 
         private void setVaccinated(boolean force) {
@@ -374,6 +390,8 @@ public class EpidemicProbe extends Probe implements ProbeKeys.EpidemicsKeys {
             saveLocalSharedPreference("infecting_name", "");
             setCurrentState(SelfState.V);
             setSusceptibleName();
+            saveLocalSharedPreference("last_state_change", ""+System.currentTimeMillis()+"_V");
+
         }
 
         private void setExposed(String device_id, String device_name, boolean force) {
@@ -386,6 +404,7 @@ public class EpidemicProbe extends Probe implements ProbeKeys.EpidemicsKeys {
             saveLocalSharedPreference("infecting_name", device_name);
             setCurrentState(SelfState.E);
             setInfectedName();
+            saveLocalSharedPreference("last_state_change", ""+System.currentTimeMillis()+"_E_"+device_id+"_"+device_name);
         }
 
         private void setRecovered(boolean force) {
@@ -398,6 +417,7 @@ public class EpidemicProbe extends Probe implements ProbeKeys.EpidemicsKeys {
             saveLocalSharedPreference("infecting_name", "");
             setCurrentState(STATE_AFTER_INFECTED);
             setSusceptibleName();
+            saveLocalSharedPreference("last_state_change", ""+System.currentTimeMillis()+"_R");
         }
 
         private void setInfectedName() {
@@ -674,13 +694,15 @@ public class EpidemicProbe extends Probe implements ProbeKeys.EpidemicsKeys {
         }
 
         private void vibrate() {
+          if (HIDDEN_MODE) return;
           Vibrator vibrator = (Vibrator)getSystemService(getBaseContext().VIBRATOR_SERVICE);
           vibrator.vibrate(2000);
         }
 
         private void showPopup() {
+            if (HIDDEN_MODE) return;
             Context context = getApplicationContext();
-            CharSequence text = "Sensible DTU: You are infected!";
+            CharSequence text = "SensibleDTU EpiGame: You are infected!";
             int duration = Toast.LENGTH_LONG;
 
             Toast toast = Toast.makeText(context, text, duration);
@@ -701,7 +723,9 @@ public class EpidemicProbe extends Probe implements ProbeKeys.EpidemicsKeys {
            if (HIDDEN_MODE) return;
            if (!SHOW_WELCOME_DIALOG) return;
            SharedPreferences settings = getSharedPreferences(OWN_NAME, 0);
-           if (settings.getBoolean(EPI_DIALOG_PREF_PREFIX+"understood", false)) return;
+           boolean understood = settings.getBoolean(EPI_DIALOG_PREF_PREFIX + "understood", false);
+           runData.putBoolean("welcome_screen_understood", understood);
+           if (understood) return;
 
             Intent dialogIntent = new Intent(getBaseContext(), EpiDescriptionActivity.class);
             dialogIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -709,19 +733,67 @@ public class EpidemicProbe extends Probe implements ProbeKeys.EpidemicsKeys {
         }
 
         void showState() {
+
+            Log.d(EPI_TAG, "showing state 1");
+
+
             if (HIDDEN_MODE) return;
-            Intent dialogIntent = new Intent(getBaseContext(), EpiStateActivity.class);
-            dialogIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            startActivity(dialogIntent);
+
+
+            if (selfState.equals(SelfState.S)) showNotification("SensibleDTU EpiGame", "You are susceptible", R.drawable.epi_icon_s);
+            if (selfState.equals(SelfState.I)) showNotification("SensibleDTU EpiGame", "You are infected", R.drawable.epi_icon_i);
+            if (selfState.equals(SelfState.V)) showNotification("SensibleDTU EpiGame", "You are vaccinated", R.drawable.epi_icon_v);
+            if (selfState.equals(SelfState.A)) showNotification("SensibleDTU EpiGame", "Awaiting vaccination to become effective", R.drawable.epi_icon_a);
+            if (selfState.equals(SelfState.R)) showNotification("SensibleDTU EpiGame", "You are recovered", R.drawable.epi_icon_r);
 
         }
+
+
+
+
+        void showDialogs() {
+            showDescription();
+            showState();
+        }
+
 
 
     }
 
 
 
+    void showNotification(String title, String text, int icon) {
 
+        Log.d(EPI_TAG, "showing state 2");
+
+
+        NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this)
+                        .setSmallIcon(icon)
+                        .setContentTitle(title)
+                        .setContentText(text);
+
+
+        int mNotificationId = 1338;
+
+        Intent resultIntent = new Intent(this, EpiStateActivity.class);
+
+        PendingIntent resultPendingIntent =
+                PendingIntent.getActivity(
+                        this,
+                        0,
+                        resultIntent,
+                        PendingIntent.FLAG_CANCEL_CURRENT
+                );
+
+        mBuilder.setContentIntent(resultPendingIntent);
+
+
+        //startForeground(mNotificationId, mBuilder.build());
+
+        NotificationManager mNotifyMgr = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+// Builds the notification and issues it.
+        mNotifyMgr.notify(mNotificationId, mBuilder.build());
+    }
 
     void setBluetoothDiscoverable() {
 

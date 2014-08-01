@@ -2,6 +2,7 @@ package edu.mit.media.funf.probe.edu.mit.media.funf.activity;
 
 import android.app.AlertDialog;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
@@ -10,6 +11,7 @@ import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.facebook.AppEventsLogger;
@@ -30,6 +32,7 @@ import java.util.Date;
 
 
 import edu.mit.media.funf.R;
+import edu.mit.media.funf.probe.builtin.EpidemicProbe;
 
 /**
  * Created by arks on 25/07/14.
@@ -46,6 +49,7 @@ public class EpiStateActivity extends FragmentActivity{
     private ViewGroup controlsContainer;
     private GraphUser user;
     private boolean canPresentShareDialog;
+    private boolean notYetPosted = true;
 
     private enum PendingAction {
         NONE,
@@ -135,6 +139,7 @@ public class EpiStateActivity extends FragmentActivity{
     protected void onResume() {
         super.onResume();
         uiHelper.onResume();
+        notYetPosted = true;
 
         // Call the 'activateApp' method to log an app event for use in analytics and advertising reporting.  Do so in
         // the onResume methods of the primary Activities that an app may be launched into.
@@ -188,8 +193,28 @@ public class EpiStateActivity extends FragmentActivity{
     private void updateUI() {
         Session session = Session.getActiveSession();
         boolean enableButtons = (session != null && session.isOpened());
+        SharedPreferences settings = getSharedPreferences(EpidemicProbe.OWN_NAME, 0);
+        String self_state = settings.getString("self_state", "");
 
-        postStatusUpdateButton.setEnabled(enableButtons || canPresentShareDialog);
+        if (self_state.equals("S")) self_state = "susceptible";
+        if (self_state.equals("I")) self_state = "infected";
+        if (self_state.equals("E")) self_state = "susceptible";
+        if (self_state.equals("V")) self_state = "vaccinated";
+        if (self_state.equals("A")) self_state = "waiting for vaccination to become effective";
+        if (self_state.equals("R")) self_state = "recovered";
+
+
+        ((TextView)findViewById(R.id.postTextView)).setText( getString(R.string.status_update, self_state));
+
+        ((TextView)findViewById(R.id.statusTextView)).setText("You are "+self_state);
+
+        postStatusUpdateButton.setEnabled((enableButtons || canPresentShareDialog) && notYetPosted);
+
+        float alpha = 0.4f;
+        if ((enableButtons || canPresentShareDialog) && notYetPosted ) alpha = 1.0f;
+
+        postStatusUpdateButton.setAlpha(alpha);
+
 
     }
 
@@ -215,11 +240,13 @@ public class EpiStateActivity extends FragmentActivity{
         String alertMessage = null;
         if (error == null) {
             alertMessage = getString(R.string.successfully_posted_post);
+            notYetPosted = false;
         } else {
             alertMessage = error.getErrorMessage();
         }
 
         Toast.makeText(getApplicationContext(), alertMessage, Toast.LENGTH_LONG).show();
+        updateUI();
     }
 
     private void onClickPostStatusUpdate() {
@@ -229,7 +256,7 @@ public class EpiStateActivity extends FragmentActivity{
     private FacebookDialog.ShareDialogBuilder createShareDialogBuilderForLink() {
         return new FacebookDialog.ShareDialogBuilder(this)
                 .setName("SensibleDTU")
-                .setDescription("You can post your state in the Epidemics game on FB")
+                .setDescription("You can post your state in the SensibleDTU Epidemics game on FB")
                 .setLink("https://www.sensible.dtu.dk/");
     }
 
@@ -238,7 +265,17 @@ public class EpiStateActivity extends FragmentActivity{
             FacebookDialog shareDialog = createShareDialogBuilderForLink().build();
             uiHelper.trackPendingDialogCall(shareDialog.present());
         } else if (user != null && hasPublishPermission()) {
-            final String message = getString(R.string.status_update, user.getFirstName(), (new Date().toString()));
+            SharedPreferences settings = getSharedPreferences(EpidemicProbe.OWN_NAME, 0);
+            String self_state = settings.getString("self_state", "");
+
+            if (self_state.equals("S")) self_state = "susceptible";
+            if (self_state.equals("I")) self_state = "infected";
+            if (self_state.equals("E")) self_state = "susceptible";
+            if (self_state.equals("V")) self_state = "vaccinated";
+            if (self_state.equals("A")) self_state = "waiting for vaccination to become effective";
+            if (self_state.equals("R")) self_state = "recovered";
+
+            final String message = getString(R.string.status_update, self_state);
             Request request = Request
                     .newStatusUpdateRequest(Session.getActiveSession(), message, new Request.Callback() {
                         @Override
