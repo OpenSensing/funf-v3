@@ -143,6 +143,9 @@ public class EpiStateActivity extends FragmentActivity{
         uiHelper.onResume();
         notYetPosted = true;
 
+        NotificationManager mNotifyMgr = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+        mNotifyMgr.cancel(1338);
+
         // Call the 'activateApp' method to log an app event for use in analytics and advertising reporting.  Do so in
         // the onResume methods of the primary Activities that an app may be launched into.
         AppEventsLogger.activateApp(this);
