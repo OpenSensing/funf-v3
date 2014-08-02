@@ -1,12 +1,14 @@
 package edu.mit.media.funf.probe.edu.mit.media.funf.activity;
 
 import android.app.AlertDialog;
+import android.app.NotificationManager;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
+import android.text.Layout;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
@@ -204,9 +206,9 @@ public class EpiStateActivity extends FragmentActivity{
         if (self_state.equals("R")) self_state = "recovered";
 
 
-        ((TextView)findViewById(R.id.postTextView)).setText( getString(R.string.status_update, self_state));
+        ((TextView)findViewById(R.id.postTextView)).setText(getString(R.string.status_update, self_state));
 
-        ((TextView)findViewById(R.id.statusTextView)).setText("You are "+self_state);
+        ((TextView)findViewById(R.id.statusTextView)).setText("You are " + self_state);
 
         postStatusUpdateButton.setEnabled((enableButtons || canPresentShareDialog) && notYetPosted);
 
@@ -215,6 +217,32 @@ public class EpiStateActivity extends FragmentActivity{
 
         postStatusUpdateButton.setAlpha(alpha);
 
+        boolean vaccination_decision_made = settings.getBoolean("vaccination_decision_made", false);
+
+        if (self_state.equals("susceptible")) (findViewById(R.id.vaccinationLayout)).setVisibility(View.VISIBLE);
+        else (findViewById(R.id.vaccinationLayout)).setVisibility(View.GONE);
+
+        if (vaccination_decision_made) {
+            (findViewById(R.id.vaccinationLayout)).setAlpha(0.4f);
+            ((Button)findViewById(R.id.vaccinateButton)).setEnabled(false);
+            ((Button)findViewById(R.id.vaccinateNotNowButton)).setEnabled(false);
+
+            if (settings.getLong("vaccination_clicked", 0) != 0)
+                ((TextView)findViewById(R.id.vaccinationExplanationTextView)).setText(R.string.vaccination_text_waiting);
+            else
+                ((TextView)findViewById(R.id.vaccinationExplanationTextView)).setText(R.string.vaccination_text_disabled);
+
+            NotificationManager mNotifyMgr = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+            mNotifyMgr.cancel(1338);
+
+
+        }
+        else {
+            (findViewById(R.id.vaccinationLayout)).setAlpha(1.0f);
+            ((TextView)findViewById(R.id.vaccinationExplanationTextView)).setText(R.string.vaccination_text);
+            ((Button)findViewById(R.id.vaccinateButton)).setEnabled(true);
+            ((Button)findViewById(R.id.vaccinateNotNowButton)).setEnabled(true);
+        }
 
     }
 
@@ -316,4 +344,41 @@ public class EpiStateActivity extends FragmentActivity{
             handlePendingAction();
         }
     }
+
+
+    public void decisionVaccinate(View view) {
+
+        saveLocalSharedPreference("vaccination_clicked", System.currentTimeMillis());
+        saveLocalSharedPreference("vaccination_decision_made", true);
+        saveLocalSharedPreference("vaccination_refused", 0L);
+
+
+        updateUI();
+
+    }
+
+    public void decisionNotNow(View view) {
+        saveLocalSharedPreference("vaccination_refused", System.currentTimeMillis());
+        saveLocalSharedPreference("vaccination_decision_made", true);
+        saveLocalSharedPreference("vaccination_clicked", 0L);
+
+
+        updateUI();
+
+    }
+
+    private void saveLocalSharedPreference(String key, Long value) {
+        SharedPreferences settings = getSharedPreferences(EpidemicProbe.OWN_NAME, 0);
+        SharedPreferences.Editor editor = settings.edit();
+        editor.putLong(key, value);
+        editor.commit();
+    }
+
+    private void saveLocalSharedPreference(String key, boolean value) {
+        SharedPreferences settings = getSharedPreferences(EpidemicProbe.OWN_NAME, 0);
+        SharedPreferences.Editor editor = settings.edit();
+        editor.putBoolean(key, value);
+        editor.commit();
+    }
+
 }

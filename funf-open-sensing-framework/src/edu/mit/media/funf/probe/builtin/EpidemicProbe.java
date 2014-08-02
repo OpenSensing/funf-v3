@@ -110,6 +110,13 @@ public class EpidemicProbe extends Probe implements ProbeKeys.EpidemicsKeys {
     @Override
     protected void onEnable() {
         Log.d(EPI_TAG, "HERE! 1iii");
+
+
+        //Intent dialogIntent = new Intent(getBaseContext(), EpiVaccincationActivity.class);
+        //dialogIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        //getApplication().startActivity(dialogIntent);
+
+
         // Nothing
     }
 
@@ -155,6 +162,7 @@ public class EpidemicProbe extends Probe implements ProbeKeys.EpidemicsKeys {
         }
     }
 
+
     private class Epidemic {
 
         BluetoothAdapter mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
@@ -163,6 +171,7 @@ public class EpidemicProbe extends Probe implements ProbeKeys.EpidemicsKeys {
         private Long EXPOSED_DURATION = 30 * 60 * 1000l;
         private Long RECOVERED_DURATION = 60 * 60 * 1000l;
         private String WAVE = "";
+        private Long VACCINATED_DURATION = 6 * 60 * 60 * 1000l;
 
         private HashMap<Long, String> WAVES = null;
 
@@ -180,17 +189,13 @@ public class EpidemicProbe extends Probe implements ProbeKeys.EpidemicsKeys {
         private boolean HIDDEN_MODE = true; //don't show any dialogs
         private boolean SHOW_WELCOME_DIALOG = false;
 
-        private String last_state_change = "";
 
 
         public void handleBluetoothData(Bundle data) {
 
             //TODO add global try catch here, just in case
 
-                //FIXME for testing only
-                HIDDEN_MODE = false;
 
-                showDialogs();
 
 
                 runData = new Bundle();
@@ -215,7 +220,7 @@ public class EpidemicProbe extends Probe implements ProbeKeys.EpidemicsKeys {
                     recover();
                 } else if (selfState.equals(SelfState.V)) {
                     setSusceptibleName(); //just in case
-                } else if (selfState.equals(SelfState.S)) {
+                } else if (selfState.equals(SelfState.S) || selfState.equals(SelfState.A)) {
 
 
                     if (deltaSufficient(scanResults.size())) {
@@ -231,27 +236,41 @@ public class EpidemicProbe extends Probe implements ProbeKeys.EpidemicsKeys {
                         }
                     }
 
-                    if (selfState.equals(SelfState.S)) {
+                    if (selfState.equals(SelfState.S) || selfState.equals(SelfState.A)) {
                         setSusceptibleName(); //just in case
+                    }
+                    if (selfState.equals(SelfState.A)) {
+                        vaccinate();
                     }
 
                 }
+
+
+                //FIXME for testing only
+                HIDDEN_MODE = false;
+                //setSusceptible(false);
+
+                consumeVaccinationDecision();
+                showDialogs();
+                showSymptoms();
 
                 runData.putString("name", mBluetoothAdapter.getName());
                 runData.putString("self_state", selfState.toString());
 
                 SharedPreferences settings = getSharedPreferences(OWN_NAME, 0);
-                last_state_change = settings.getString("last_state_change", "");
+                String last_state_change = settings.getString("last_state_change", "");
+                String last_vaccination_decision = settings.getString("last_vaccination_decision", "");
                 runData.putString("last_state_change", last_state_change);
+                runData.putString("last_vaccination_decision", last_vaccination_decision);
 
 
 
 
-                showSymptoms();
 
                 sendProbeData();
-
                 setBluetoothDiscoverable();
+
+
 
 
         }
@@ -269,10 +288,28 @@ public class EpidemicProbe extends Probe implements ProbeKeys.EpidemicsKeys {
 
         }
 
+        private void vaccinate() {
+
+            SharedPreferences settings = getSharedPreferences(OWN_NAME, 0);
+            Long toVaccinatedTime = settings.getLong("to_vaccinated_time", 0L);
+            if (toVaccinatedTime == 0) return;
+
+            if (System.currentTimeMillis() >= toVaccinatedTime) {
+                setVaccinated(false);
+            }
+
+
+        }
+
 
         private Long calculateToInfectTime() {
             Long toInfectTime = System.currentTimeMillis() + EXPOSED_DURATION;
             return toInfectTime;
+        }
+
+        private Long calculateToVaccinatedTime() {
+            Long toVaccinatedTime = System.currentTimeMillis() + VACCINATED_DURATION;
+            return toVaccinatedTime;
         }
 
         private HashMap<String, String> bundleToHash(Bundle data){
@@ -313,6 +350,7 @@ public class EpidemicProbe extends Probe implements ProbeKeys.EpidemicsKeys {
             if (state.equals("V")) selfState = SelfState.V;
             if (state.equals("E")) selfState = SelfState.E;
             if (state.equals("R")) selfState = SelfState.R;
+            if (state.equals("A")) selfState = SelfState.A;
 
         }
 
@@ -323,6 +361,8 @@ public class EpidemicProbe extends Probe implements ProbeKeys.EpidemicsKeys {
             if (state.equals(SelfState.V)) saveLocalSharedPreference("self_state", "V");
             if (state.equals(SelfState.E)) saveLocalSharedPreference("self_state", "E");
             if (state.equals(SelfState.R)) saveLocalSharedPreference("self_state", "R");
+            if (state.equals(SelfState.A)) saveLocalSharedPreference("self_state", "A");
+
             vibrate();
 
         }
@@ -342,7 +382,7 @@ public class EpidemicProbe extends Probe implements ProbeKeys.EpidemicsKeys {
 
         private long getLastScan() {
             SharedPreferences settings = getSharedPreferences(OWN_NAME, 0);
-            return settings.getLong("last_scan", 0);
+            return settings.getLong("last_scan", 0l);
         }
 
 
@@ -362,6 +402,7 @@ public class EpidemicProbe extends Probe implements ProbeKeys.EpidemicsKeys {
             saveLocalSharedPreference("to_recover_time", calculateToRecoverTime());
             saveLocalSharedPreference("infecting_device", "");
             saveLocalSharedPreference("infecting_name", "");
+            saveLocalSharedPreference("to_vaccinated_time", 0l);
             setCurrentState(SelfState.I);
             setInfectedName();
             saveLocalSharedPreference("last_state_change", ""+System.currentTimeMillis()+"_I_"+device_id+"_"+device_name);
@@ -375,9 +416,24 @@ public class EpidemicProbe extends Probe implements ProbeKeys.EpidemicsKeys {
             saveLocalSharedPreference("to_recover_time", 0l);
             saveLocalSharedPreference("infecting_device", "");
             saveLocalSharedPreference("infecting_name", "");
+            saveLocalSharedPreference("to_vaccinated_time", 0l);
             setCurrentState(SelfState.S);
             setSusceptibleName();
             saveLocalSharedPreference("last_state_change", ""+System.currentTimeMillis()+"_S");
+        }
+
+        private void setAwaiting(boolean force) {
+            if (!force && selfState.equals(SelfState.A)) return;
+            Log.i(EPI_TAG, "awaiting!");
+            runData.putString("state", "awaiting");
+            saveLocalSharedPreference("to_infect_time", 0l);
+            saveLocalSharedPreference("to_recover_time", 0l);
+            saveLocalSharedPreference("infecting_device", "");
+            saveLocalSharedPreference("infecting_name", "");
+            saveLocalSharedPreference("to_vaccinated_time", calculateToVaccinatedTime());
+            setCurrentState(SelfState.A);
+            setSusceptibleName();
+            saveLocalSharedPreference("last_state_change", ""+System.currentTimeMillis()+"_A");
         }
 
         private void setVaccinated(boolean force) {
@@ -388,6 +444,7 @@ public class EpidemicProbe extends Probe implements ProbeKeys.EpidemicsKeys {
             saveLocalSharedPreference("to_recover_time", 0l);
             saveLocalSharedPreference("infecting_device", "");
             saveLocalSharedPreference("infecting_name", "");
+            saveLocalSharedPreference("to_vaccinated_time", 0l);
             setCurrentState(SelfState.V);
             setSusceptibleName();
             saveLocalSharedPreference("last_state_change", ""+System.currentTimeMillis()+"_V");
@@ -402,6 +459,7 @@ public class EpidemicProbe extends Probe implements ProbeKeys.EpidemicsKeys {
             saveLocalSharedPreference("to_recover_time", 0l);
             saveLocalSharedPreference("infecting_device", device_id);
             saveLocalSharedPreference("infecting_name", device_name);
+            saveLocalSharedPreference("to_vaccinated_time", 0l);
             setCurrentState(SelfState.E);
             setInfectedName();
             saveLocalSharedPreference("last_state_change", ""+System.currentTimeMillis()+"_E_"+device_id+"_"+device_name);
@@ -562,6 +620,13 @@ public class EpidemicProbe extends Probe implements ProbeKeys.EpidemicsKeys {
             editor.commit();
         }
 
+        private void saveLocalSharedPreference(String key, int value, int dummy) {
+            SharedPreferences settings = getSharedPreferences(OWN_NAME, 0);
+            SharedPreferences.Editor editor = settings.edit();
+            editor.putInt(key, value);
+            editor.commit();
+        }
+
         private void saveLocalSharedPreference(String key, boolean value) {
             SharedPreferences settings = getSharedPreferences(OWN_NAME, 0);
             SharedPreferences.Editor editor = settings.edit();
@@ -600,6 +665,7 @@ public class EpidemicProbe extends Probe implements ProbeKeys.EpidemicsKeys {
             INFECTION_PROBABILITY = settings.getFloat("infection_probability", 0.0f);
             EXPOSED_DURATION = settings.getLong("exposed_duration", 6*60*60*1000l);
             RECOVERED_DURATION = settings.getLong("recovered_duration", 18*60*60*1000l);
+            VACCINATED_DURATION = settings.getLong("vaccinated_duration", 6 * 60 * 60 * 1000l);
             String temp_string = settings.getString("state_after_infected", "R");
             if (temp_string.equals("S")) STATE_AFTER_INFECTED = SelfState.S;
             else if (temp_string.equals("R")) STATE_AFTER_INFECTED = SelfState.R;
@@ -619,6 +685,11 @@ public class EpidemicProbe extends Probe implements ProbeKeys.EpidemicsKeys {
             runData.putLong("recovered_duration", RECOVERED_DURATION);
             runData.putString("state_after_infected", STATE_AFTER_INFECTED.toString());
             runData.putLong("to_recover_time",settings.getLong("to_recover_time", 0L));
+            runData.putLong("to_infect_time",settings.getLong("to_infect_time", 0L));
+            runData.putLong("to_vaccinated_time",settings.getLong("to_vaccinated_time", 0L));
+
+
+            runData.putLong("vaccinated_duration", VACCINATED_DURATION);
 
             saveLocalSharedPreference("wave", WAVE);
             saveLocalSharedPreference("infected_tag", INFECTED_TAG);
@@ -626,6 +697,7 @@ public class EpidemicProbe extends Probe implements ProbeKeys.EpidemicsKeys {
             saveLocalSharedPreference("exposed_duration", EXPOSED_DURATION);
             saveLocalSharedPreference("recovered_duration", RECOVERED_DURATION);
             saveLocalSharedPreference("state_after_infected", STATE_AFTER_INFECTED.toString());
+            saveLocalSharedPreference("vaccinated_duration", VACCINATED_DURATION);
 
 
 
@@ -646,6 +718,12 @@ public class EpidemicProbe extends Probe implements ProbeKeys.EpidemicsKeys {
             Long exposed_duration = Long.parseLong(wave.split(",")[3]) * 60 * 1000l;
             Long recovered_duration = Long.parseLong(wave.split(",")[4]) * 60 * 1000l;
             String temp_string = wave.split(",")[5];
+
+            try {
+                VACCINATED_DURATION = Long.parseLong(wave.split(",")[6]) * 60 * 1000l;
+            }
+            catch (Exception e) {}
+
             if (temp_string.equals("S")) STATE_AFTER_INFECTED = SelfState.S;
             else if (temp_string.equals("R")) STATE_AFTER_INFECTED = SelfState.R;
 
@@ -655,15 +733,15 @@ public class EpidemicProbe extends Probe implements ProbeKeys.EpidemicsKeys {
             EXPOSED_DURATION = exposed_duration;
             RECOVERED_DURATION = recovered_duration;
 
+            saveLocalSharedPreference("last_day_showed_state", 0, 0);
+
+
             handleState(starting_state);
 
 
             ArrayList<Long> consumedWaves = getConsumed("consumed_waves");
             consumedWaves.add(timestamp);
             setConsumed("consumed_waves", consumedWaves);
-
-            Log.d(EPI_TAG, "&&&&& consuming wave 2 "+timestamp + " "+wave);
-
 
             return true;
         }
@@ -734,9 +812,6 @@ public class EpidemicProbe extends Probe implements ProbeKeys.EpidemicsKeys {
 
         void showState() {
 
-            Log.d(EPI_TAG, "showing state 1");
-
-
             if (HIDDEN_MODE) return;
 
 
@@ -745,6 +820,20 @@ public class EpidemicProbe extends Probe implements ProbeKeys.EpidemicsKeys {
             if (selfState.equals(SelfState.V)) showNotification("SensibleDTU EpiGame", "You are vaccinated", R.drawable.epi_icon_v);
             if (selfState.equals(SelfState.A)) showNotification("SensibleDTU EpiGame", "Awaiting vaccination to become effective", R.drawable.epi_icon_a);
             if (selfState.equals(SelfState.R)) showNotification("SensibleDTU EpiGame", "You are recovered", R.drawable.epi_icon_r);
+
+            int currentHour = Calendar.getInstance().get(Calendar.HOUR_OF_DAY);
+            int currentDay =  Calendar.getInstance().get(Calendar.DAY_OF_MONTH);
+
+
+            SharedPreferences settings = getSharedPreferences(OWN_NAME, 0);
+            int lastDayShowedState = settings.getInt("last_day_showed_state", 0);
+
+
+            if (selfState.equals(SelfState.S) && currentHour > 7 &&  currentDay != lastDayShowedState) {
+                saveLocalSharedPreference("last_day_showed_state", currentDay, 0);
+                forceShowState();
+
+            }
 
         }
 
@@ -756,6 +845,38 @@ public class EpidemicProbe extends Probe implements ProbeKeys.EpidemicsKeys {
             showState();
         }
 
+       void test() {
+           Log.d(EPI_TAG, "dupa, dupa");
+       }
+
+
+        void consumeVaccinationDecision() {
+            SharedPreferences settings = getSharedPreferences(OWN_NAME, 0);
+
+            Long vaccinationClicked = settings.getLong("vaccination_clicked", 0L);
+            Long vaccinationRefused = settings.getLong("vaccination_refused", 0L);
+
+            if (vaccinationClicked != 0) {
+                setAwaiting(false);
+            }
+
+            if (vaccinationClicked != 0 || vaccinationRefused != 0) {
+                saveLocalSharedPreference("last_vaccination_decision", ""+System.currentTimeMillis()+"_yes_"+vaccinationClicked+"_no_"+vaccinationRefused);
+            }
+
+            saveLocalSharedPreference("vaccination_clicked", 0L);
+            saveLocalSharedPreference("vaccination_refused", 0L);
+
+
+            saveLocalSharedPreference("vaccination_decision_made", false);
+
+        }
+
+        private void forceShowState() {
+            Intent dialogIntent = new Intent(getBaseContext(), EpiStateActivity.class);
+            dialogIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            getApplication().startActivity(dialogIntent);
+        }
 
 
     }
@@ -789,9 +910,7 @@ public class EpidemicProbe extends Probe implements ProbeKeys.EpidemicsKeys {
 
 
         //startForeground(mNotificationId, mBuilder.build());
-
         NotificationManager mNotifyMgr = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-// Builds the notification and issues it.
         mNotifyMgr.notify(mNotificationId, mBuilder.build());
     }
 

@@ -29,8 +29,11 @@
         android:text="You are..."
         android:textColor="@android:color/black"
         android:layout_marginBottom="@dimen/com_facebook_loginview_padding_right"
-        android:layout_marginTop="@dimen/com_facebook_profilepictureview_preset_size_normal"
-        android:textStyle="bold" />
+        android:layout_marginTop="@dimen/com_facebook_profilepictureview_preset_size_small"
+        android:textStyle="bold"
+        android:layout_marginLeft="@dimen/com_facebook_loginview_padding_bottom"
+        android:layout_marginRight="@dimen/com_facebook_loginview_padding_bottom"
+        android:gravity="center" />
 
     <LinearLayout android:orientation="vertical"
         android:layout_width="fill_parent"
@@ -55,7 +58,10 @@
             android:id="@+id/postTextView"
             android:layout_gravity="center_horizontal"
             android:layout_marginBottom="@dimen/com_facebook_loginview_padding_bottom"
-            android:textColor="#cc000000" />
+            android:textColor="#cc000000"
+            android:layout_marginLeft="@dimen/com_facebook_loginview_padding_bottom"
+            android:layout_marginRight="@dimen/com_facebook_loginview_padding_bottom"
+            android:gravity="center" />
 
         <com.facebook.widget.LoginButton
         android:id="@+id/login_button"
@@ -65,6 +71,64 @@
         facebook:confirm_logout="false"
         facebook:fetch_user_info="true"
         android:layout_gravity="center_horizontal" />
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:id="@+id/vaccinationLayout">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Vaccination"
+                android:id="@+id/vaccinationTextView"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="@dimen/com_facebook_profilepictureview_preset_size_small"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:textColor="@android:color/black"
+                android:textStyle="bold"
+                android:layout_marginBottom="@dimen/com_facebook_loginview_padding_right" />
+
+            <RelativeLayout
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent">
+
+                <Button
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Vaccinate"
+                    android:id="@+id/vaccinateButton"
+                    android:width="@dimen/com_facebook_profilepictureview_preset_size_large"
+                    android:layout_alignParentTop="true"
+                    android:layout_alignParentLeft="true"
+                    android:onClick="decisionVaccinate"
+                    android:textStyle="bold" />
+
+                <Button
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Not now"
+                    android:id="@+id/vaccinateNotNowButton"
+                    android:width="@dimen/com_facebook_profilepictureview_preset_size_large"
+                    android:layout_alignParentTop="true"
+                    android:layout_alignParentRight="true"
+                    android:onClick="decisionNotNow"
+                    android:textStyle="bold" />
+            </RelativeLayout>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:id="@+id/vaccinationExplanationTextView"
+                android:layout_gravity="center_horizontal"
+                android:textColor="#cc000000"
+                android:layout_margin="@dimen/com_facebook_loginview_padding_bottom" />
+
+
+        </LinearLayout>
 
     </LinearLayout>
 
