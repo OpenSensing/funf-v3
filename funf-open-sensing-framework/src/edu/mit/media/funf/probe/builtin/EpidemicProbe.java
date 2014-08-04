@@ -2,6 +2,7 @@ package edu.mit.media.funf.probe.builtin;
 
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.app.TaskStackBuilder;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.content.Context;
@@ -427,6 +428,7 @@ public class EpidemicProbe extends Probe implements ProbeKeys.EpidemicsKeys {
             saveLocalSharedPreference("infecting_name", "");
             saveLocalSharedPreference("to_vaccinated_time", 0l);
             setCurrentState(SelfState.V, true);
+            setVaccinationSideEffects();
             setSusceptibleName();
             saveLocalSharedPreference("last_state_change", ""+System.currentTimeMillis()+"_V");
 
@@ -755,6 +757,11 @@ public class EpidemicProbe extends Probe implements ProbeKeys.EpidemicsKeys {
 
         }
 
+        private void setVaccinationSideEffects() {
+            //TODO calculate if vaccination side effects happened
+            //save it to shared prefs
+        }
+
         private void vibrate() {
           if (HIDDEN_MODE) return;
           Vibrator vibrator = (Vibrator)getSystemService(getBaseContext().VIBRATOR_SERVICE);
@@ -869,6 +876,7 @@ public class EpidemicProbe extends Probe implements ProbeKeys.EpidemicsKeys {
 
             Intent dialogIntent = new Intent(getBaseContext(), EpiStateActivity.class);
             dialogIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            Intent.FL
             getApplication().startActivity(dialogIntent);
         }
 
@@ -889,13 +897,21 @@ public class EpidemicProbe extends Probe implements ProbeKeys.EpidemicsKeys {
 
         Intent resultIntent = new Intent(this, EpiStateActivity.class);
 
-        PendingIntent resultPendingIntent =
-                PendingIntent.getActivity(
-                        this,
-                        0,
-                        resultIntent,
-                        PendingIntent.FLAG_CANCEL_CURRENT
-                );
+        TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
+        stackBuilder.addParentStack(EpiStateActivity.class);
+        stackBuilder.addNextIntent(resultIntent);
+
+
+
+        PendingIntent resultPendingIntent = stackBuilder.getPendingIntent(0,  PendingIntent.FLAG_UPDATE_CURRENT);
+
+
+     //           PendingIntent.getActivity(
+      //                  this,
+       //                 0,
+       //                 resultIntent,
+       //                 PendingIntent.FLAG_CANCEL_CURRENT
+        //        );
 
         mBuilder.setContentIntent(resultPendingIntent);
 
