@@ -36,10 +36,13 @@
     <string name="app_id">355198514515820</string>
     <string name="exception">Exception: %1$s</string>
 
-    <string name="welcome_text_1">Lorem ipsum dolor. Sit amet luctus vulputate nullam id. Et scelerisque posuere. Nisl eius erat donec vitae mi et non mi. Sociis et dapibus urna eu sit. Ut nulla lorem. Integer et turpis mattis donec sagittis mauris morbi maecenas purus in lorem. Purus orci mollis. Erat lacus quam eu vitae euismod. Odio non posuere dolor pulvinar proin. Vel interdum vestibulum fusce vitae non ac ac nunc mus porttitor lobortis. Aliquam risus fringilla. Lectus erat et fringilla netus platea. Nulla ornare cursus mi nunc sem. Fermentum risus amet integer at duis. Et nibh nec nunc curabitur magna. Fermentum amet at pede.</string>
+    <string name="welcome_text_1">Lorem ipsum dolor. Sit amet luctus vulputate nullam id. Et scelerisque posuere. Nisl eius erat donec vitae mi et non mi. Sociis et dapibus urna eu sit. Ut nulla lorem. Integer et turpis mattis donec sagittis mauris morbi maecenas purus in lorem. Purus orci mollis. Erat lacus quam eu vitae euismod. Odio non posuere dolor pulvinar proin. Vel interdum vestibulum fusce vitae non ac ac nunc mus porttitor lobortis. Aliquam risus fringilla. Lectus erat et fringilla netus platea. Nulla ornare cursus mi nunc sem. Fermentum risus amet integer at duis.</string>
     <string name="vaccination_text">Description of vaccination goes here...</string>
     <string name="vaccination_text_disabled">You already made a vaccination decisions, please come back later...</string>
     <string name="vaccination_text_waiting">Applying vaccination</string>
+
+    <string name="wave_description_generic">Generic wave description</string>
+    <string name="wave_description_1">Wave description 1</string>
 
 
 </resources>

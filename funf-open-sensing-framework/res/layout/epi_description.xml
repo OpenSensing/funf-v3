@@ -2,7 +2,22 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical" >
+    android:orientation="vertical"
+    android:background="#FFF"
+    >
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="SensibleDTU EpiGame"
+        android:id="@+id/titleTextView"
+        android:layout_gravity="center_horizontal"
+        android:textColor="@android:color/black"
+        android:typeface="normal"
+        android:textStyle="bold"
+        android:textSize="30dp"
+        android:layout_marginTop="@dimen/com_facebook_loginview_padding_right" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -11,7 +26,8 @@
         android:text="@string/welcome_text_1"
         android:id="@+id/textView"
         android:layout_gravity="center_horizontal"
-        android:layout_margin="10dp" />
+        android:layout_margin="10dp"
+        android:textColor="@android:color/black" />
 
     <Button android:id="@+id/understand_button"
         android:layout_width="wrap_content"

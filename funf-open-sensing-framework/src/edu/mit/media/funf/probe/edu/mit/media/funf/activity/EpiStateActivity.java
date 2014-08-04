@@ -8,7 +8,6 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
-import android.text.Layout;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
@@ -29,9 +28,6 @@ import com.facebook.model.GraphObject;
 import com.facebook.model.GraphUser;
 import com.facebook.widget.FacebookDialog;
 import com.facebook.widget.LoginButton;
-
-import java.util.Date;
-
 
 import edu.mit.media.funf.R;
 import edu.mit.media.funf.probe.builtin.EpidemicProbe;
@@ -196,55 +192,82 @@ public class EpiStateActivity extends FragmentActivity{
     }
 
     private void updateUI() {
-        Session session = Session.getActiveSession();
-        boolean enableButtons = (session != null && session.isOpened());
+
         SharedPreferences settings = getSharedPreferences(EpidemicProbe.OWN_NAME, 0);
         String self_state = settings.getString("self_state", "");
+        boolean wave_description_accepted = settings.getBoolean("wave_description_accepted", false);
 
-        if (self_state.equals("S")) self_state = "susceptible";
-        if (self_state.equals("I")) self_state = "infected";
-        if (self_state.equals("E")) self_state = "susceptible";
-        if (self_state.equals("V")) self_state = "vaccinated";
-        if (self_state.equals("A")) self_state = "waiting for vaccination to become effective";
-        if (self_state.equals("R")) self_state = "recovered";
+        if (wave_description_accepted) {
 
+            (findViewById(R.id.stateLayout)).setVisibility(View.VISIBLE);
+            (findViewById(R.id.waveDescriptionLayout)).setVisibility(View.GONE);
 
-        ((TextView)findViewById(R.id.postTextView)).setText(getString(R.string.status_update, self_state));
-
-        ((TextView)findViewById(R.id.statusTextView)).setText("You are " + self_state);
-
-        postStatusUpdateButton.setEnabled((enableButtons || canPresentShareDialog) && notYetPosted);
-
-        float alpha = 0.4f;
-        if ((enableButtons || canPresentShareDialog) && notYetPosted ) alpha = 1.0f;
-
-        postStatusUpdateButton.setAlpha(alpha);
-
-        boolean vaccination_decision_made = settings.getBoolean("vaccination_decision_made", false);
-
-        if (self_state.equals("susceptible")) (findViewById(R.id.vaccinationLayout)).setVisibility(View.VISIBLE);
-        else (findViewById(R.id.vaccinationLayout)).setVisibility(View.GONE);
-
-        if (vaccination_decision_made) {
-            (findViewById(R.id.vaccinationLayout)).setAlpha(0.4f);
-            ((Button)findViewById(R.id.vaccinateButton)).setEnabled(false);
-            ((Button)findViewById(R.id.vaccinateNotNowButton)).setEnabled(false);
-
-            if (settings.getLong("vaccination_clicked", 0) != 0)
-                ((TextView)findViewById(R.id.vaccinationExplanationTextView)).setText(R.string.vaccination_text_waiting);
-            else
-                ((TextView)findViewById(R.id.vaccinationExplanationTextView)).setText(R.string.vaccination_text_disabled);
-
-            NotificationManager mNotifyMgr = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-            mNotifyMgr.cancel(1338);
+            Session session = Session.getActiveSession();
+            boolean enableButtons = (session != null && session.isOpened());
 
 
+            if (self_state.equals("S")) self_state = "susceptible";
+            if (self_state.equals("I")) self_state = "infected";
+            if (self_state.equals("E")) self_state = "susceptible";
+            if (self_state.equals("V")) self_state = "vaccinated";
+            if (self_state.equals("A")) self_state = "waiting for vaccination to become effective";
+            if (self_state.equals("R")) self_state = "recovered";
+
+
+            ((TextView) findViewById(R.id.postTextView)).setText(getString(R.string.status_update, self_state));
+
+            ((TextView) findViewById(R.id.statusTextView)).setText("You are " + self_state);
+
+            postStatusUpdateButton.setEnabled((enableButtons || canPresentShareDialog) && notYetPosted);
+
+            float alpha = 0.4f;
+            if ((enableButtons || canPresentShareDialog) && notYetPosted) alpha = 1.0f;
+
+            postStatusUpdateButton.setAlpha(alpha);
+
+            boolean vaccination_decision_made = settings.getBoolean("vaccination_decision_made", false);
+
+            if (self_state.equals("susceptible"))
+                (findViewById(R.id.vaccinationLayout)).setVisibility(View.VISIBLE);
+            else (findViewById(R.id.vaccinationLayout)).setVisibility(View.GONE);
+
+            if (vaccination_decision_made) {
+                (findViewById(R.id.vaccinationLayout)).setAlpha(0.4f);
+                ((Button) findViewById(R.id.vaccinateButton)).setEnabled(false);
+                ((Button) findViewById(R.id.vaccinateNotNowButton)).setEnabled(false);
+
+                if (settings.getLong("vaccination_clicked", 0) != 0)
+                    ((TextView) findViewById(R.id.vaccinationExplanationTextView)).setText(R.string.vaccination_text_waiting);
+                else
+                    ((TextView) findViewById(R.id.vaccinationExplanationTextView)).setText(R.string.vaccination_text_disabled);
+
+                NotificationManager mNotifyMgr = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+                mNotifyMgr.cancel(1338);
+
+
+            } else {
+                (findViewById(R.id.vaccinationLayout)).setAlpha(1.0f);
+                ((TextView) findViewById(R.id.vaccinationExplanationTextView)).setText(R.string.vaccination_text);
+                ((Button) findViewById(R.id.vaccinateButton)).setEnabled(true);
+                ((Button) findViewById(R.id.vaccinateNotNowButton)).setEnabled(true);
+            }
         }
         else {
-            (findViewById(R.id.vaccinationLayout)).setAlpha(1.0f);
-            ((TextView)findViewById(R.id.vaccinationExplanationTextView)).setText(R.string.vaccination_text);
-            ((Button)findViewById(R.id.vaccinateButton)).setEnabled(true);
-            ((Button)findViewById(R.id.vaccinateNotNowButton)).setEnabled(true);
+            (findViewById(R.id.stateLayout)).setVisibility(View.GONE);
+            (findViewById(R.id.waveDescriptionLayout)).setVisibility(View.VISIBLE);
+
+
+            //TODO put real strings and wave ids here
+            String description = getString(R.string.wave_description_generic);
+            String wave = settings.getString("wave", "");
+            try {
+                String wave_id = wave.split("!")[1].split(",")[0];
+                if (wave_id.equals("")) description = getString(R.string.wave_description_1);
+            }
+            catch (Exception e) {}
+            ((TextView)findViewById(R.id.waveDescriptiontextView)).setText(description);
+
+
         }
 
     }
@@ -368,6 +391,14 @@ public class EpiStateActivity extends FragmentActivity{
 
         updateUI();
 
+    }
+
+    public void waveDescriptionConfimed(View view) {
+
+        saveLocalSharedPreference("wave_description_accepted", true);
+        saveLocalSharedPreference("wave_description_accepted_t", System.currentTimeMillis());
+
+        updateUI();
     }
 
     private void saveLocalSharedPreference(String key, Long value) {

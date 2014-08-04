@@ -1,55 +1,34 @@
 package edu.mit.media.funf.probe.builtin;
 
-import android.app.Activity;
-import android.app.AlertDialog;
-import android.app.Dialog;
-import android.app.DialogFragment;
-import android.app.Fragment;
-import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.Parcel;
 import android.os.Parcelable;
 import android.os.Vibrator;
 import android.preference.PreferenceManager;
 import android.support.v4.app.NotificationCompat;
 import android.text.TextUtils;
-import android.util.Base64;
 import android.util.Log;
 import android.widget.Toast;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
 
 import edu.mit.media.funf.R;
-import edu.mit.media.funf.Utils;
-import edu.mit.media.funf.configured.ConfiguredPipeline;
-import edu.mit.media.funf.configured.FunfConfig;
-import edu.mit.media.funf.probe.CursorCell;
 import edu.mit.media.funf.probe.Probe;
 import edu.mit.media.funf.probe.ProbeScheduler;
-import edu.mit.media.funf.probe.SensorProbe;
-
-import edu.mit.media.funf.probe.CursorCell;
-import edu.mit.media.funf.probe.DatedContentProviderProbe;
 import edu.mit.media.funf.probe.edu.mit.media.funf.activity.EpiDescriptionActivity;
 import edu.mit.media.funf.probe.edu.mit.media.funf.activity.EpiStateActivity;
 
@@ -195,6 +174,9 @@ public class EpidemicProbe extends Probe implements ProbeKeys.EpidemicsKeys {
 
             //TODO add global try catch here, just in case
 
+                SharedPreferences settings = getSharedPreferences(OWN_NAME, 0);
+                String currentSelfState = settings.getString("self_state", "");
+                if (currentSelfState.equals("")) setCurrentState(selfState, false);
 
 
 
@@ -246,7 +228,7 @@ public class EpidemicProbe extends Probe implements ProbeKeys.EpidemicsKeys {
                 }
 
 
-                //FIXME for testing only
+                //FIXME remove
                 HIDDEN_MODE = false;
                 //setSusceptible(false);
 
@@ -257,12 +239,11 @@ public class EpidemicProbe extends Probe implements ProbeKeys.EpidemicsKeys {
                 runData.putString("name", mBluetoothAdapter.getName());
                 runData.putString("self_state", selfState.toString());
 
-                SharedPreferences settings = getSharedPreferences(OWN_NAME, 0);
                 String last_state_change = settings.getString("last_state_change", "");
                 String last_vaccination_decision = settings.getString("last_vaccination_decision", "");
                 runData.putString("last_state_change", last_state_change);
                 runData.putString("last_vaccination_decision", last_vaccination_decision);
-
+                runData.putLong("wave_description_accepted_t", settings.getLong("wave_description_accepted_t", 0L));
 
 
 
@@ -354,7 +335,7 @@ public class EpidemicProbe extends Probe implements ProbeKeys.EpidemicsKeys {
 
         }
 
-        private void setCurrentState(SelfState state) {
+        private void setCurrentState(SelfState state, boolean vibrate) {
             selfState = state;
             if (state.equals(SelfState.S)) saveLocalSharedPreference("self_state", "S");
             if (state.equals(SelfState.I)) saveLocalSharedPreference("self_state", "I");
@@ -363,7 +344,7 @@ public class EpidemicProbe extends Probe implements ProbeKeys.EpidemicsKeys {
             if (state.equals(SelfState.R)) saveLocalSharedPreference("self_state", "R");
             if (state.equals(SelfState.A)) saveLocalSharedPreference("self_state", "A");
 
-            vibrate();
+            if (vibrate) vibrate();
 
         }
 
@@ -403,7 +384,7 @@ public class EpidemicProbe extends Probe implements ProbeKeys.EpidemicsKeys {
             saveLocalSharedPreference("infecting_device", "");
             saveLocalSharedPreference("infecting_name", "");
             saveLocalSharedPreference("to_vaccinated_time", 0l);
-            setCurrentState(SelfState.I);
+            setCurrentState(SelfState.I, true);
             setInfectedName();
             saveLocalSharedPreference("last_state_change", ""+System.currentTimeMillis()+"_I_"+device_id+"_"+device_name);
         }
@@ -417,7 +398,7 @@ public class EpidemicProbe extends Probe implements ProbeKeys.EpidemicsKeys {
             saveLocalSharedPreference("infecting_device", "");
             saveLocalSharedPreference("infecting_name", "");
             saveLocalSharedPreference("to_vaccinated_time", 0l);
-            setCurrentState(SelfState.S);
+            setCurrentState(SelfState.S, true);
             setSusceptibleName();
             saveLocalSharedPreference("last_state_change", ""+System.currentTimeMillis()+"_S");
         }
@@ -431,7 +412,7 @@ public class EpidemicProbe extends Probe implements ProbeKeys.EpidemicsKeys {
             saveLocalSharedPreference("infecting_device", "");
             saveLocalSharedPreference("infecting_name", "");
             saveLocalSharedPreference("to_vaccinated_time", calculateToVaccinatedTime());
-            setCurrentState(SelfState.A);
+            setCurrentState(SelfState.A, true);
             setSusceptibleName();
             saveLocalSharedPreference("last_state_change", ""+System.currentTimeMillis()+"_A");
         }
@@ -445,7 +426,7 @@ public class EpidemicProbe extends Probe implements ProbeKeys.EpidemicsKeys {
             saveLocalSharedPreference("infecting_device", "");
             saveLocalSharedPreference("infecting_name", "");
             saveLocalSharedPreference("to_vaccinated_time", 0l);
-            setCurrentState(SelfState.V);
+            setCurrentState(SelfState.V, true);
             setSusceptibleName();
             saveLocalSharedPreference("last_state_change", ""+System.currentTimeMillis()+"_V");
 
@@ -460,7 +441,7 @@ public class EpidemicProbe extends Probe implements ProbeKeys.EpidemicsKeys {
             saveLocalSharedPreference("infecting_device", device_id);
             saveLocalSharedPreference("infecting_name", device_name);
             saveLocalSharedPreference("to_vaccinated_time", 0l);
-            setCurrentState(SelfState.E);
+            setCurrentState(SelfState.E, true);
             setInfectedName();
             saveLocalSharedPreference("last_state_change", ""+System.currentTimeMillis()+"_E_"+device_id+"_"+device_name);
         }
@@ -473,7 +454,7 @@ public class EpidemicProbe extends Probe implements ProbeKeys.EpidemicsKeys {
             saveLocalSharedPreference("to_recover_time", 0l);
             saveLocalSharedPreference("infecting_device", "");
             saveLocalSharedPreference("infecting_name", "");
-            setCurrentState(STATE_AFTER_INFECTED);
+            setCurrentState(STATE_AFTER_INFECTED, true);
             setSusceptibleName();
             saveLocalSharedPreference("last_state_change", ""+System.currentTimeMillis()+"_R");
         }
@@ -743,6 +724,9 @@ public class EpidemicProbe extends Probe implements ProbeKeys.EpidemicsKeys {
             consumedWaves.add(timestamp);
             setConsumed("consumed_waves", consumedWaves);
 
+            saveLocalSharedPreference("wave_description_accepted", false);
+            saveLocalSharedPreference("wave_description_accepted_t", 0L);
+
             return true;
         }
 
@@ -824,15 +808,22 @@ public class EpidemicProbe extends Probe implements ProbeKeys.EpidemicsKeys {
             int currentHour = Calendar.getInstance().get(Calendar.HOUR_OF_DAY);
             int currentDay =  Calendar.getInstance().get(Calendar.DAY_OF_MONTH);
 
+            //FIXME remove
+            //saveLocalSharedPreference("wave_description_accepted", false);
+
 
             SharedPreferences settings = getSharedPreferences(OWN_NAME, 0);
             int lastDayShowedState = settings.getInt("last_day_showed_state", 0);
+            boolean wave_description_accepted = settings.getBoolean("wave_description_accepted", false);
 
 
-            if (selfState.equals(SelfState.S) && currentHour > 7 &&  currentDay != lastDayShowedState) {
+
+            if (wave_description_accepted && selfState.equals(SelfState.S) && currentHour > 7 &&  currentDay != lastDayShowedState) {
                 saveLocalSharedPreference("last_day_showed_state", currentDay, 0);
                 forceShowState();
-
+            }
+            else if (!wave_description_accepted) {
+                forceShowState();
             }
 
         }
@@ -873,6 +864,9 @@ public class EpidemicProbe extends Probe implements ProbeKeys.EpidemicsKeys {
         }
 
         private void forceShowState() {
+
+            //TODO: cancel previous from the stack
+
             Intent dialogIntent = new Intent(getBaseContext(), EpiStateActivity.class);
             dialogIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             getApplication().startActivity(dialogIntent);
@@ -884,9 +878,6 @@ public class EpidemicProbe extends Probe implements ProbeKeys.EpidemicsKeys {
 
 
     void showNotification(String title, String text, int icon) {
-
-        Log.d(EPI_TAG, "showing state 2");
-
 
         NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this)
                         .setSmallIcon(icon)
@@ -908,8 +899,6 @@ public class EpidemicProbe extends Probe implements ProbeKeys.EpidemicsKeys {
 
         mBuilder.setContentIntent(resultPendingIntent);
 
-
-        //startForeground(mNotificationId, mBuilder.build());
         NotificationManager mNotifyMgr = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
         mNotifyMgr.notify(mNotificationId, mBuilder.build());
     }
