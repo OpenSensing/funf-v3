@@ -8,7 +8,6 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -216,7 +215,14 @@ public class EpiStateActivity extends FragmentActivity{
 
             ((TextView) findViewById(R.id.postTextView)).setText(getString(R.string.status_update, self_state));
 
-            ((TextView) findViewById(R.id.statusTextView)).setText("You are " + self_state);
+            String youAreText = "You are " + self_state + ". ";
+            if (self_state.equals("waiting for vaccination to become effective")) {
+                Long vaccinationEffective = settings.getLong("to_vaccinated_time", 0L);
+                String untilVaccination = String.format("%.0f", (vaccinationEffective - System.currentTimeMillis())/1000.0/60.0);
+                youAreText += untilVaccination + " minutes until vaccination is effective.";
+            }
+
+            ((TextView) findViewById(R.id.statusTextView)).setText(youAreText);
 
             postStatusUpdateButton.setEnabled((enableButtons || canPresentShareDialog) && notYetPosted);
 

@@ -133,7 +133,8 @@
                 android:id="@+id/vaccinationExplanationTextView"
                 android:layout_gravity="center_horizontal"
                 android:textColor="#cc000000"
-                android:layout_margin="@dimen/com_facebook_loginview_padding_bottom" />
+                android:layout_margin="@dimen/com_facebook_loginview_padding_bottom"
+                android:text="@string/vaccination_text"/>
 
 
         </LinearLayout>

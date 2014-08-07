@@ -151,7 +151,7 @@ public class EpidemicProbe extends Probe implements ProbeKeys.EpidemicsKeys {
         private Long EXPOSED_DURATION = 30 * 60 * 1000l;
         private Long RECOVERED_DURATION = 60 * 60 * 1000l;
         private String WAVE = "";
-        private Long VACCINATED_DURATION = 6 * 60 * 60 * 1000l;
+        private Long VACCINATED_DURATION = 2 * 60 * 60 * 1000l;
 
         private HashMap<Long, String> WAVES = null;
 
@@ -876,7 +876,6 @@ public class EpidemicProbe extends Probe implements ProbeKeys.EpidemicsKeys {
 
             Intent dialogIntent = new Intent(getBaseContext(), EpiStateActivity.class);
             dialogIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            Intent.FL
             getApplication().startActivity(dialogIntent);
         }
 
