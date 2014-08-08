@@ -78,7 +78,15 @@ public class EpiDescriptionActivity extends Activity {
             welcomeText.setText(R.string.welcome_text_4);
             welcomeText.setCompoundDrawablesRelativeWithIntrinsicBounds(R.drawable.epi_icon_a, 0, 0, 0);
         }
-        if (screenNo == 5) welcomeText.setText(R.string.welcome_text_5);
+        if (screenNo == 5) {
+            SharedPreferences settings = getSharedPreferences(EpidemicProbe.OWN_NAME, 0);
+            int waveNo = settings.getInt("wave_no", 1);
+            String finalString = getString(R.string.welcome_text_5);
+            if (waveNo > 4 && waveNo <= 8) finalString += " " + getString(R.string.welcome_text_extra_after_wave_4);
+            if (waveNo > 8) finalString += " " + getString(R.string.welcome_text_extra_after_wave_8);
+
+            welcomeText.setText(finalString);
+        }
 
         if (screenNo == 1) backButton.setVisibility(View.INVISIBLE);
         else backButton.setVisibility(View.VISIBLE);

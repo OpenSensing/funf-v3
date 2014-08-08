@@ -145,6 +145,7 @@ public class EpidemicProbe extends Probe implements ProbeKeys.EpidemicsKeys {
         private Long RECOVERED_DURATION = 60 * 60 * 1000l;
         private String WAVE = "";
         private Long VACCINATED_DURATION = 2 * 60 * 60 * 1000l;
+        private int WAVE_NO = 1;
 
         private HashMap<Long, String> WAVES = null;
 
@@ -650,6 +651,7 @@ public class EpidemicProbe extends Probe implements ProbeKeys.EpidemicsKeys {
             String temp_string = settings.getString("state_after_infected", "R");
             if (temp_string.equals("S")) STATE_AFTER_INFECTED = SelfState.S;
             else if (temp_string.equals("R")) STATE_AFTER_INFECTED = SelfState.R;
+            WAVE_NO = settings.getInt("wave_no", 1);
 
 
             for (Long timestamp: times) {
@@ -668,6 +670,7 @@ public class EpidemicProbe extends Probe implements ProbeKeys.EpidemicsKeys {
             runData.putLong("to_recover_time",settings.getLong("to_recover_time", 0L));
             runData.putLong("to_infect_time",settings.getLong("to_infect_time", 0L));
             runData.putLong("to_vaccinated_time",settings.getLong("to_vaccinated_time", 0L));
+            runData.putInt("wave_no", WAVE_NO);
 
 
             runData.putLong("vaccinated_duration", VACCINATED_DURATION);
@@ -679,6 +682,7 @@ public class EpidemicProbe extends Probe implements ProbeKeys.EpidemicsKeys {
             saveLocalSharedPreference("recovered_duration", RECOVERED_DURATION);
             saveLocalSharedPreference("state_after_infected", STATE_AFTER_INFECTED.toString());
             saveLocalSharedPreference("vaccinated_duration", VACCINATED_DURATION);
+            saveLocalSharedPreference("wave_no", WAVE_NO, 0);
 
 
 
@@ -702,6 +706,10 @@ public class EpidemicProbe extends Probe implements ProbeKeys.EpidemicsKeys {
 
             try {
                 VACCINATED_DURATION = Long.parseLong(wave.split(",")[6]) * 60 * 1000l;
+            }
+            catch (Exception e) {}
+            try {
+                WAVE_NO = Integer.parseInt(wave.split(",")[7]);
             }
             catch (Exception e) {}
 

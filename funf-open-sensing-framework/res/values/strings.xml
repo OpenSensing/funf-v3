@@ -54,6 +54,10 @@
 In each round, you are asked once a day whether you want to vaccinate or not, until you either contracted the disease or vaccinated. However, you may vaccinate all the time by opening the app. Additionally, you can see your current state - susceptible, vaccinated, or infected - all the time in the app.  At the end of the round, you will learn about the points earned.
 </string>
 
+    <string name="welcome_text_extra_after_wave_4">You will also receive feedback each day about the relative number of other persons you had bluetooth contact during this round, who chose to vaccinate.</string>
+    <string name="welcome_text_extra_after_wave_8">You will also receive feedback each day about the relative number of all other persons playing the game, who chose to vaccinate.</string>
+
+
     <string name="vaccination_text">Vaccination costs 10 points. It prevents from contracting the disease from 2 hours after pressing the button until the end of the round. Additional point losses due to side effects might appear.</string>
     <string name="vaccination_text_disabled">You already made a vaccination decisions, please come back later...</string>
     <string name="vaccination_text_waiting">Applying vaccination...</string>
