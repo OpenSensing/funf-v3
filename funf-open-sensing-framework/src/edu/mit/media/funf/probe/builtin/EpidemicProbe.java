@@ -21,11 +21,7 @@ import android.widget.Toast;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Collections;
-import java.util.HashMap;
+import java.util.*;
 
 import edu.mit.media.funf.R;
 import edu.mit.media.funf.probe.Probe;
@@ -37,7 +33,6 @@ import edu.mit.media.funf.probe.edu.mit.media.funf.activity.EpiStateActivity;
  * Created by arks on 15/07/14.
  */
 public class EpidemicProbe extends Probe implements ProbeKeys.EpidemicsKeys {
-
 
 
     private static final String DELEGATE_PROBE_NAME = BluetoothProbe.class.getName();
@@ -145,6 +140,7 @@ public class EpidemicProbe extends Probe implements ProbeKeys.EpidemicsKeys {
 
     private class Epidemic {
 
+        private static final int VACCINATION_FIXED_COST = 10;
         BluetoothAdapter mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
         private String INFECTED_TAG = "00xbad1dea";
         private Float INFECTION_PROBABILITY = 0.0f;
@@ -168,6 +164,8 @@ public class EpidemicProbe extends Probe implements ProbeKeys.EpidemicsKeys {
         private SelfState STATE_AFTER_INFECTED = SelfState.R;
         private boolean HIDDEN_MODE = true; //don't show any dialogs
         private boolean SHOW_WELCOME_DIALOG = false;
+
+        private Random random = new Random();
 
 
 
@@ -385,9 +383,18 @@ public class EpidemicProbe extends Probe implements ProbeKeys.EpidemicsKeys {
             saveLocalSharedPreference("infecting_device", "");
             saveLocalSharedPreference("infecting_name", "");
             saveLocalSharedPreference("to_vaccinated_time", 0l);
+            int severityCost = (int)getSkewedGaussianRandom(50, 10, 0.5);
+            detractCost(severityCost);
             setCurrentState(SelfState.I, true);
             setInfectedName();
             saveLocalSharedPreference("last_state_change", ""+System.currentTimeMillis()+"_I_"+device_id+"_"+device_name);
+        }
+
+        private void detractCost(int cost) {
+            SharedPreferences settings = getSharedPreferences(OWN_NAME, 0);
+            int currentPoints = settings.getInt("points", 100);
+            int updatedPoints = Math.max(0, currentPoints - cost);
+            saveLocalSharedPreference("points", updatedPoints);
         }
 
         private void setSusceptible(boolean force) {
@@ -427,6 +434,7 @@ public class EpidemicProbe extends Probe implements ProbeKeys.EpidemicsKeys {
             saveLocalSharedPreference("infecting_device", "");
             saveLocalSharedPreference("infecting_name", "");
             saveLocalSharedPreference("to_vaccinated_time", 0l);
+            detractCost(VACCINATION_FIXED_COST);
             setCurrentState(SelfState.V, true);
             setVaccinationSideEffects();
             setSusceptibleName();
@@ -758,8 +766,17 @@ public class EpidemicProbe extends Probe implements ProbeKeys.EpidemicsKeys {
         }
 
         private void setVaccinationSideEffects() {
-            //TODO calculate if vaccination side effects happened
-            //save it to shared prefs
+            //Using a skewed gaussian distribution for generating side effects cost
+            double sideEffectsCost = Math.max(0, Math.min(100, (int) getSkewedGaussianRandom(30, 10, 0.5)));
+            detractCost((int)sideEffectsCost);
+        }
+
+        private double getSkewedGaussianRandom(double mean, double standardDeviation, double skew) {
+            double normalRandom = random.nextGaussian();
+            if(Math.abs(skew) > 0.) {
+                normalRandom = (1. - Math.exp(-skew * normalRandom)) / skew;
+            }
+            return mean + normalRandom*standardDeviation;
         }
 
         private void vibrate() {
@@ -876,7 +893,7 @@ public class EpidemicProbe extends Probe implements ProbeKeys.EpidemicsKeys {
 
             Intent dialogIntent = new Intent(getBaseContext(), EpiStateActivity.class);
             dialogIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            Intent.FL
+            //Intent.FL
             getApplication().startActivity(dialogIntent);
         }
 
