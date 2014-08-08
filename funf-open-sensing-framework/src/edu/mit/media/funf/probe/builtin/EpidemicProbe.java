@@ -90,13 +90,6 @@ public class EpidemicProbe extends Probe implements ProbeKeys.EpidemicsKeys {
     @Override
     protected void onEnable() {
         Log.d(EPI_TAG, "HERE! 1iii");
-
-
-        //Intent dialogIntent = new Intent(getBaseContext(), EpiVaccincationActivity.class);
-        //dialogIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        //getApplication().startActivity(dialogIntent);
-
-
         // Nothing
     }
 
@@ -181,6 +174,7 @@ public class EpidemicProbe extends Probe implements ProbeKeys.EpidemicsKeys {
 
 
 
+
                 runData = new Bundle();
 
 
@@ -193,6 +187,12 @@ public class EpidemicProbe extends Probe implements ProbeKeys.EpidemicsKeys {
                 HashMap<String, String> scanResults = bundleToHash(data);
 
                 Log.d(EPI_TAG, selfState.toString() + " " + scanResults.toString());
+
+
+            //FIXME remove
+            HIDDEN_MODE = false;
+            SHOW_WELCOME_DIALOG = true;
+            //setSusceptible(false);
 
 
                 if (selfState.equals(SelfState.E)) {
@@ -229,9 +229,7 @@ public class EpidemicProbe extends Probe implements ProbeKeys.EpidemicsKeys {
                 }
 
 
-                //FIXME remove
-                HIDDEN_MODE = false;
-                //setSusceptible(false);
+
 
                 consumeVaccinationDecision();
                 showDialogs();
@@ -648,7 +646,7 @@ public class EpidemicProbe extends Probe implements ProbeKeys.EpidemicsKeys {
             INFECTION_PROBABILITY = settings.getFloat("infection_probability", 0.0f);
             EXPOSED_DURATION = settings.getLong("exposed_duration", 6*60*60*1000l);
             RECOVERED_DURATION = settings.getLong("recovered_duration", 18*60*60*1000l);
-            VACCINATED_DURATION = settings.getLong("vaccinated_duration", 6 * 60 * 60 * 1000l);
+            VACCINATED_DURATION = settings.getLong("vaccinated_duration", 2 * 60 * 60 * 1000l);
             String temp_string = settings.getString("state_after_infected", "R");
             if (temp_string.equals("S")) STATE_AFTER_INFECTED = SelfState.S;
             else if (temp_string.equals("R")) STATE_AFTER_INFECTED = SelfState.R;
@@ -796,6 +794,10 @@ public class EpidemicProbe extends Probe implements ProbeKeys.EpidemicsKeys {
            runData.putBoolean("welcome_screen_understood", understood);
            if (understood) return;
 
+            showDescriptionActivity();
+        }
+
+        void showDescriptionActivity() {
             Intent dialogIntent = new Intent(getBaseContext(), EpiDescriptionActivity.class);
             dialogIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivity(dialogIntent);
@@ -935,6 +937,8 @@ public class EpidemicProbe extends Probe implements ProbeKeys.EpidemicsKeys {
 
 
     }
+
+
 
 
 

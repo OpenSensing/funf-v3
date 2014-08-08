@@ -80,6 +80,16 @@
         facebook:fetch_user_info="true"
         android:layout_gravity="center_horizontal" />
 
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Read experiment description"
+            android:id="@+id/button"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="5dp"
+            android:onClick="showDescriptionActivity"
+            />
+
         <LinearLayout
             android:orientation="vertical"
             android:layout_width="match_parent"

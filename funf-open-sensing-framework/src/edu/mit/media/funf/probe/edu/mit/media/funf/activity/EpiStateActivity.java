@@ -421,4 +421,10 @@ public class EpiStateActivity extends FragmentActivity{
         editor.commit();
     }
 
+    public void showDescriptionActivity(View view) {
+        Intent dialogIntent = new Intent(getBaseContext(), EpiDescriptionActivity.class);
+        dialogIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(dialogIntent);
+    }
+
 }

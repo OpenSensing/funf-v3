@@ -4,7 +4,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:background="#FFF"
-    >
+    android:weightSum="1">
 
     <TextView
         android:layout_width="wrap_content"
@@ -19,22 +19,62 @@
         android:textSize="30dp"
         android:layout_marginTop="@dimen/com_facebook_loginview_padding_right" />
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="@string/welcome_text_2"
-        android:id="@+id/textView"
-        android:layout_gravity="center_horizontal"
-        android:layout_margin="10dp"
-        android:textColor="@android:color/black"
-        android:textSize="18dp" />
+    <RelativeLayout
+        android:layout_width="fill_parent"
+        android:layout_height="395dp"
+        android:layout_weight="1.14">
 
-    <Button android:id="@+id/understand_button"
-        android:layout_width="wrap_content"
+        <ScrollView
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:id="@+id/scrollView"
+            android:layout_marginBottom="20dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:text="@string/welcome_text_2"
+                android:id="@+id/welcomeTextView"
+                android:layout_gravity="center_horizontal"
+                android:layout_margin="10dp"
+                android:textColor="@android:color/black"
+                android:textSize="16dp"
+                android:paddingBottom="10dp" />
+        </ScrollView>
+
+    </RelativeLayout>
+
+
+
+
+
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:text="Got it!"
-        android:layout_gravity="center_horizontal"
-        android:onClick="understand"
-        />
+        android:weightSum="1"
+        android:layout_marginBottom="20dp">
+
+
+        <Button
+            android:layout_width="115dp"
+            android:layout_height="wrap_content"
+            android:text="&lt;&lt; Back"
+            android:id="@+id/backButton"
+            android:onClick="back" />
+
+        <Button android:id="@+id/proceedButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Got it!"
+            android:layout_gravity="center_horizontal"
+            android:onClick="proceed"
+            android:layout_alignParentTop="true"
+            android:layout_toRightOf="@+id/backButton" />
+
+    </LinearLayout>
+
+
 </LinearLayout>
