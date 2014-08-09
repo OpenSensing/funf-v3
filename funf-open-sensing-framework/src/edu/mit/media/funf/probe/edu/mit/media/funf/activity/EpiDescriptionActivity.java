@@ -52,6 +52,8 @@ public class EpiDescriptionActivity extends Activity {
     private Button proceedButton = null;
     private Button backButton = null;
 
+    private boolean showVaccinationScreenFirst = false;
+
 
     public void onCreate (Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -61,6 +63,10 @@ public class EpiDescriptionActivity extends Activity {
         backButton = (Button)findViewById(R.id.backButton);
         welcomeText.setMovementMethod(new ScrollingMovementMethod());
 
+        showVaccinationScreenFirst = false;
+        if (Math.random() > 0.5) showVaccinationScreenFirst = true;
+
+        saveLocalSharedPreference("show_vaccination_screen_first", showVaccinationScreenFirst);
     }
 
     protected void onResume() {
@@ -69,24 +75,43 @@ public class EpiDescriptionActivity extends Activity {
         updateUI();
     }
 
+    void showScreen1() {
+        welcomeText.setText(R.string.welcome_text_1);
+    }
+
+    void showScreen2() {
+        welcomeText.setText(R.string.welcome_text_2);
+    }
+
+    void showScreen3() {
+        welcomeText.setText(R.string.welcome_text_3);
+    }
+
+    void showScreen4() {
+        welcomeText.setText(R.string.welcome_text_4);
+        welcomeText.setCompoundDrawablesRelativeWithIntrinsicBounds(R.drawable.epi_icon_a, 0, 0, 0);
+    }
+
+    void showScreen5() {
+        SharedPreferences settings = getSharedPreferences(EpidemicProbe.OWN_NAME, 0);
+        int waveNo = settings.getInt("wave_no", 1);
+        String finalString = getString(R.string.welcome_text_5);
+        if (waveNo > 4 && waveNo <= 8) finalString += " " + getString(R.string.welcome_text_extra_after_wave_4);
+        if (waveNo > 8) finalString += " " + getString(R.string.welcome_text_extra_after_wave_8);
+
+        welcomeText.setText(finalString);
+    }
+
     void updateUI() {
         welcomeText.setCompoundDrawablesRelativeWithIntrinsicBounds(null, null, null, null);
-        if (screenNo == 1) welcomeText.setText(R.string.welcome_text_1);
-        if (screenNo == 2) welcomeText.setText(R.string.welcome_text_2);
-        if (screenNo == 3) welcomeText.setText(R.string.welcome_text_3);
-        if (screenNo == 4) {
-            welcomeText.setText(R.string.welcome_text_4);
-            welcomeText.setCompoundDrawablesRelativeWithIntrinsicBounds(R.drawable.epi_icon_a, 0, 0, 0);
-        }
-        if (screenNo == 5) {
-            SharedPreferences settings = getSharedPreferences(EpidemicProbe.OWN_NAME, 0);
-            int waveNo = settings.getInt("wave_no", 1);
-            String finalString = getString(R.string.welcome_text_5);
-            if (waveNo > 4 && waveNo <= 8) finalString += " " + getString(R.string.welcome_text_extra_after_wave_4);
-            if (waveNo > 8) finalString += " " + getString(R.string.welcome_text_extra_after_wave_8);
-
-            welcomeText.setText(finalString);
-        }
+        if (screenNo == 1) showScreen1();
+        if (screenNo == 2) showScreen2();
+        if (screenNo == 3 && !showVaccinationScreenFirst) showScreen3();
+        if (screenNo == 3 && showVaccinationScreenFirst) showScreen5();
+        if (screenNo == 4 && !showVaccinationScreenFirst) showScreen4();
+        if (screenNo == 4 && showVaccinationScreenFirst) showScreen3();
+        if (screenNo == 5 && !showVaccinationScreenFirst) showScreen5();
+        if (screenNo == 5 && showVaccinationScreenFirst) showScreen4();
 
         if (screenNo == 1) backButton.setVisibility(View.INVISIBLE);
         else backButton.setVisibility(View.VISIBLE);
@@ -128,5 +153,11 @@ public class EpiDescriptionActivity extends Activity {
         editor.commit();
     }
 
+    private void saveLocalSharedPreference(String key, Integer value) {
+        SharedPreferences settings = getSharedPreferences(EpidemicProbe.OWN_NAME, 0);
+        SharedPreferences.Editor editor = settings.edit();
+        editor.putInt(key, value);
+        editor.commit();
+    }
 
 }

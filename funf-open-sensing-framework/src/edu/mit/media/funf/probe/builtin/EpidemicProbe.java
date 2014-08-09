@@ -244,7 +244,7 @@ public class EpidemicProbe extends Probe implements ProbeKeys.EpidemicsKeys {
                 runData.putString("last_state_change", last_state_change);
                 runData.putString("last_vaccination_decision", last_vaccination_decision);
                 runData.putLong("wave_description_accepted_t", settings.getLong("wave_description_accepted_t", 0L));
-
+                runData.putBoolean("show_vaccination_screen_first", settings.getBoolean("show_vaccination_screen_first", false));
 
 
 
