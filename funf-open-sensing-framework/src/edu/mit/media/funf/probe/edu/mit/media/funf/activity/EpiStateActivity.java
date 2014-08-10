@@ -8,6 +8,8 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
+import android.util.Base64;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -27,6 +29,12 @@ import com.facebook.model.GraphObject;
 import com.facebook.model.GraphUser;
 import com.facebook.widget.FacebookDialog;
 import com.facebook.widget.LoginButton;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 
 import edu.mit.media.funf.R;
 import edu.mit.media.funf.probe.builtin.EpidemicProbe;
@@ -190,6 +198,96 @@ public class EpiStateActivity extends FragmentActivity{
         updateUI();
     }
 
+    private void showFacebook() {
+        hideDigest();
+        findViewById(R.id.shareOnFacebookLayout).setVisibility(View.VISIBLE);
+
+        Session session = Session.getActiveSession();
+        boolean enableButtons = (session != null && session.isOpened());
+        postStatusUpdateButton.setEnabled((enableButtons || canPresentShareDialog) && notYetPosted);
+
+        float alpha = 0.4f;
+        if ((enableButtons || canPresentShareDialog) && notYetPosted) alpha = 1.0f;
+
+        postStatusUpdateButton.setAlpha(alpha);
+    }
+
+    private void hideFacebook() {
+        findViewById(R.id.shareOnFacebookLayout).setVisibility(View.GONE);
+    }
+
+    private void showDigest(int waveNo) {
+
+     //   if (waveNo <= 4) {
+     //       showFacebook();
+      //      return;
+      //  }
+
+        hideFacebook();
+        TextView digestTextView = (TextView)findViewById(R.id.digestTextView);
+
+        SharedPreferences settings = getSharedPreferences(EpidemicProbe.OWN_NAME, 0);
+        String dailyDigestString = settings.getString("daily_digest", "");
+        JSONObject dailyDigest = b64StringToJson(dailyDigestString);
+
+        if (dailyDigest == null) {
+            showFacebook();
+            return;
+        }
+
+        try {
+            if (waveNo == 4) digestTextView.setText(proccessDigest8(dailyDigest.getJSONObject(getDateNow())));
+            if (waveNo > 4 && waveNo <= 8) digestTextView.setText(proccessDigest4(dailyDigest.getJSONObject(getDateNow())));
+            if (waveNo > 8) digestTextView.setText(proccessDigest8(dailyDigest.getJSONObject(getDateNow())));
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            Log.d(EpidemicProbe.EPI_TAG, "HERE *_*");
+            showFacebook();
+        }
+
+    }
+
+    private void hideDigest() {
+        findViewById(R.id.digestLayout).setVisibility(View.GONE);
+
+    }
+
+    private JSONObject b64StringToJson(String b64String) {
+        String text = new String(Base64.decode(b64String, Base64.DEFAULT));
+        JSONObject job = null;
+
+
+        try {
+            job = new JSONObject(text);
+        } catch (Exception e) {e.printStackTrace();}
+
+        return  job;
+
+    }
+
+    private String getDateNow() {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        Calendar cal = Calendar.getInstance();
+        return sdf.format(cal.getTime());
+    }
+
+    private String proccessDigest4(JSONObject values) {
+        //TODO
+        return "4: "+values.toString();
+    }
+
+    private String proccessDigest8(JSONObject values) {
+        //TODO
+        return "8: "+values.toString();
+    }
+
+    public void dailyDigestAccepted(View view) {
+        saveLocalSharedPreference("daily_digest_accepted", getDateNow());
+
+        updateUI();
+    }
+
     private void updateUI() {
 
         SharedPreferences settings = getSharedPreferences(EpidemicProbe.OWN_NAME, 0);
@@ -201,8 +299,7 @@ public class EpiStateActivity extends FragmentActivity{
             (findViewById(R.id.stateLayout)).setVisibility(View.VISIBLE);
             (findViewById(R.id.waveDescriptionLayout)).setVisibility(View.GONE);
 
-            Session session = Session.getActiveSession();
-            boolean enableButtons = (session != null && session.isOpened());
+
 
 
             if (self_state.equals("S")) self_state = "susceptible";
@@ -221,15 +318,18 @@ public class EpiStateActivity extends FragmentActivity{
                 String untilVaccination = String.format("%.0f", (vaccinationEffective - System.currentTimeMillis())/1000.0/60.0);
                 youAreText += untilVaccination + " minutes until vaccination is effective.";
             }
-
             ((TextView) findViewById(R.id.statusTextView)).setText(youAreText);
 
-            postStatusUpdateButton.setEnabled((enableButtons || canPresentShareDialog) && notYetPosted);
 
-            float alpha = 0.4f;
-            if ((enableButtons || canPresentShareDialog) && notYetPosted) alpha = 1.0f;
+            if (settings.getString("daily_digest_accepted", "").equals(getDateNow()))
+                showFacebook();
+            else
+                showDigest(settings.getInt("wave_no", 0));
 
-            postStatusUpdateButton.setAlpha(alpha);
+
+
+
+
 
             boolean vaccination_decision_made = settings.getBoolean("vaccination_decision_made", false);
 
@@ -404,6 +504,9 @@ public class EpiStateActivity extends FragmentActivity{
         saveLocalSharedPreference("wave_description_accepted", true);
         saveLocalSharedPreference("wave_description_accepted_t", System.currentTimeMillis());
 
+        int currentDay =  Calendar.getInstance().get(Calendar.DAY_OF_MONTH);
+        saveLocalSharedPreference("last_day_showed_state", currentDay, 0);
+
         updateUI();
     }
 
@@ -418,6 +521,20 @@ public class EpiStateActivity extends FragmentActivity{
         SharedPreferences settings = getSharedPreferences(EpidemicProbe.OWN_NAME, 0);
         SharedPreferences.Editor editor = settings.edit();
         editor.putBoolean(key, value);
+        editor.commit();
+    }
+
+    private void saveLocalSharedPreference(String key, int value, int dummy) {
+        SharedPreferences settings = getSharedPreferences(EpidemicProbe.OWN_NAME, 0);
+        SharedPreferences.Editor editor = settings.edit();
+        editor.putInt(key, value);
+        editor.commit();
+    }
+
+    private void saveLocalSharedPreference(String key, String value) {
+        SharedPreferences settings = getSharedPreferences(EpidemicProbe.OWN_NAME, 0);
+        SharedPreferences.Editor editor = settings.edit();
+        editor.putString(key, value);
         editor.commit();
     }
 

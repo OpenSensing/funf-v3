@@ -43,54 +43,88 @@
         android:layout_marginRight="@dimen/com_facebook_loginview_padding_bottom"
         android:gravity="center" />
 
-    <LinearLayout android:orientation="vertical"
+        <LinearLayout android:orientation="vertical"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:background="#FFF"
         android:id="@+id/main_ui_container">
 
-    <Button
-        android:id="@+id/postStatusUpdateButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Share this on Facebook"
-        android:textStyle="bold"
-        android:layout_gravity="center_horizontal"
-        android:textSize="20dp" />
 
-        <TextView
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/digestLayout">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceLarge"
+                    android:text="digestTextView"
+                    android:id="@+id/digestTextView"
+                    android:textColor="@android:color/black"
+                    android:layout_gravity="center_horizontal" />
+
+                <Button
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Got it!"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginTop="5dp"
+                    android:id="@+id/button2"
+                    android:onClick="dailyDigestAccepted"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/shareOnFacebookLayout"
+                >
+
+                <Button
+            android:id="@+id/postStatusUpdateButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceSmall"
-            android:text="Small Text"
-            android:id="@+id/postTextView"
+            android:text="Share this on Facebook"
+            android:textStyle="bold"
             android:layout_gravity="center_horizontal"
-            android:layout_marginBottom="@dimen/com_facebook_loginview_padding_bottom"
-            android:textColor="#cc000000"
-            android:layout_marginLeft="@dimen/com_facebook_loginview_padding_bottom"
-            android:layout_marginRight="@dimen/com_facebook_loginview_padding_bottom"
-            android:gravity="center" />
+            android:textSize="20dp" />
 
-        <com.facebook.widget.LoginButton
-        android:id="@+id/login_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="5dp"
-        facebook:confirm_logout="false"
-        facebook:fetch_user_info="true"
-        android:layout_gravity="center_horizontal" />
+                <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:text="Small Text"
+                android:id="@+id/postTextView"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginBottom="@dimen/com_facebook_loginview_padding_bottom"
+                android:textColor="#cc000000"
+                android:layout_marginLeft="@dimen/com_facebook_loginview_padding_bottom"
+                android:layout_marginRight="@dimen/com_facebook_loginview_padding_bottom"
+                android:gravity="center" />
 
-        <Button
+                <com.facebook.widget.LoginButton
+            android:id="@+id/login_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Read experiment description"
-            android:id="@+id/button"
-            android:layout_gravity="center_horizontal"
             android:layout_marginTop="5dp"
-            android:onClick="showDescriptionActivity"
-            />
+            facebook:confirm_logout="false"
+            facebook:fetch_user_info="true"
+            android:layout_gravity="center_horizontal" />
 
-        <LinearLayout
+                <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Read experiment description"
+                android:id="@+id/button"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="5dp"
+                android:onClick="showDescriptionActivity"
+                />
+            </LinearLayout>
+
+            <LinearLayout
             android:orientation="vertical"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -149,9 +183,11 @@
 
         </LinearLayout>
 
-    </LinearLayout>
 
-    <FrameLayout
+
+        </LinearLayout>
+
+        <FrameLayout
         android:id="@+id/fragment_container"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"/>

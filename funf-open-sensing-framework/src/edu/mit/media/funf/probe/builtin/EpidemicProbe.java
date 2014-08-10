@@ -15,17 +15,20 @@ import android.os.Vibrator;
 import android.preference.PreferenceManager;
 import android.support.v4.app.NotificationCompat;
 import android.text.TextUtils;
+import android.util.Base64;
 import android.util.Log;
 import android.widget.Toast;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Locale;
 
 import edu.mit.media.funf.R;
 import edu.mit.media.funf.probe.Probe;
@@ -90,6 +93,7 @@ public class EpidemicProbe extends Probe implements ProbeKeys.EpidemicsKeys {
     @Override
     protected void onEnable() {
         Log.d(EPI_TAG, "HERE! 1iii");
+
         // Nothing
     }
 
@@ -148,6 +152,7 @@ public class EpidemicProbe extends Probe implements ProbeKeys.EpidemicsKeys {
         private int WAVE_NO = -1;
 
         private HashMap<Long, String> WAVES = null;
+        private JSONObject DAILY_DIGESTS = null;
 
         private long SCAN_DELTA = 250 * 1000;
         private long TIME_LIMIT = 12 * 60 * 60 * 1000;
@@ -202,7 +207,7 @@ public class EpidemicProbe extends Probe implements ProbeKeys.EpidemicsKeys {
                     setInfectedName(); //just in case
                     recover();
                 } else if (selfState.equals(SelfState.V)) {
-                    setSusceptibleName(); //just in case
+                    setVaccinatedName(); //just in case
                 } else if (selfState.equals(SelfState.S) || selfState.equals(SelfState.A)) {
 
 
@@ -229,11 +234,13 @@ public class EpidemicProbe extends Probe implements ProbeKeys.EpidemicsKeys {
                 }
 
 
-
-
                 consumeVaccinationDecision();
                 showDialogs();
                 showSymptoms();
+
+                if (selfState.equals(SelfState.V)) {
+                    setVaccinatedName();
+                }
 
                 runData.putString("name", mBluetoothAdapter.getName());
                 runData.putString("self_state", selfState.toString());
@@ -244,7 +251,7 @@ public class EpidemicProbe extends Probe implements ProbeKeys.EpidemicsKeys {
                 runData.putString("last_vaccination_decision", last_vaccination_decision);
                 runData.putLong("wave_description_accepted_t", settings.getLong("wave_description_accepted_t", 0L));
                 runData.putBoolean("show_vaccination_screen_first", settings.getBoolean("show_vaccination_screen_first", false));
-
+                runData.putString("daily_digest_accepted", settings.getString("daily_digest_accepted", ""));
 
 
                 sendProbeData();
@@ -427,7 +434,7 @@ public class EpidemicProbe extends Probe implements ProbeKeys.EpidemicsKeys {
             saveLocalSharedPreference("to_vaccinated_time", 0l);
             setCurrentState(SelfState.V, true);
             setVaccinationSideEffects();
-            setSusceptibleName();
+            setVaccinatedName();
             saveLocalSharedPreference("last_state_change", ""+System.currentTimeMillis()+"_V");
 
         }
@@ -467,6 +474,12 @@ public class EpidemicProbe extends Probe implements ProbeKeys.EpidemicsKeys {
 
         }
 
+        private void setVaccinatedName() {
+            String vaccinatedName = INFECTED_TAG + "_VAC";
+            mBluetoothAdapter.setName(getDefaultName()+vaccinatedName);
+            runData.putString("name", mBluetoothAdapter.getName());
+        }
+
         private void saveDefaultName() {
             String defaultName = mBluetoothAdapter.getName();
             saveLocalSharedPreference("default_name", defaultName);
@@ -491,6 +504,7 @@ public class EpidemicProbe extends Probe implements ProbeKeys.EpidemicsKeys {
             JSONObject probeConfig = new JSONObject();
 
             if (WAVES == null) WAVES = new HashMap<Long, String>();
+            if (DAILY_DIGESTS == null) DAILY_DIGESTS = new JSONObject();
 
             try  {
                 //TODO ugly way to get the config, because the probe needs to know about the name of the config; how to do this better?
@@ -522,12 +536,17 @@ public class EpidemicProbe extends Probe implements ProbeKeys.EpidemicsKeys {
                         }
 
                         WAVES.put(timestamp, s);
-                    }
-                    catch (NumberFormatException e) {}
+                    } catch (NumberFormatException e) {}
                 }
 
-            }
-            catch (JSONException e) {}
+            } catch (JSONException e) {}
+
+            try {
+                DAILY_DIGESTS = b64StringToJson(probeConfig.getString("DAILY_DIGESTS"));
+                saveLocalSharedPreference("daily_digest", probeConfig.getString("DAILY_DIGESTS") );
+                runData.putString("daily_digest", probeConfig.getString("DAILY_DIGESTS"));
+
+            } catch (Exception e) {}
 
             try {
                 SCAN_DELTA = probeConfig.getInt("SCAN_DELTA") * 1000;
@@ -834,7 +853,7 @@ public class EpidemicProbe extends Probe implements ProbeKeys.EpidemicsKeys {
 
 
 
-            if (wave_description_accepted && selfState.equals(SelfState.S) && currentHour > 7 &&  currentDay != lastDayShowedState) {
+            if (wave_description_accepted && currentHour > 7 &&  currentDay != lastDayShowedState) {
                 saveLocalSharedPreference("last_day_showed_state", currentDay, 0);
                 forceShowState();
             }
@@ -887,9 +906,21 @@ public class EpidemicProbe extends Probe implements ProbeKeys.EpidemicsKeys {
         }
 
 
+
     }
 
+    private JSONObject b64StringToJson(String b64String) {
+        String text = new String(Base64.decode(b64String, Base64.DEFAULT));
+        JSONObject job = null;
 
+
+        try {
+            job = new JSONObject(text);
+        } catch (Exception e) {e.printStackTrace();}
+
+        return  job;
+
+    }
 
     void showNotification(String title, String text, int icon) {
 
