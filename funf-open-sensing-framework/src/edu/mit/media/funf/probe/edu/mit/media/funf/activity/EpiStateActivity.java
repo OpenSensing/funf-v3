@@ -266,7 +266,16 @@ public class EpiStateActivity extends FragmentActivity{
             }
             catch (Exception e) {}
             ((TextView)findViewById(R.id.waveDescriptiontextView)).setText(description);
+            String[] last_decision_parts = settings.getString("last_vaccination_decision", "").split("_");
+            String previousDecision = "not vaccinate";
+            if(last_decision_parts.length > 1 && Long.parseLong(last_decision_parts[1]) > Long.parseLong(last_decision_parts[3])) {
+                previousDecision = "vaccinate";
+            }
+            String previousWaveDecisionText = "In the last wave you've decided to ";
 
+            ((TextView)findViewById(R.id.previousWaveDecisionText)).setText(previousWaveDecisionText + previousDecision);
+            int remainingPoints = settings.getInt("points", 0);
+            ((TextView)findViewById(R.id.previousWaveLostPoints)).setText("You've lost: " + Integer.toString(100 - remainingPoints));
 
         }
 
