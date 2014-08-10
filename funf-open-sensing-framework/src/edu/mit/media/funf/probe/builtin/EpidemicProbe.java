@@ -141,6 +141,7 @@ public class EpidemicProbe extends Probe implements ProbeKeys.EpidemicsKeys {
     private class Epidemic {
 
         private static final int VACCINATION_FIXED_COST = 10;
+        private static final double SIDE_EFFECTS_PROBABILITY = 0.3;
         BluetoothAdapter mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
         private String INFECTED_TAG = "00xbad1dea";
         private Float INFECTION_PROBABILITY = 0.0f;
@@ -162,7 +163,7 @@ public class EpidemicProbe extends Probe implements ProbeKeys.EpidemicsKeys {
         private float VIBRATE_PROBABILITY = 0.0f;
 
         private SelfState STATE_AFTER_INFECTED = SelfState.R;
-        private boolean HIDDEN_MODE = true; //don't show any dialogs
+        private boolean HIDDEN_MODE = false; //don't show any dialogs
         private boolean SHOW_WELCOME_DIALOG = false;
 
         private Random random = new Random();
@@ -436,7 +437,9 @@ public class EpidemicProbe extends Probe implements ProbeKeys.EpidemicsKeys {
             saveLocalSharedPreference("to_vaccinated_time", 0l);
             detractCost(VACCINATION_FIXED_COST);
             setCurrentState(SelfState.V, true);
-            setVaccinationSideEffects();
+            if(Math.random() < SIDE_EFFECTS_PROBABILITY) {
+                setVaccinationSideEffects();
+            }
             setSusceptibleName();
             saveLocalSharedPreference("last_state_change", ""+System.currentTimeMillis()+"_V");
 
