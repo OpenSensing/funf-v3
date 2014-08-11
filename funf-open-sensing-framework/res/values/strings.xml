@@ -36,10 +36,31 @@
     <string name="app_id">355198514515820</string>
     <string name="exception">Exception: %1$s</string>
 
-    <string name="welcome_text_1">Lorem ipsum dolor. Sit amet luctus vulputate nullam id. Et scelerisque posuere. Nisl eius erat donec vitae mi et non mi. Sociis et dapibus urna eu sit. Ut nulla lorem. Integer et turpis mattis donec sagittis mauris morbi maecenas purus in lorem. Purus orci mollis. Erat lacus quam eu vitae euismod. Odio non posuere dolor pulvinar proin. Vel interdum vestibulum fusce vitae non ac ac nunc mus porttitor lobortis. Aliquam risus fringilla. Lectus erat et fringilla netus platea. Nulla ornare cursus mi nunc sem. Fermentum risus amet integer at duis.</string>
-    <string name="vaccination_text">Description of vaccination goes here...</string>
+    <string name="welcome_text_1">You will take part in an interactive study.\n\nThe study consists of 12 rounds, each taking one week.
+        You will receive 100 points in each round and may lose between 0 and 90 points in each round, depending on your decision and the decisions of other participants.\n\nAt the end of the experiment, there will be lottery in that we raffle ??.
+        The more points you have at the end of the experiment, the more like you will win in the lottery.\n\nPlease click “Proceed” to receive detailed information about the study.</string>
+
+    <string name="welcome_text_2">In each week, you may contract a hypothetical disease.\n\nYou can decide either for or against a vaccination. The vaccine becomes effective only after 2 hours after you have vaccinated.\n\nDepending on your decision, you can be in one of three states:\n
+        1. Susceptible: You either did not vaccinate or vaccinated within the last 2 hours, so the vaccine is not effective yet. You may be contracting the disease.\n
+        2. Vaccinated: You vaccinated at least 2 hours before and cannot contract the disease.\n
+        3. Infected: You did not vaccinate and contracted the disease. You may infect others.\n\nPlease click Proceed to learn about the potential consequences of non-vaccination.
+</string>
+
+    <string name="welcome_text_3">If you do not vaccinate, you are susceptible and can fall sick with a probability of ??% (independent of your contact with others) or contract the disease by being in bluetooth contact with other persons who are infected. Only unvaccinated people can contract the disease. The probability of contracting the disease depends on the number of other participants who are vaccinated. The greater the number of vaccinated people, the lower the probability of contracting the disease for unvaccinated persons (see below).
+</string>
+    <string name="welcome_text_4"></string>
+    <string name="welcome_text_5">In each round, you can vaccinate against the disease. Vaccination costs a fixed amount of ?? points. Once vaccinated, the vaccine becomes effective after ?? hours and your can no longer contract the disease. The probability of side effects due to vaccination is ??%. In case of side effects, you will lose between ?? and ?? points, with an average loss of ?? points. If you are vaccinated, you also cannot infect others.
+
+In each round, you are asked once a day whether you want to vaccinate or not, until you either contracted the disease or vaccinated. However, you may vaccinate all the time by opening the app. Additionally, you can see your current state - susceptible, vaccinated, or infected - all the time in the app.  At the end of the round, you will learn about the points earned.
+</string>
+
+    <string name="welcome_text_extra_after_wave_4">You will also receive feedback each day about the relative number of other persons you had bluetooth contact during this round, who chose to vaccinate.</string>
+    <string name="welcome_text_extra_after_wave_8">You will also receive feedback each day about the relative number of all other persons playing the game, who chose to vaccinate.</string>
+
+
+    <string name="vaccination_text">Vaccination costs 10 points. It prevents from contracting the disease from 2 hours after pressing the button until the end of the round. Additional point losses due to side effects might appear.</string>
     <string name="vaccination_text_disabled">You already made a vaccination decisions, please come back later...</string>
-    <string name="vaccination_text_waiting">Applying vaccination</string>
+    <string name="vaccination_text_waiting">Applying vaccination...</string>
 
     <string name="wave_description_generic">Generic wave description</string>
     <string name="wave_description_1">Wave description 1</string>

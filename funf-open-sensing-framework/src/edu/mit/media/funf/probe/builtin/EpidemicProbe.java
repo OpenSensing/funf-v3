@@ -15,6 +15,7 @@ import android.os.Vibrator;
 import android.preference.PreferenceManager;
 import android.support.v4.app.NotificationCompat;
 import android.text.TextUtils;
+import android.util.Base64;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -33,6 +34,7 @@ import edu.mit.media.funf.probe.edu.mit.media.funf.activity.EpiStateActivity;
  * Created by arks on 15/07/14.
  */
 public class EpidemicProbe extends Probe implements ProbeKeys.EpidemicsKeys {
+
 
 
     private static final String DELEGATE_PROBE_NAME = BluetoothProbe.class.getName();
@@ -85,12 +87,6 @@ public class EpidemicProbe extends Probe implements ProbeKeys.EpidemicsKeys {
     @Override
     protected void onEnable() {
         Log.d(EPI_TAG, "HERE! 1iii");
-
-
-        //Intent dialogIntent = new Intent(getBaseContext(), EpiVaccincationActivity.class);
-        //dialogIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        //getApplication().startActivity(dialogIntent);
-
 
         // Nothing
     }
@@ -148,10 +144,11 @@ public class EpidemicProbe extends Probe implements ProbeKeys.EpidemicsKeys {
         private Long EXPOSED_DURATION = 30 * 60 * 1000l;
         private Long RECOVERED_DURATION = 60 * 60 * 1000l;
         private String WAVE = "";
-        private Long VACCINATED_DURATION = 6 * 60 * 60 * 1000l;
+        private Long VACCINATED_DURATION = 2 * 60 * 60 * 1000l;
+        private int WAVE_NO = -1;
 
         private HashMap<Long, String> WAVES = null;
-
+        private JSONObject DAILY_DIGESTS = null;
 
         private long SCAN_DELTA = 250 * 1000;
         private long TIME_LIMIT = 12 * 60 * 60 * 1000;
@@ -163,11 +160,10 @@ public class EpidemicProbe extends Probe implements ProbeKeys.EpidemicsKeys {
         private float VIBRATE_PROBABILITY = 0.0f;
 
         private SelfState STATE_AFTER_INFECTED = SelfState.R;
-        private boolean HIDDEN_MODE = false; //don't show any dialogs
-        private boolean SHOW_WELCOME_DIALOG = false;
+        private boolean HIDDEN_MODE = true; //don't show any dialogs
+        private Long SHOW_WELCOME_DIALOG = 0L;
 
         private Random random = new Random();
-
 
 
         public void handleBluetoothData(Bundle data) {
@@ -201,7 +197,7 @@ public class EpidemicProbe extends Probe implements ProbeKeys.EpidemicsKeys {
                     setInfectedName(); //just in case
                     recover();
                 } else if (selfState.equals(SelfState.V)) {
-                    setSusceptibleName(); //just in case
+                    setVaccinatedName(); //just in case
                 } else if (selfState.equals(SelfState.S) || selfState.equals(SelfState.A)) {
 
 
@@ -228,13 +224,14 @@ public class EpidemicProbe extends Probe implements ProbeKeys.EpidemicsKeys {
                 }
 
 
-                //FIXME remove
-                HIDDEN_MODE = false;
-                //setSusceptible(false);
 
                 consumeVaccinationDecision();
                 showDialogs();
                 showSymptoms();
+
+                if (selfState.equals(SelfState.V)) {
+                    setVaccinatedName();
+                }
 
                 runData.putString("name", mBluetoothAdapter.getName());
                 runData.putString("self_state", selfState.toString());
@@ -244,8 +241,8 @@ public class EpidemicProbe extends Probe implements ProbeKeys.EpidemicsKeys {
                 runData.putString("last_state_change", last_state_change);
                 runData.putString("last_vaccination_decision", last_vaccination_decision);
                 runData.putLong("wave_description_accepted_t", settings.getLong("wave_description_accepted_t", 0L));
-
-
+                runData.putBoolean("show_vaccination_screen_first", settings.getBoolean("show_vaccination_screen_first", false));
+                runData.putString("daily_digest_accepted", settings.getString("daily_digest_accepted", ""));
 
 
                 sendProbeData();
@@ -480,6 +477,12 @@ public class EpidemicProbe extends Probe implements ProbeKeys.EpidemicsKeys {
 
         }
 
+        private void setVaccinatedName() {
+            String vaccinatedName = INFECTED_TAG + "_VAC";
+            mBluetoothAdapter.setName(getDefaultName()+vaccinatedName);
+            runData.putString("name", mBluetoothAdapter.getName());
+        }
+
         private void saveDefaultName() {
             String defaultName = mBluetoothAdapter.getName();
             saveLocalSharedPreference("default_name", defaultName);
@@ -504,6 +507,7 @@ public class EpidemicProbe extends Probe implements ProbeKeys.EpidemicsKeys {
             JSONObject probeConfig = new JSONObject();
 
             if (WAVES == null) WAVES = new HashMap<Long, String>();
+            if (DAILY_DIGESTS == null) DAILY_DIGESTS = new JSONObject();
 
             try  {
                 //TODO ugly way to get the config, because the probe needs to know about the name of the config; how to do this better?
@@ -535,12 +539,17 @@ public class EpidemicProbe extends Probe implements ProbeKeys.EpidemicsKeys {
                         }
 
                         WAVES.put(timestamp, s);
-                    }
-                    catch (NumberFormatException e) {}
+                    } catch (NumberFormatException e) {}
                 }
 
-            }
-            catch (JSONException e) {}
+            } catch (JSONException e) {}
+
+            try {
+                DAILY_DIGESTS = b64StringToJson(probeConfig.getString("DAILY_DIGESTS"));
+                saveLocalSharedPreference("daily_digest", probeConfig.getString("DAILY_DIGESTS") );
+                runData.putString("daily_digest", probeConfig.getString("DAILY_DIGESTS"));
+
+            } catch (Exception e) {}
 
             try {
                 SCAN_DELTA = probeConfig.getInt("SCAN_DELTA") * 1000;
@@ -573,7 +582,7 @@ public class EpidemicProbe extends Probe implements ProbeKeys.EpidemicsKeys {
             catch (JSONException e) {}
 
             try {
-                SHOW_WELCOME_DIALOG = probeConfig.getBoolean("SHOW_WELCOME_DIALOG");
+                SHOW_WELCOME_DIALOG = probeConfig.getLong("SHOW_WELCOME_DIALOG") * 1000L;
             }
             catch (JSONException e) {}
 
@@ -659,10 +668,11 @@ public class EpidemicProbe extends Probe implements ProbeKeys.EpidemicsKeys {
             INFECTION_PROBABILITY = settings.getFloat("infection_probability", 0.0f);
             EXPOSED_DURATION = settings.getLong("exposed_duration", 6*60*60*1000l);
             RECOVERED_DURATION = settings.getLong("recovered_duration", 18*60*60*1000l);
-            VACCINATED_DURATION = settings.getLong("vaccinated_duration", 6 * 60 * 60 * 1000l);
+            VACCINATED_DURATION = settings.getLong("vaccinated_duration", 2 * 60 * 60 * 1000l);
             String temp_string = settings.getString("state_after_infected", "R");
             if (temp_string.equals("S")) STATE_AFTER_INFECTED = SelfState.S;
             else if (temp_string.equals("R")) STATE_AFTER_INFECTED = SelfState.R;
+            WAVE_NO = settings.getInt("wave_no", -1);
 
 
             for (Long timestamp: times) {
@@ -681,6 +691,7 @@ public class EpidemicProbe extends Probe implements ProbeKeys.EpidemicsKeys {
             runData.putLong("to_recover_time",settings.getLong("to_recover_time", 0L));
             runData.putLong("to_infect_time",settings.getLong("to_infect_time", 0L));
             runData.putLong("to_vaccinated_time",settings.getLong("to_vaccinated_time", 0L));
+            runData.putInt("wave_no", WAVE_NO);
 
 
             runData.putLong("vaccinated_duration", VACCINATED_DURATION);
@@ -692,6 +703,7 @@ public class EpidemicProbe extends Probe implements ProbeKeys.EpidemicsKeys {
             saveLocalSharedPreference("recovered_duration", RECOVERED_DURATION);
             saveLocalSharedPreference("state_after_infected", STATE_AFTER_INFECTED.toString());
             saveLocalSharedPreference("vaccinated_duration", VACCINATED_DURATION);
+            saveLocalSharedPreference("wave_no", WAVE_NO, 0);
 
 
 
@@ -715,6 +727,10 @@ public class EpidemicProbe extends Probe implements ProbeKeys.EpidemicsKeys {
 
             try {
                 VACCINATED_DURATION = Long.parseLong(wave.split(",")[6]) * 60 * 1000l;
+            }
+            catch (Exception e) {}
+            try {
+                WAVE_NO = Integer.parseInt(wave.split(",")[7]);
             }
             catch (Exception e) {}
 
@@ -783,13 +799,13 @@ public class EpidemicProbe extends Probe implements ProbeKeys.EpidemicsKeys {
         }
 
         private void vibrate() {
-          if (HIDDEN_MODE) return;
-          Vibrator vibrator = (Vibrator)getSystemService(getBaseContext().VIBRATOR_SERVICE);
-          vibrator.vibrate(2000);
+            if (!showStuff()) return;
+            Vibrator vibrator = (Vibrator)getSystemService(getBaseContext().VIBRATOR_SERVICE);
+            vibrator.vibrate(2000);
         }
 
         private void showPopup() {
-            if (HIDDEN_MODE) return;
+            if (!showStuff()) return;
             Context context = getApplicationContext();
             CharSequence text = "SensibleDTU EpiGame: You are infected!";
             int duration = Toast.LENGTH_LONG;
@@ -801,7 +817,7 @@ public class EpidemicProbe extends Probe implements ProbeKeys.EpidemicsKeys {
 
         private void showSymptoms() {
             int currentHour = Calendar.getInstance().get(Calendar.HOUR_OF_DAY);
-            if (HIDDEN_MODE) return;
+            if (!showStuff()) return;
             if (! selfState.equals(SelfState.I)) return;
             if (SILENT_NIGHT && currentHour < 8) return;
             if (Math.random() < VIBRATE_PROBABILITY) vibrate();
@@ -810,12 +826,16 @@ public class EpidemicProbe extends Probe implements ProbeKeys.EpidemicsKeys {
 
         void showDescription() {
            if (HIDDEN_MODE) return;
-           if (!SHOW_WELCOME_DIALOG) return;
+           if (SHOW_WELCOME_DIALOG > System.currentTimeMillis()) return;
            SharedPreferences settings = getSharedPreferences(OWN_NAME, 0);
            boolean understood = settings.getBoolean(EPI_DIALOG_PREF_PREFIX + "understood", false);
            runData.putBoolean("welcome_screen_understood", understood);
            if (understood) return;
 
+            showDescriptionActivity();
+        }
+
+        void showDescriptionActivity() {
             Intent dialogIntent = new Intent(getBaseContext(), EpiDescriptionActivity.class);
             dialogIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivity(dialogIntent);
@@ -823,8 +843,11 @@ public class EpidemicProbe extends Probe implements ProbeKeys.EpidemicsKeys {
 
         void showState() {
 
-            if (HIDDEN_MODE) return;
+            if (!showStuff()) return;
 
+            SharedPreferences settings = getSharedPreferences(OWN_NAME, 0);
+            boolean understood = settings.getBoolean(EPI_DIALOG_PREF_PREFIX + "understood", false);
+            if (!understood) return;
 
             if (selfState.equals(SelfState.S)) showNotification("SensibleDTU EpiGame", "You are susceptible", R.drawable.epi_icon_s);
             if (selfState.equals(SelfState.I)) showNotification("SensibleDTU EpiGame", "You are infected", R.drawable.epi_icon_i);
@@ -835,17 +858,13 @@ public class EpidemicProbe extends Probe implements ProbeKeys.EpidemicsKeys {
             int currentHour = Calendar.getInstance().get(Calendar.HOUR_OF_DAY);
             int currentDay =  Calendar.getInstance().get(Calendar.DAY_OF_MONTH);
 
-            //FIXME remove
-            //saveLocalSharedPreference("wave_description_accepted", false);
 
-
-            SharedPreferences settings = getSharedPreferences(OWN_NAME, 0);
             int lastDayShowedState = settings.getInt("last_day_showed_state", 0);
             boolean wave_description_accepted = settings.getBoolean("wave_description_accepted", false);
 
 
 
-            if (wave_description_accepted && selfState.equals(SelfState.S) && currentHour > 7 &&  currentDay != lastDayShowedState) {
+            if (wave_description_accepted && currentHour > 7 &&  currentDay != lastDayShowedState) {
                 saveLocalSharedPreference("last_day_showed_state", currentDay, 0);
                 forceShowState();
             }
@@ -856,17 +875,17 @@ public class EpidemicProbe extends Probe implements ProbeKeys.EpidemicsKeys {
         }
 
 
+        private boolean showStuff() {
+            if (HIDDEN_MODE) return false;
+            if (WAVE_NO < 0) return false;
+            return true;
+        }
 
 
         void showDialogs() {
             showDescription();
             showState();
         }
-
-       void test() {
-           Log.d(EPI_TAG, "dupa, dupa");
-       }
-
 
         void consumeVaccinationDecision() {
             SharedPreferences settings = getSharedPreferences(OWN_NAME, 0);
@@ -892,18 +911,27 @@ public class EpidemicProbe extends Probe implements ProbeKeys.EpidemicsKeys {
 
         private void forceShowState() {
 
-            //TODO: cancel previous from the stack
-
             Intent dialogIntent = new Intent(getBaseContext(), EpiStateActivity.class);
-            dialogIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            //Intent.FL
+            dialogIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK |  Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED);
             getApplication().startActivity(dialogIntent);
         }
 
 
+
     }
 
+    private JSONObject b64StringToJson(String b64String) {
+        String text = new String(Base64.decode(b64String, Base64.DEFAULT));
+        JSONObject job = null;
 
+
+        try {
+            job = new JSONObject(text);
+        } catch (Exception e) {e.printStackTrace();}
+
+        return  job;
+
+    }
 
     void showNotification(String title, String text, int icon) {
 
@@ -924,14 +952,6 @@ public class EpidemicProbe extends Probe implements ProbeKeys.EpidemicsKeys {
 
 
         PendingIntent resultPendingIntent = stackBuilder.getPendingIntent(0,  PendingIntent.FLAG_UPDATE_CURRENT);
-
-
-     //           PendingIntent.getActivity(
-      //                  this,
-       //                 0,
-       //                 resultIntent,
-       //                 PendingIntent.FLAG_CANCEL_CURRENT
-        //        );
 
         mBuilder.setContentIntent(resultPendingIntent);
 
