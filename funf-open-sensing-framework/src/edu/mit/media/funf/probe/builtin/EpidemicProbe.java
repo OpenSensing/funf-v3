@@ -196,10 +196,6 @@ public class EpidemicProbe extends Probe implements ProbeKeys.EpidemicsKeys {
                 Log.d(EPI_TAG, selfState.toString() + " " + scanResults.toString());
 
 
-            //FIXME remove
-            //HIDDEN_MODE = false;
-            //SHOW_WELCOME_DIALOG = true;
-            //setSusceptible(false);
 
 
                 if (selfState.equals(SelfState.E)) {
