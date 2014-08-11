@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.app.NotificationManager;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
@@ -200,6 +201,7 @@ public class EpiStateActivity extends FragmentActivity{
 
     private void showFacebook() {
         hideDigest();
+        hideFinalDialog();
         findViewById(R.id.shareOnFacebookLayout).setVisibility(View.VISIBLE);
 
         Session session = Session.getActiveSession();
@@ -218,12 +220,13 @@ public class EpiStateActivity extends FragmentActivity{
 
     private void showDigest(int waveNo) {
 
-     //   if (waveNo <= 4) {
-     //       showFacebook();
-      //      return;
-      //  }
+        if (waveNo <= 4) {
+            showFacebook();
+            return;
+        }
 
         hideFacebook();
+        hideFinalDialog();
         TextView digestTextView = (TextView)findViewById(R.id.digestTextView);
 
         SharedPreferences settings = getSharedPreferences(EpidemicProbe.OWN_NAME, 0);
@@ -236,9 +239,8 @@ public class EpiStateActivity extends FragmentActivity{
         }
 
         try {
-            if (waveNo == 4) digestTextView.setText(proccessDigest8(dailyDigest.getJSONObject(getDateNow())));
-            if (waveNo > 4 && waveNo <= 8) digestTextView.setText(proccessDigest4(dailyDigest.getJSONObject(getDateNow())));
-            if (waveNo > 8) digestTextView.setText(proccessDigest8(dailyDigest.getJSONObject(getDateNow())));
+            if (waveNo > 4 && waveNo <= 8) digestTextView.setText(proccessDigest4(dailyDigest.getJSONObject(getDateYesterday())));
+            if (waveNo > 8) digestTextView.setText(proccessDigest8(dailyDigest.getJSONObject(getDateYesterday())));
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -251,6 +253,19 @@ public class EpiStateActivity extends FragmentActivity{
     private void hideDigest() {
         findViewById(R.id.digestLayout).setVisibility(View.GONE);
 
+    }
+
+    private void showFinalDialog() {
+        hideFacebook();
+        hideDigest();
+        findViewById(R.id.finalDialogLayout).setVisibility(View.VISIBLE);
+
+        ((TextView)findViewById(R.id.finalDialogTextView)).setText(R.string.final_dialog);
+
+    }
+
+    private void hideFinalDialog() {
+        findViewById(R.id.finalDialogLayout).setVisibility(View.GONE);
     }
 
     private JSONObject b64StringToJson(String b64String) {
@@ -269,6 +284,13 @@ public class EpiStateActivity extends FragmentActivity{
     private String getDateNow() {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         Calendar cal = Calendar.getInstance();
+        return sdf.format(cal.getTime());
+    }
+
+    private String getDateYesterday() {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        Calendar cal = Calendar.getInstance();
+        cal.add(Calendar.DATE, -1);
         return sdf.format(cal.getTime());
     }
 
@@ -321,10 +343,17 @@ public class EpiStateActivity extends FragmentActivity{
             ((TextView) findViewById(R.id.statusTextView)).setText(youAreText);
 
 
-            if (settings.getString("daily_digest_accepted", "").equals(getDateNow()))
-                showFacebook();
-            else
-                showDigest(settings.getInt("wave_no", 0));
+
+            if (System.currentTimeMillis() >= settings.getLong("show_final_dialog", 9999999999L*1000L)) {
+                showFinalDialog();
+            } else{
+                if (settings.getString("daily_digest_accepted", "").equals(getDateNow()))
+                    showFacebook();
+                else
+                    showDigest(settings.getInt("wave_no", 0));
+            }
+
+
 
 
 
@@ -542,6 +571,13 @@ public class EpiStateActivity extends FragmentActivity{
         Intent dialogIntent = new Intent(getBaseContext(), EpiDescriptionActivity.class);
         dialogIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(dialogIntent);
+    }
+
+    public void openFinalDigest(View view) {
+        SharedPreferences settings = getSharedPreferences(EpidemicProbe.OWN_NAME, 0);
+        Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(settings.getString("final_dialog_url", "http://www.sensible.dtu.dk")));
+        browserIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK |  Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED);
+        startActivity(browserIntent);
     }
 
 }

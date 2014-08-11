@@ -65,5 +65,6 @@ In each round, you are asked once a day whether you want to vaccinate or not, un
     <string name="wave_description_generic">Generic wave description</string>
     <string name="wave_description_1">Wave description 1</string>
 
+    <string name="final_dialog">The competition has ended. Check out the results and prizes.</string>
 
 </resources>

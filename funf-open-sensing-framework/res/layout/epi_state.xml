@@ -54,6 +54,37 @@
                 android:orientation="vertical"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
+                android:id="@+id/finalDialogLayout"
+                >
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceLarge"
+                    android:text="finalDialogTextView"
+                    android:id="@+id/finalDialogTextView"
+                    android:textColor="@android:color/black"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginLeft="@dimen/com_facebook_loginview_padding_bottom"
+                    android:layout_marginRight="@dimen/com_facebook_loginview_padding_bottom"
+                    />
+
+                <Button
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Open summary"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginTop="5dp"
+                    android:id="@+id/finalDigestButton"
+                    android:onClick="openFinalDigest"/>
+
+                </LinearLayout>
+
+
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
                 android:id="@+id/digestLayout">
 
                 <TextView
@@ -63,7 +94,10 @@
                     android:text="digestTextView"
                     android:id="@+id/digestTextView"
                     android:textColor="@android:color/black"
-                    android:layout_gravity="center_horizontal" />
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginLeft="@dimen/com_facebook_loginview_padding_bottom"
+                    android:layout_marginRight="@dimen/com_facebook_loginview_padding_bottom"
+                    />
 
                 <Button
                     android:layout_width="wrap_content"
@@ -186,6 +220,8 @@
 
 
         </LinearLayout>
+
+
 
         <FrameLayout
         android:id="@+id/fragment_container"
