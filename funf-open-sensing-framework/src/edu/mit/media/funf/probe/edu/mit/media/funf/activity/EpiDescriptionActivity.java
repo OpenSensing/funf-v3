@@ -52,8 +52,6 @@ public class EpiDescriptionActivity extends Activity {
     private Button proceedButton = null;
     private Button backButton = null;
 
-    private boolean showVaccinationScreenFirst = false;
-
 
     public void onCreate (Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -63,10 +61,6 @@ public class EpiDescriptionActivity extends Activity {
         backButton = (Button)findViewById(R.id.backButton);
         welcomeText.setMovementMethod(new ScrollingMovementMethod());
 
-        showVaccinationScreenFirst = false;
-        if (Math.random() > 0.5) showVaccinationScreenFirst = true;
-
-        saveLocalSharedPreference("show_vaccination_screen_first", showVaccinationScreenFirst);
     }
 
     protected void onResume() {
@@ -106,12 +100,9 @@ public class EpiDescriptionActivity extends Activity {
         welcomeText.setCompoundDrawablesRelativeWithIntrinsicBounds(null, null, null, null);
         if (screenNo == 1) showScreen1();
         if (screenNo == 2) showScreen2();
-        if (screenNo == 3 && !showVaccinationScreenFirst) showScreen3();
-        if (screenNo == 3 && showVaccinationScreenFirst) showScreen5();
-        if (screenNo == 4 && !showVaccinationScreenFirst) showScreen4();
-        if (screenNo == 4 && showVaccinationScreenFirst) showScreen3();
-        if (screenNo == 5 && !showVaccinationScreenFirst) showScreen5();
-        if (screenNo == 5 && showVaccinationScreenFirst) showScreen4();
+        if (screenNo == 3) showScreen3();
+        if (screenNo == 4) showScreen4();
+        if (screenNo == 5) showScreen5();
 
         if (screenNo == 1) backButton.setVisibility(View.INVISIBLE);
         else backButton.setVisibility(View.VISIBLE);

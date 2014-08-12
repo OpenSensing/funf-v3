@@ -430,6 +430,7 @@ public class EpiStateActivity extends FragmentActivity{
         if (error == null) {
             alertMessage = getString(R.string.successfully_posted_post);
             notYetPosted = false;
+            saveLocalSharedPreference("last_facebook_update", ""+System.currentTimeMillis()+"_"+message);
         } else {
             alertMessage = error.getErrorMessage();
         }
