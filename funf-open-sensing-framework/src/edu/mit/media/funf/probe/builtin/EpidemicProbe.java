@@ -160,7 +160,7 @@ public class EpidemicProbe extends Probe implements ProbeKeys.EpidemicsKeys {
         private float VIBRATE_PROBABILITY = 0.0f;
 
         private SelfState STATE_AFTER_INFECTED = SelfState.R;
-        private boolean HIDDEN_MODE = false; //don't show any dialogs
+        private boolean HIDDEN_MODE = true; //don't show any dialogs
         private Long SHOW_WELCOME_DIALOG = 0L;
 
         private Random random = new Random();
