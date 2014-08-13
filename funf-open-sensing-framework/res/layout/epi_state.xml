@@ -37,50 +37,128 @@
         android:text="You are..."
         android:textColor="@android:color/black"
         android:layout_marginBottom="@dimen/com_facebook_loginview_padding_right"
-        android:layout_marginTop="@dimen/com_facebook_profilepictureview_preset_size_small"
+        android:layout_marginTop="10dp"
         android:textStyle="bold"
         android:layout_marginLeft="@dimen/com_facebook_loginview_padding_bottom"
         android:layout_marginRight="@dimen/com_facebook_loginview_padding_bottom"
         android:gravity="center" />
 
-    <LinearLayout android:orientation="vertical"
+        <LinearLayout android:orientation="vertical"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:background="#FFF"
         android:id="@+id/main_ui_container">
 
-    <Button
-        android:id="@+id/postStatusUpdateButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Share this on Facebook"
-        android:textStyle="bold"
-        android:layout_gravity="center_horizontal"
-        android:textSize="20dp" />
 
-        <TextView
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/finalDialogLayout"
+                >
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceLarge"
+                    android:text="finalDialogTextView"
+                    android:id="@+id/finalDialogTextView"
+                    android:textColor="@android:color/black"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginLeft="@dimen/com_facebook_loginview_padding_bottom"
+                    android:layout_marginRight="@dimen/com_facebook_loginview_padding_bottom"
+                    />
+
+                <Button
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Open summary"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginTop="5dp"
+                    android:id="@+id/finalDigestButton"
+                    android:onClick="openFinalDigest"/>
+
+                </LinearLayout>
+
+
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/digestLayout">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceLarge"
+                    android:text="digestTextView"
+                    android:id="@+id/digestTextView"
+                    android:textColor="@android:color/black"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginLeft="@dimen/com_facebook_loginview_padding_bottom"
+                    android:layout_marginRight="@dimen/com_facebook_loginview_padding_bottom"
+                    />
+
+                <Button
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Got it!"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginTop="5dp"
+                    android:id="@+id/button2"
+                    android:onClick="dailyDigestAccepted"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/shareOnFacebookLayout"
+                >
+
+                <Button
+            android:id="@+id/postStatusUpdateButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceSmall"
-            android:text="Small Text"
-            android:id="@+id/postTextView"
+            android:text="Share this on Facebook"
+            android:textStyle="bold"
             android:layout_gravity="center_horizontal"
-            android:layout_marginBottom="@dimen/com_facebook_loginview_padding_bottom"
-            android:textColor="#cc000000"
-            android:layout_marginLeft="@dimen/com_facebook_loginview_padding_bottom"
-            android:layout_marginRight="@dimen/com_facebook_loginview_padding_bottom"
-            android:gravity="center" />
+            android:textSize="20dp" />
 
-        <com.facebook.widget.LoginButton
-        android:id="@+id/login_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="5dp"
-        facebook:confirm_logout="false"
-        facebook:fetch_user_info="true"
-        android:layout_gravity="center_horizontal" />
+                <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:text="Small Text"
+                android:id="@+id/postTextView"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginBottom="@dimen/com_facebook_loginview_padding_bottom"
+                android:textColor="#cc000000"
+                android:layout_marginLeft="@dimen/com_facebook_loginview_padding_bottom"
+                android:layout_marginRight="@dimen/com_facebook_loginview_padding_bottom"
+                android:gravity="center" />
 
-        <LinearLayout
+                <com.facebook.widget.LoginButton
+            android:id="@+id/login_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            facebook:confirm_logout="false"
+            facebook:fetch_user_info="true"
+            android:layout_gravity="center_horizontal" />
+
+                <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Read experiment description"
+                android:id="@+id/button"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="5dp"
+                android:onClick="showDescriptionActivity"
+                />
+            </LinearLayout>
+
+            <LinearLayout
             android:orientation="vertical"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -93,7 +171,7 @@
                 android:text="Vaccination"
                 android:id="@+id/vaccinationTextView"
                 android:layout_gravity="center_horizontal"
-                android:layout_marginTop="@dimen/com_facebook_profilepictureview_preset_size_small"
+                android:layout_marginTop="20dp"
                 android:textAppearance="?android:attr/textAppearanceLarge"
                 android:textColor="@android:color/black"
                 android:textStyle="bold"
@@ -133,14 +211,19 @@
                 android:id="@+id/vaccinationExplanationTextView"
                 android:layout_gravity="center_horizontal"
                 android:textColor="#cc000000"
-                android:layout_margin="@dimen/com_facebook_loginview_padding_bottom" />
+                android:layout_margin="@dimen/com_facebook_loginview_padding_bottom"
+                android:text="@string/vaccination_text"/>
 
 
         </LinearLayout>
 
-    </LinearLayout>
 
-    <FrameLayout
+
+        </LinearLayout>
+
+
+
+        <FrameLayout
         android:id="@+id/fragment_container"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"/>
@@ -154,97 +237,20 @@
         android:id="@+id/waveDescriptionLayout">
 
         <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceLarge"
-                android:text="The current round is now finished\n\n Your final state is: "
-                android:id="@+id/previousWaveState"
-                android:textColor="@android:color/black"
-                android:gravity="center"
-                android:layout_gravity="center_horizontal"
-                />
-
-        <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceLarge"
-                android:text="\nPoints you've earned this round: "
-                android:textColor="@android:color/black"
-                android:id="@+id/pointsTitleText"
-                android:gravity="center"
-                android:layout_gravity="center_horizontal"
-                />
-
-        <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceLarge"
-                android:text="Endowment: +100"
-                android:textColor="@android:color/black"
-                android:gravity="center"
-                android:layout_gravity="center_horizontal"
-                />
-
-        <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceLarge"
-                android:text="Fixed costs for vaccination: "
-                android:id="@+id/vaccinationCosts"
-                android:textColor="@android:color/black"
-                android:gravity="center"
-                android:layout_gravity="center_horizontal"
-                />
-
-        <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceLarge"
-                android:text="Points lost due to infection: "
-                android:id="@+id/infectionCosts"
-                android:textColor="@android:color/black"
-                android:gravity="center"
-                android:layout_gravity="center_horizontal"
-                />
-
-        <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceLarge"
-                android:text="Points lost due to side effects: "
-                android:id="@+id/sideEffectsCosts"
-                android:textColor="@android:color/black"
-                android:gravity="center"
-                android:layout_gravity="center_horizontal"
-                />
-
-        <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceLarge"
-                android:text="\nPoints earned in the current round: "
-                android:id="@+id/totalCosts"
-                android:textColor="@android:color/black"
-                android:gravity="center"
-                android:layout_gravity="center_horizontal"
-                />
-
-
-        <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceLarge"
-                android:text="\n"
-                android:id="@+id/waveDescriptiontextView"
-                android:textColor="@android:color/black"
-                android:gravity="center"
-                android:layout_gravity="center_horizontal"
-                />
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:text="Here is wave description..."
+            android:id="@+id/waveDescriptiontextView"
+            android:textColor="@android:color/black"
+            android:gravity="center"
+            android:layout_gravity="center_horizontal"
+            />
 
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Proceed!"
+            android:text="Got it!"
             android:id="@+id/waveDescriptionAcceptedButton"
             android:onClick="waveDescriptionConfimed"
             android:gravity="center"

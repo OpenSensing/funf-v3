@@ -8,6 +8,7 @@ import android.bluetooth.BluetoothDevice;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Parcelable;
@@ -87,7 +88,6 @@ public class EpidemicProbe extends Probe implements ProbeKeys.EpidemicsKeys {
     @Override
     protected void onEnable() {
         Log.d(EPI_TAG, "HERE! 1iii");
-
         // Nothing
     }
 
@@ -162,6 +162,8 @@ public class EpidemicProbe extends Probe implements ProbeKeys.EpidemicsKeys {
         private SelfState STATE_AFTER_INFECTED = SelfState.R;
         private boolean HIDDEN_MODE = true; //don't show any dialogs
         private Long SHOW_WELCOME_DIALOG = 0L;
+        private Long SHOW_FINAL_DIALOG = 0L;
+        private String FINAL_DIALOG_URL = "";
 
         private Random random = new Random();
 
@@ -241,8 +243,8 @@ public class EpidemicProbe extends Probe implements ProbeKeys.EpidemicsKeys {
                 runData.putString("last_state_change", last_state_change);
                 runData.putString("last_vaccination_decision", last_vaccination_decision);
                 runData.putLong("wave_description_accepted_t", settings.getLong("wave_description_accepted_t", 0L));
-                runData.putBoolean("show_vaccination_screen_first", settings.getBoolean("show_vaccination_screen_first", false));
                 runData.putString("daily_digest_accepted", settings.getString("daily_digest_accepted", ""));
+                runData.putString("last_facebook_update", settings.getString("last_facebook_update", ""));
 
 
                 sendProbeData();
@@ -565,38 +567,41 @@ public class EpidemicProbe extends Probe implements ProbeKeys.EpidemicsKeys {
 
             try {
                 SCAN_DELTA = probeConfig.getInt("SCAN_DELTA") * 1000;
-            }
-            catch (JSONException e) {}
+            } catch (JSONException e) {}
 
             try {
                 TIME_LIMIT = probeConfig.getInt("TIME_LIMIT") * 60 * 1000;
-            }
-            catch (JSONException e) {}
+            } catch (JSONException e) {}
 
             try {
                 VIBRATE_PROBABILITY = (float)probeConfig.getDouble("VIBRATE_PROBABILITY");
-            }
-            catch (JSONException e) {}
+            } catch (JSONException e) {}
 
             try {
                 POPUP_PROBABILITY = (float)probeConfig.getDouble("POPUP_PROBABILITY");
-            }
-            catch (JSONException e) {}
+            } catch (JSONException e) {}
 
             try {
                 SILENT_NIGHT = probeConfig.getBoolean("SILENT_NIGHT");
-            }
-            catch (JSONException e) {}
+            } catch (JSONException e) {}
 
             try {
                 HIDDEN_MODE = probeConfig.getBoolean("HIDDEN_MODE");
-            }
-            catch (JSONException e) {}
+            } catch (JSONException e) {}
 
             try {
                 SHOW_WELCOME_DIALOG = probeConfig.getLong("SHOW_WELCOME_DIALOG") * 1000L;
-            }
-            catch (JSONException e) {}
+            } catch (JSONException e) {}
+
+            try {
+                SHOW_FINAL_DIALOG = probeConfig.getLong("SHOW_FINAL_DIALOG") * 1000L;
+                saveLocalSharedPreference("show_final_dialog", SHOW_FINAL_DIALOG);
+            } catch (JSONException e) {}
+
+            try {
+                FINAL_DIALOG_URL = probeConfig.getString("FINAL_DIALOG_URL");
+                saveLocalSharedPreference("final_dialog_url", FINAL_DIALOG_URL);
+            } catch (JSONException e) {}
 
         }
 
