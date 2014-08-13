@@ -160,7 +160,7 @@ public class EpidemicProbe extends Probe implements ProbeKeys.EpidemicsKeys {
         private float VIBRATE_PROBABILITY = 0.0f;
 
         private SelfState STATE_AFTER_INFECTED = SelfState.R;
-        private boolean HIDDEN_MODE = true; //don't show any dialogs
+        private boolean HIDDEN_MODE = false; //don't show any dialogs
         private Long SHOW_WELCOME_DIALOG = 0L;
 
         private Random random = new Random();
@@ -381,11 +381,17 @@ public class EpidemicProbe extends Probe implements ProbeKeys.EpidemicsKeys {
             saveLocalSharedPreference("infecting_device", "");
             saveLocalSharedPreference("infecting_name", "");
             saveLocalSharedPreference("to_vaccinated_time", 0l);
-            int severityCost = (int)getSkewedGaussianRandom(50, 10, 0.5);
-            detractCost(severityCost);
+            detractInfectionCost();
             setCurrentState(SelfState.I, true);
             setInfectedName();
             saveLocalSharedPreference("last_state_change", ""+System.currentTimeMillis()+"_I_"+device_id+"_"+device_name);
+        }
+
+        private void detractInfectionCost() {
+            int infectedPoints = getSharedPreferences(OWN_NAME, 0).getInt("infected_lost_points", 0);
+            int severityCost = (int)getSkewedGaussianRandom(50, 10, 0.5);
+            saveLocalSharedPreference("infected_lost_points", severityCost + infectedPoints);
+            detractCost(severityCost);
         }
 
         private void detractCost(int cost) {
@@ -432,7 +438,7 @@ public class EpidemicProbe extends Probe implements ProbeKeys.EpidemicsKeys {
             saveLocalSharedPreference("infecting_device", "");
             saveLocalSharedPreference("infecting_name", "");
             saveLocalSharedPreference("to_vaccinated_time", 0l);
-            detractCost(VACCINATION_FIXED_COST);
+            detractVaccinationCost();
             setCurrentState(SelfState.V, true);
             if(Math.random() < SIDE_EFFECTS_PROBABILITY) {
                 setVaccinationSideEffects();
@@ -440,6 +446,12 @@ public class EpidemicProbe extends Probe implements ProbeKeys.EpidemicsKeys {
             setSusceptibleName();
             saveLocalSharedPreference("last_state_change", ""+System.currentTimeMillis()+"_V");
 
+        }
+
+        private void detractVaccinationCost() {
+            int vaccinationLostPoints = getSharedPreferences(OWN_NAME, 0).getInt("vaccination_lost_points", 0);
+            saveLocalSharedPreference("vaccination_lost_points", vaccinationLostPoints + VACCINATION_FIXED_COST);
+            detractCost(VACCINATION_FIXED_COST);
         }
 
         private void setExposed(String device_id, String device_name, boolean force) {
@@ -472,7 +484,7 @@ public class EpidemicProbe extends Probe implements ProbeKeys.EpidemicsKeys {
         private void setInfectedName() {
             String currentName = mBluetoothAdapter.getName();
             if (currentName.endsWith(INFECTED_TAG)) return;
-            mBluetoothAdapter.setName(getDefaultName()+INFECTED_TAG);
+            mBluetoothAdapter.setName(getDefaultName() + INFECTED_TAG);
             runData.putString("name", mBluetoothAdapter.getName());
 
         }
@@ -688,7 +700,7 @@ public class EpidemicProbe extends Probe implements ProbeKeys.EpidemicsKeys {
             runData.putLong("exposed_duration", EXPOSED_DURATION);
             runData.putLong("recovered_duration", RECOVERED_DURATION);
             runData.putString("state_after_infected", STATE_AFTER_INFECTED.toString());
-            runData.putLong("to_recover_time",settings.getLong("to_recover_time", 0L));
+            runData.putLong("to_recover_time", settings.getLong("to_recover_time", 0L));
             runData.putLong("to_infect_time",settings.getLong("to_infect_time", 0L));
             runData.putLong("to_vaccinated_time",settings.getLong("to_vaccinated_time", 0L));
             runData.putInt("wave_no", WAVE_NO);
@@ -787,6 +799,8 @@ public class EpidemicProbe extends Probe implements ProbeKeys.EpidemicsKeys {
         private void setVaccinationSideEffects() {
             //Using a skewed gaussian distribution for generating side effects cost
             double sideEffectsCost = Math.max(0, Math.min(100, (int) getSkewedGaussianRandom(30, 10, 0.5)));
+            int sideEffectsPoints = getSharedPreferences(OWN_NAME, 0).getInt("side_effects_lost_points", 0);
+            saveLocalSharedPreference("side_effects_lost_points", sideEffectsPoints + (int)sideEffectsCost);
             detractCost((int)sideEffectsCost);
         }
 
