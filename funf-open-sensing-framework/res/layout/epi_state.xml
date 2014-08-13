@@ -231,31 +231,108 @@
     </LinearLayout>
 
     <LinearLayout
-        android:orientation="vertical"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:id="@+id/waveDescriptionLayout">
+            android:orientation="vertical"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:id="@+id/waveDescriptionLayout">
 
         <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceLarge"
-            android:text="Here is wave description..."
-            android:id="@+id/waveDescriptiontextView"
-            android:textColor="@android:color/black"
-            android:gravity="center"
-            android:layout_gravity="center_horizontal"
-            />
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:text="The current round is now finished\n\n Your final state is: "
+                android:id="@+id/previousWaveState"
+                android:textColor="@android:color/black"
+                android:gravity="center"
+                android:layout_gravity="center_horizontal"
+                />
+
+        <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:text="\nPoints you've earned this round: "
+                android:textColor="@android:color/black"
+                android:id="@+id/pointsTitleText"
+                android:gravity="center"
+                android:layout_gravity="center_horizontal"
+                />
+
+        <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:text="Endowment: +100"
+                android:textColor="@android:color/black"
+                android:gravity="center"
+                android:layout_gravity="center_horizontal"
+                />
+
+        <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:text="Fixed costs for vaccination: "
+                android:id="@+id/vaccinationCosts"
+                android:textColor="@android:color/black"
+                android:gravity="center"
+                android:layout_gravity="center_horizontal"
+                />
+
+        <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:text="Points lost due to infection: "
+                android:id="@+id/infectionCosts"
+                android:textColor="@android:color/black"
+                android:gravity="center"
+                android:layout_gravity="center_horizontal"
+                />
+
+        <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:text="Points lost due to side effects: "
+                android:id="@+id/sideEffectsCosts"
+                android:textColor="@android:color/black"
+                android:gravity="center"
+                android:layout_gravity="center_horizontal"
+                />
+
+        <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:text="\nPoints earned in the current round: "
+                android:id="@+id/totalCosts"
+                android:textColor="@android:color/black"
+                android:gravity="center"
+                android:layout_gravity="center_horizontal"
+                />
+
+
+        <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:text="\n"
+                android:id="@+id/waveDescriptiontextView"
+                android:textColor="@android:color/black"
+                android:gravity="center"
+                android:layout_gravity="center_horizontal"
+                />
 
         <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Got it!"
-            android:id="@+id/waveDescriptionAcceptedButton"
-            android:onClick="waveDescriptionConfimed"
-            android:gravity="center"
-            android:layout_gravity="center_horizontal"
-            />
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Proceed!"
+                android:id="@+id/waveDescriptionAcceptedButton"
+                android:onClick="waveDescriptionConfimed"
+                android:gravity="center"
+                android:layout_gravity="center_horizontal"
+                />
     </LinearLayout>
 
 </LinearLayout>

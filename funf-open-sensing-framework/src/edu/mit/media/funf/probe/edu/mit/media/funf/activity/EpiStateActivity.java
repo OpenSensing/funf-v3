@@ -391,18 +391,31 @@ public class EpiStateActivity extends FragmentActivity{
             (findViewById(R.id.stateLayout)).setVisibility(View.GONE);
             (findViewById(R.id.waveDescriptionLayout)).setVisibility(View.VISIBLE);
 
-
-            //TODO put real strings and wave ids here
-            String description = getString(R.string.wave_description_generic);
-            String wave = settings.getString("wave", "");
-            try {
-                String wave_id = wave.split("!")[1].split(",")[0];
-                if (wave_id.equals("")) description = getString(R.string.wave_description_1);
+            String final_state = settings.getString("self_state", "");
+            String finalStateDisplayText = "SUSCEPTIBLE";
+            if(final_state.equals("I")) {
+                finalStateDisplayText = "INFECTED";
+            } else if (final_state.equals("V")) {
+                finalStateDisplayText = "VACCINATED";
+            } else if (final_state.equals("R")) {
+                finalStateDisplayText = "RECOVERED";
             }
-            catch (Exception e) {}
-            ((TextView)findViewById(R.id.waveDescriptiontextView)).setText(description);
+            ((TextView)findViewById(R.id.previousWaveState)).setText(finalStateDisplayText);
 
+            ((TextView)findViewById(R.id.vaccinationCosts)).setText(settings.getInt("vaccination_lost_points", 0));
+            ((TextView)findViewById(R.id.infectionCosts)).setText(settings.getInt("infected_lost_points", 0));
+            ((TextView)findViewById(R.id.sideEffectsCosts)).setText(settings.getInt("side_effects_lost_points", 0));
+            ((TextView)findViewById(R.id.totalCosts)).setText(Math.min(0, 100 - settings.getInt("points", 0)));
 
+            String defaultWaveDescription = getString(R.string.wave_description_1);
+            int waveId = settings.getInt("wave_no", -1);
+            int specificWaveDescriptionResourceId = getResources().getIdentifier("wave_description_" + Integer.toString(waveId), "string", EpiStateActivity.this.getPackageName());
+            if (specificWaveDescriptionResourceId != 0) {
+                String specificWaveDescription = getString(specificWaveDescriptionResourceId);
+                ((TextView)findViewById(R.id.waveDescriptiontextView)).setText(specificWaveDescription);
+            } else {
+                ((TextView)findViewById(R.id.waveDescriptiontextView)).setText(defaultWaveDescription);
+            }
         }
 
     }
