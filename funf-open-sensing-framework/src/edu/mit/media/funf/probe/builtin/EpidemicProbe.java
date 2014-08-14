@@ -176,9 +176,10 @@ public class EpidemicProbe extends Probe implements ProbeKeys.EpidemicsKeys {
                 String currentSelfState = settings.getString("self_state", "");
                 if (currentSelfState.equals("")) setCurrentState(selfState, false);
 
+               //FIXME
+                //saveLocalSharedPreference("to_vaccinated_time", 1408004999L);
 
-
-                runData = new Bundle();
+            runData = new Bundle();
 
 
                 firstRun = checkFirstRun();
@@ -245,9 +246,18 @@ public class EpidemicProbe extends Probe implements ProbeKeys.EpidemicsKeys {
                 runData.putLong("wave_description_accepted_t", settings.getLong("wave_description_accepted_t", 0L));
                 runData.putString("daily_digest_accepted", settings.getString("daily_digest_accepted", ""));
                 runData.putString("last_facebook_update", settings.getString("last_facebook_update", ""));
+                runData.putInt("vaccination_lost_points", settings.getInt("vaccination_lost_points", 0));
+                runData.putInt("last_vaccination_lost_points", settings.getInt("last_vaccination_lost_points", 0));
+                runData.putInt("infected_lost_points", settings.getInt("infected_lost_points", 0));
+                runData.putInt("last_infected_lost_points", settings.getInt("last_infected_lost_points", 0));
+                runData.putInt("side_effects_lost_points", settings.getInt("side_effects_lost_points", 0));
+                runData.putInt("last_side_effects_lost_points", settings.getInt("last_side_effects_lost_points", 0));
+                runData.putInt("points", settings.getInt("points", 0));
+                runData.putInt("last_points", settings.getInt("last_points", 0));
 
 
-                sendProbeData();
+
+            sendProbeData();
                 setBluetoothDiscoverable();
 
 
@@ -392,7 +402,7 @@ public class EpidemicProbe extends Probe implements ProbeKeys.EpidemicsKeys {
         private void detractInfectionCost() {
             int infectedPoints = getSharedPreferences(OWN_NAME, 0).getInt("infected_lost_points", 0);
             int severityCost = (int)getSkewedGaussianRandom(50, 10, 0.5);
-            saveLocalSharedPreference("infected_lost_points", severityCost + infectedPoints);
+            saveLocalSharedPreference("infected_lost_points", severityCost + infectedPoints, 0);
             detractCost(severityCost);
         }
 
@@ -400,7 +410,7 @@ public class EpidemicProbe extends Probe implements ProbeKeys.EpidemicsKeys {
             SharedPreferences settings = getSharedPreferences(OWN_NAME, 0);
             int currentPoints = settings.getInt("points", 100);
             int updatedPoints = Math.max(0, currentPoints - cost);
-            saveLocalSharedPreference("points", updatedPoints);
+            saveLocalSharedPreference("points", updatedPoints, 0);
         }
 
         private void setSusceptible(boolean force) {
@@ -452,7 +462,7 @@ public class EpidemicProbe extends Probe implements ProbeKeys.EpidemicsKeys {
 
         private void detractVaccinationCost() {
             int vaccinationLostPoints = getSharedPreferences(OWN_NAME, 0).getInt("vaccination_lost_points", 0);
-            saveLocalSharedPreference("vaccination_lost_points", vaccinationLostPoints + VACCINATION_FIXED_COST);
+            saveLocalSharedPreference("vaccination_lost_points", vaccinationLostPoints + VACCINATION_FIXED_COST, 0);
             detractCost(VACCINATION_FIXED_COST);
         }
 
@@ -763,6 +773,22 @@ public class EpidemicProbe extends Probe implements ProbeKeys.EpidemicsKeys {
             saveLocalSharedPreference("last_day_showed_state", 0, 0);
 
 
+            saveLocalSharedPreference("last_state", selfState.toString());
+
+            SharedPreferences settings = getSharedPreferences(OWN_NAME, 0);
+
+            saveLocalSharedPreference("last_side_effects_lost_points", settings.getInt("side_effects_lost_points", 0), 0);
+            saveLocalSharedPreference("last_infected_lost_points", settings.getInt("infected_lost_points", 0), 0);
+            saveLocalSharedPreference("last_points", settings.getInt("points", 0), 0);
+            saveLocalSharedPreference("last_vaccination_lost_points", settings.getInt("vaccination_lost_points", 0), 0);
+
+
+            saveLocalSharedPreference("side_effects_lost_points", 0, 0);
+            saveLocalSharedPreference("infected_lost_points", 0, 0);
+            saveLocalSharedPreference("points", 100, 0);
+            saveLocalSharedPreference("vaccination_lost_points", 0, 0);
+
+
             handleState(starting_state);
 
 
@@ -805,7 +831,7 @@ public class EpidemicProbe extends Probe implements ProbeKeys.EpidemicsKeys {
             //Using a skewed gaussian distribution for generating side effects cost
             double sideEffectsCost = Math.max(0, Math.min(100, (int) getSkewedGaussianRandom(30, 10, 0.5)));
             int sideEffectsPoints = getSharedPreferences(OWN_NAME, 0).getInt("side_effects_lost_points", 0);
-            saveLocalSharedPreference("side_effects_lost_points", sideEffectsPoints + (int)sideEffectsCost);
+            saveLocalSharedPreference("side_effects_lost_points", sideEffectsPoints + (int)sideEffectsCost, 0);
             detractCost((int)sideEffectsCost);
         }
 
@@ -869,6 +895,7 @@ public class EpidemicProbe extends Probe implements ProbeKeys.EpidemicsKeys {
             if (!understood) return;
 
             if (selfState.equals(SelfState.S)) showNotification("SensibleDTU EpiGame", "You are susceptible", R.drawable.epi_icon_s);
+            if (selfState.equals(SelfState.E)) showNotification("SensibleDTU EpiGame", "You are susceptible", R.drawable.epi_icon_s);
             if (selfState.equals(SelfState.I)) showNotification("SensibleDTU EpiGame", "You are infected", R.drawable.epi_icon_i);
             if (selfState.equals(SelfState.V)) showNotification("SensibleDTU EpiGame", "You are vaccinated", R.drawable.epi_icon_v);
             if (selfState.equals(SelfState.A)) showNotification("SensibleDTU EpiGame", "Awaiting vaccination to become effective", R.drawable.epi_icon_a);

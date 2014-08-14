@@ -315,8 +315,10 @@ public class EpiStateActivity extends FragmentActivity{
         SharedPreferences settings = getSharedPreferences(EpidemicProbe.OWN_NAME, 0);
         String self_state = settings.getString("self_state", "");
         boolean wave_description_accepted = settings.getBoolean("wave_description_accepted", false);
+        int wave_no = settings.getInt("wave_no", -1);
 
-        if (wave_description_accepted) {
+
+        if (wave_description_accepted || wave_no == 1) {
 
             (findViewById(R.id.stateLayout)).setVisibility(View.VISIBLE);
             (findViewById(R.id.waveDescriptionLayout)).setVisibility(View.GONE);
@@ -332,7 +334,21 @@ public class EpiStateActivity extends FragmentActivity{
             if (self_state.equals("R")) self_state = "recovered";
 
 
-            ((TextView) findViewById(R.id.postTextView)).setText(getString(R.string.status_update, self_state));
+
+            int points = settings.getInt("points", 0);
+            String message1 = "";
+
+            Log.d(EpidemicProbe.EPI_TAG, "points: "+points);
+
+
+            if (points != 100) {
+                message1 = getString(R.string.status_update, self_state) + " Because of this I lost " + (100-points) + " points!";
+            } else {
+                message1 = getString(R.string.status_update, self_state);
+
+            }
+
+            ((TextView) findViewById(R.id.postTextView)).setText(message1);
 
             String youAreText = "You are " + self_state + ". ";
             if (self_state.equals("waiting for vaccination to become effective")) {
@@ -391,7 +407,7 @@ public class EpiStateActivity extends FragmentActivity{
             (findViewById(R.id.stateLayout)).setVisibility(View.GONE);
             (findViewById(R.id.waveDescriptionLayout)).setVisibility(View.VISIBLE);
 
-            String final_state = settings.getString("self_state", "");
+            String final_state = settings.getString("last_state", "");
             String finalStateDisplayText = "SUSCEPTIBLE";
             if(final_state.equals("I")) {
                 finalStateDisplayText = "INFECTED";
@@ -400,12 +416,12 @@ public class EpiStateActivity extends FragmentActivity{
             } else if (final_state.equals("R")) {
                 finalStateDisplayText = "RECOVERED";
             }
-            ((TextView)findViewById(R.id.previousWaveState)).setText(finalStateDisplayText);
+            ((TextView)findViewById(R.id.previousWaveState)).setText("You finished the round as "+finalStateDisplayText);
 
-            ((TextView)findViewById(R.id.vaccinationCosts)).setText(settings.getInt("vaccination_lost_points", 0));
-            ((TextView)findViewById(R.id.infectionCosts)).setText(settings.getInt("infected_lost_points", 0));
-            ((TextView)findViewById(R.id.sideEffectsCosts)).setText(settings.getInt("side_effects_lost_points", 0));
-            ((TextView)findViewById(R.id.totalCosts)).setText(Math.min(0, 100 - settings.getInt("points", 0)));
+            ((TextView)findViewById(R.id.vaccinationCosts)).setText(""+settings.getInt("last_vaccination_lost_points", 0));
+            ((TextView)findViewById(R.id.infectionCosts)).setText(""+settings.getInt("last_infected_lost_points", 0));
+            ((TextView)findViewById(R.id.sideEffectsCosts)).setText(""+settings.getInt("last_side_effects_lost_points", 0));
+            ((TextView)findViewById(R.id.totalCosts)).setText(""+Math.max(0, settings.getInt("last_points", 100)));
 
             String defaultWaveDescription = getString(R.string.wave_description_1);
             int waveId = settings.getInt("wave_no", -1);
@@ -478,7 +494,18 @@ public class EpiStateActivity extends FragmentActivity{
             if (self_state.equals("A")) self_state = "waiting for vaccination to become effective";
             if (self_state.equals("R")) self_state = "recovered";
 
-            final String message = getString(R.string.status_update, self_state);
+            int points = settings.getInt("points", 0);
+            String message1 = "";
+
+            if (points != 100) {
+                message1 = getString(R.string.status_update, self_state) + " Because of this I lost " + (100 - points) + " points!";
+            } else {
+                message1 = getString(R.string.status_update, self_state);
+
+            }
+
+            final String message = message1;
+
             Request request = Request
                     .newStatusUpdateRequest(Session.getActiveSession(), message, new Request.Callback() {
                         @Override
@@ -549,6 +576,8 @@ public class EpiStateActivity extends FragmentActivity{
 
         int currentDay =  Calendar.getInstance().get(Calendar.DAY_OF_MONTH);
         saveLocalSharedPreference("last_day_showed_state", currentDay, 0);
+
+
 
         updateUI();
     }

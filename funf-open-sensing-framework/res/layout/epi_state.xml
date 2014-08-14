@@ -12,8 +12,7 @@
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:background="#FFF"
-        android:id="@+id/stateLayout"
-        >
+        android:id="@+id/stateLayout">
 
     <TextView
         android:layout_width="wrap_content"
@@ -237,102 +236,218 @@
             android:id="@+id/waveDescriptionLayout">
 
         <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:text="SensibleDTU EpiGame"
+            android:id="@+id/textView"
+            android:layout_gravity="center_horizontal"
+            android:textColor="@android:color/black"
+            android:typeface="normal"
+            android:textStyle="bold"
+            android:textSize="30dp"
+            android:layout_marginTop="@dimen/com_facebook_loginview_padding_right" />
+
+        <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textAppearance="?android:attr/textAppearanceLarge"
-                android:text="The current round is now finished\n\n Your final state is: "
+                android:text="You finished previous round as..."
                 android:id="@+id/previousWaveState"
                 android:textColor="@android:color/black"
                 android:gravity="center"
                 android:layout_gravity="center_horizontal"
-                />
+                android:layout_margin="10dp"
+                android:textSize="16dp" />
 
         <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textAppearance="?android:attr/textAppearanceLarge"
-                android:text="\nPoints you've earned this round: "
+                android:text="Points you've earned this round: "
                 android:textColor="@android:color/black"
                 android:id="@+id/pointsTitleText"
                 android:gravity="center"
                 android:layout_gravity="center_horizontal"
-                />
+            android:textSize="16dp"
+            android:layout_marginBottom="10dp" />
 
-        <TextView
+        <RelativeLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceLarge"
+                    android:text="Endowment:"
+                    android:textColor="@android:color/black"
+                android:layout_marginLeft="10dp"
+                 />
+
+            <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textAppearance="?android:attr/textAppearanceLarge"
-                android:text="Endowment: +100"
+                android:text="+100"
+                android:id="@+id/textView2"
                 android:textColor="@android:color/black"
-                android:gravity="center"
-                android:layout_gravity="center_horizontal"
-                />
+                android:layout_alignParentTop="true"
+                android:layout_alignParentRight="true"
+                android:layout_marginRight="10dp" />
+        </RelativeLayout>
 
-        <TextView
+        <RelativeLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceLarge"
+                    android:text="-10"
+                    android:id="@+id/vaccinationCosts"
+                    android:textColor="@android:color/black"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentRight="true"
+                android:layout_marginRight="10dp" />
+
+            <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textAppearance="?android:attr/textAppearanceLarge"
-                android:text="Fixed costs for vaccination: "
-                android:id="@+id/vaccinationCosts"
+                android:text="Fixed costs for vaccination:"
+                android:id="@+id/textView3"
+                android:layout_centerVertical="true"
+                android:layout_alignParentLeft="true"
                 android:textColor="@android:color/black"
-                android:gravity="center"
-                android:layout_gravity="center_horizontal"
-                />
+                android:layout_marginLeft="10dp" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:text="Points lost due to infection:"
+                android:id="@+id/textView4"
+                android:textColor="#ff000000"
+                android:layout_marginLeft="10dp" />
+
+            <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceLarge"
+                    android:text="-10"
+                    android:id="@+id/infectionCosts"
+                    android:textColor="@android:color/black"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentRight="true"
+                android:layout_marginRight="10dp" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceLarge"
+                    android:text="-10"
+                    android:id="@+id/sideEffectsCosts"
+                    android:textColor="@android:color/black"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentRight="true"
+                android:layout_marginRight="10dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:text="Points lost due to side effects:"
+                android:id="@+id/textView5"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentLeft="true"
+                android:layout_marginLeft="10dp"
+                android:textColor="#ff000000" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceLarge"
+                    android:text="80"
+                    android:id="@+id/totalCosts"
+                    android:textColor="@android:color/black"
+                    android:gravity="center"
+                    android:layout_gravity="center_horizontal"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentRight="true"
+                android:layout_marginRight="10dp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:text="Points earned:"
+                android:id="@+id/textView6"
+                android:layout_centerVertical="true"
+                android:layout_alignParentLeft="true"
+                android:textStyle="bold"
+                android:textColor="#ff000000"
+                android:layout_marginLeft="10dp" />
+        </RelativeLayout>
+
 
         <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textAppearance="?android:attr/textAppearanceLarge"
-                android:text="Points lost due to infection: "
-                android:id="@+id/infectionCosts"
-                android:textColor="@android:color/black"
-                android:gravity="center"
-                android:layout_gravity="center_horizontal"
-                />
-
-        <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceLarge"
-                android:text="Points lost due to side effects: "
-                android:id="@+id/sideEffectsCosts"
-                android:textColor="@android:color/black"
-                android:gravity="center"
-                android:layout_gravity="center_horizontal"
-                />
-
-        <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceLarge"
-                android:text="\nPoints earned in the current round: "
-                android:id="@+id/totalCosts"
-                android:textColor="@android:color/black"
-                android:gravity="center"
-                android:layout_gravity="center_horizontal"
-                />
-
-
-        <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceLarge"
-                android:text="\n"
+                android:text="HERE"
                 android:id="@+id/waveDescriptiontextView"
                 android:textColor="@android:color/black"
                 android:gravity="center"
                 android:layout_gravity="center_horizontal"
-                />
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:textSize="16dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="10dp" />
 
-        <Button
+        <RelativeLayout
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent">
+
+            <Button
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Proceed!"
+                    android:id="@+id/waveDescriptionAcceptedButton"
+                    android:onClick="waveDescriptionConfimed"
+                    android:gravity="center"
+                    android:layout_gravity="center_horizontal"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentRight="true"
+                android:layout_marginRight="10dp"
+                android:layout_toRightOf="@+id/button3" />
+
+            <Button
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Proceed!"
-                android:id="@+id/waveDescriptionAcceptedButton"
-                android:onClick="waveDescriptionConfimed"
-                android:gravity="center"
-                android:layout_gravity="center_horizontal"
-                />
+                android:text="Read experiment description"
+                android:id="@+id/button3"
+                android:onClick="showDescriptionActivity" />
+        </RelativeLayout>
+
     </LinearLayout>
 
 </LinearLayout>
