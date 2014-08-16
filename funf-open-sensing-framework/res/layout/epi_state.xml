@@ -90,13 +90,68 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textAppearance="?android:attr/textAppearanceLarge"
-                    android:text="digestTextView"
-                    android:id="@+id/digestTextView"
+                    android:text="digestTextViewDate"
+                    android:id="@+id/digestTextViewDate"
                     android:textColor="@android:color/black"
                     android:layout_gravity="center_horizontal"
                     android:layout_marginLeft="@dimen/com_facebook_loginview_padding_bottom"
                     android:layout_marginRight="@dimen/com_facebook_loginview_padding_bottom"
-                    />
+                    android:layout_marginBottom="10dp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceLarge"
+                    android:text="digestTextViewVaccinated"
+                    android:id="@+id/digestTextViewVaccinated"
+                    android:textColor="#ff000000"
+                    android:layout_marginLeft="10dp"
+                    android:textSize="18dp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceLarge"
+                    android:text="digestTextViewVaccinatedSide"
+                    android:id="@+id/digestTextViewVaccinatedSide"
+                    android:textColor="#ff000000"
+                    android:layout_marginLeft="10dp"
+                    android:textSize="18dp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceLarge"
+                    android:text="digestTextViewInfected"
+                    android:id="@+id/digestTextViewInfected"
+                    android:textColor="#ff000000"
+                    android:layout_marginLeft="10dp"
+                    android:textSize="18dp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceLarge"
+                    android:text="digestTextViewSusceptible"
+                    android:id="@+id/digestTextViewSusceptible"
+                    android:textColor="#ff000000"
+                    android:layout_marginLeft="10dp"
+                    android:textSize="18dp"
+                    android:layout_marginBottom="16dp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceLarge"
+                    android:text="Upload your data on time to get more accurate feedback."
+                    android:id="@+id/digestTextViewUploadOnTime"
+                    android:textColor="#ff000000"
+                    android:layout_marginLeft="10dp"
+                    android:textSize="18dp"
+                    android:layout_marginBottom="10dp"
+                    android:layout_marginRight="10dp"
+                    android:gravity="center" />
 
                 <Button
                     android:layout_width="wrap_content"

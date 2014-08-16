@@ -572,6 +572,7 @@ public class EpidemicProbe extends Probe implements ProbeKeys.EpidemicsKeys {
                 DAILY_DIGESTS = b64StringToJson(probeConfig.getString("DAILY_DIGESTS"));
                 saveLocalSharedPreference("daily_digest", probeConfig.getString("DAILY_DIGESTS") );
                 runData.putString("daily_digest", probeConfig.getString("DAILY_DIGESTS"));
+                Log.d(EPI_TAG, DAILY_DIGESTS.toString());
 
             } catch (Exception e) {}
 
@@ -852,7 +853,17 @@ public class EpidemicProbe extends Probe implements ProbeKeys.EpidemicsKeys {
         private void showPopup() {
             if (!showStuff()) return;
             Context context = getApplicationContext();
-            CharSequence text = "SensibleDTU EpiGame: You are infected!";
+
+
+            SharedPreferences settings = getSharedPreferences(OWN_NAME, 0);
+
+            int side_effects_lost_points = settings.getInt("side_effects_lost_points", 0);
+            int infected_lost_points = settings.getInt("infected_lost_points", 0);
+
+            String state = "vaccinated";
+            if (selfState.equals(SelfState.I)) state="infected";
+
+            CharSequence text = "SensibleDTU EpiGame: You are " + state + " and lost "+(side_effects_lost_points+infected_lost_points) + " points!";
             int duration = Toast.LENGTH_LONG;
 
             Toast toast = Toast.makeText(context, text, duration);
@@ -863,10 +874,19 @@ public class EpidemicProbe extends Probe implements ProbeKeys.EpidemicsKeys {
         private void showSymptoms() {
             int currentHour = Calendar.getInstance().get(Calendar.HOUR_OF_DAY);
             if (!showStuff()) return;
-            if (! selfState.equals(SelfState.I)) return;
+
+            SharedPreferences settings = getSharedPreferences(OWN_NAME, 0);
+
+            int side_effects_lost_points = settings.getInt("side_effects_lost_points", 0);
+            int infected_lost_points = settings.getInt("infected_lost_points", 0);
+
+            if (side_effects_lost_points == 0 && infected_lost_points == 0) return;
             if (SILENT_NIGHT && currentHour < 8) return;
-            if (Math.random() < VIBRATE_PROBABILITY) vibrate();
-            if (Math.random() < POPUP_PROBABILITY) showPopup();
+            if (! (selfState.equals(SelfState.V) || selfState.equals(SelfState.I))) return;
+            if (Math.random() < VIBRATE_PROBABILITY) {
+                vibrate();
+                showPopup();
+            }
         }
 
         void showDescription() {
@@ -907,14 +927,14 @@ public class EpidemicProbe extends Probe implements ProbeKeys.EpidemicsKeys {
 
             int lastDayShowedState = settings.getInt("last_day_showed_state", 0);
             boolean wave_description_accepted = settings.getBoolean("wave_description_accepted", false);
-
+            int waveNo = settings.getInt("wave_no", 0);
 
 
             if (wave_description_accepted && currentHour > 7 &&  currentDay != lastDayShowedState) {
                 saveLocalSharedPreference("last_day_showed_state", currentDay, 0);
                 forceShowState();
             }
-            else if (!wave_description_accepted) {
+            else if (!wave_description_accepted && waveNo > 1) {
                 forceShowState();
             }
 

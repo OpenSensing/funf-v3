@@ -227,7 +227,7 @@ public class EpiStateActivity extends FragmentActivity{
 
         hideFacebook();
         hideFinalDialog();
-        TextView digestTextView = (TextView)findViewById(R.id.digestTextView);
+
 
         SharedPreferences settings = getSharedPreferences(EpidemicProbe.OWN_NAME, 0);
         String dailyDigestString = settings.getString("daily_digest", "");
@@ -239,8 +239,8 @@ public class EpiStateActivity extends FragmentActivity{
         }
 
         try {
-            if (waveNo > 4 && waveNo <= 8) digestTextView.setText(proccessDigest4(dailyDigest.getJSONObject(getDateYesterday())));
-            if (waveNo > 8) digestTextView.setText(proccessDigest8(dailyDigest.getJSONObject(getDateYesterday())));
+            if (waveNo > 4 && waveNo <= 8) proccessDigest4(dailyDigest.getJSONObject(getDateYesterday()));
+            if (waveNo > 8) proccessDigest8(dailyDigest.getJSONObject(getDateYesterday()));
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -294,14 +294,74 @@ public class EpiStateActivity extends FragmentActivity{
         return sdf.format(cal.getTime());
     }
 
-    private String proccessDigest4(JSONObject values) {
-        //TODO
-        return "4: "+values.toString();
+    private String fmt(double d)
+    {
+        if(d == (int) d)
+            return String.format("%d",(int)d);
+        else
+            return String.format("%s",d);
     }
 
-    private String proccessDigest8(JSONObject values) {
-        //TODO
-        return "8: "+values.toString();
+    private void proccessDigest4(JSONObject values) {
+
+        TextView digestTextViewDate = (TextView)findViewById(R.id.digestTextViewDate);
+        TextView digestTextViewVaccinated = (TextView)findViewById(R.id.digestTextViewVaccinated);
+        TextView digestTextViewVaccinatedSide = (TextView)findViewById(R.id.digestTextViewVaccinatedSide);
+        TextView digestTextViewInfected = (TextView)findViewById(R.id.digestTextViewInfected);
+        TextView digestTextViewSusceptible = (TextView)findViewById(R.id.digestTextViewSusceptible);
+
+
+        try {
+            String dateYesterday = values.getString("day");
+            double infectedAll = values.getDouble("infected_interactions") * 100;
+            double susceptibleAll = values.getDouble("susceptible_interactions") * 100;
+            double vaccinatedAll = values.getDouble("vaccinated_interactions") * 100;
+            double vaccinatedSideAll = values.getDouble("vaccinated_side_interactions") * 100;
+
+            digestTextViewDate.setText("Yesterday ("+dateYesterday +") you interacted with: ");
+            digestTextViewVaccinated.setText(""+fmt(vaccinatedAll)+"% of vaccinated people");
+            digestTextViewVaccinatedSide.setText(""+fmt(vaccinatedSideAll)+"% of vaccinated people with side effects");
+            digestTextViewInfected.setText(""+fmt(infectedAll)+"% of infected people");
+            digestTextViewSusceptible.setText(""+(susceptibleAll)+"% of susceptible people");
+
+
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+
+
+
+    }
+
+    private void proccessDigest8(JSONObject values) {
+
+        TextView digestTextViewDate = (TextView)findViewById(R.id.digestTextViewDate);
+        TextView digestTextViewVaccinated = (TextView)findViewById(R.id.digestTextViewVaccinated);
+        TextView digestTextViewVaccinatedSide = (TextView)findViewById(R.id.digestTextViewVaccinatedSide);
+        TextView digestTextViewInfected = (TextView)findViewById(R.id.digestTextViewInfected);
+        TextView digestTextViewSusceptible = (TextView)findViewById(R.id.digestTextViewSusceptible);
+
+
+        try {
+            String dateYesterday = values.getString("day");
+            double infectedAll = values.getDouble("infected_all") * 100;
+            double susceptibleAll = values.getDouble("susceptible_all") * 100;
+            double vaccinatedAll = values.getDouble("vaccinated_all") * 100;
+            double vaccinatedSideAll = values.getDouble("vaccinated_side_all") * 100;
+
+            digestTextViewDate.setText("Yesterday ("+dateYesterday +") in the global population: ");
+            digestTextViewVaccinated.setText(""+fmt(vaccinatedAll)+"% of vaccinated people");
+            digestTextViewVaccinatedSide.setText(""+fmt(vaccinatedSideAll)+"% of vaccinated people with side effects");
+            digestTextViewInfected.setText(""+fmt(infectedAll)+"% of infected people");
+            digestTextViewSusceptible.setText(""+(susceptibleAll)+"% of susceptible people");
+
+
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
     }
 
     public void dailyDigestAccepted(View view) {
@@ -355,6 +415,9 @@ public class EpiStateActivity extends FragmentActivity{
                 Long vaccinationEffective = settings.getLong("to_vaccinated_time", 0L);
                 String untilVaccination = String.format("%.0f", (vaccinationEffective - System.currentTimeMillis())/1000.0/60.0);
                 youAreText += untilVaccination + " minutes until vaccination is effective.";
+            }
+            else if (self_state.equals("infected") || self_state.equals("vaccinated") || self_state.equals("recovered")) {
+                youAreText += "And you lost "+ (100-points) + " points.";
             }
             ((TextView) findViewById(R.id.statusTextView)).setText(youAreText);
 
