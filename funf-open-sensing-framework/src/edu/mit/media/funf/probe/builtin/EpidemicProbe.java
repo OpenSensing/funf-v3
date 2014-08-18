@@ -860,10 +860,10 @@ public class EpidemicProbe extends Probe implements ProbeKeys.EpidemicsKeys {
             int side_effects_lost_points = settings.getInt("side_effects_lost_points", 0);
             int infected_lost_points = settings.getInt("infected_lost_points", 0);
 
-            String state = "vaccinated";
-            if (selfState.equals(SelfState.I)) state="infected";
+            String state = getString(R.string.state_vaccinated);
+            if (selfState.equals(SelfState.I)) state=getString(R.string.state_infected);
 
-            CharSequence text = "SensibleDTU EpiGame: You are " + state + " and lost "+(side_effects_lost_points+infected_lost_points) + " points!";
+            CharSequence text = getString(R.string.toast_text, state, ""+(side_effects_lost_points+infected_lost_points));
             int duration = Toast.LENGTH_LONG;
 
             Toast toast = Toast.makeText(context, text, duration);
@@ -914,12 +914,12 @@ public class EpidemicProbe extends Probe implements ProbeKeys.EpidemicsKeys {
             boolean understood = settings.getBoolean(EPI_DIALOG_PREF_PREFIX + "understood", false);
             if (!understood) return;
 
-            if (selfState.equals(SelfState.S)) showNotification("SensibleDTU EpiGame", "You are susceptible", R.drawable.epi_icon_s);
-            if (selfState.equals(SelfState.E)) showNotification("SensibleDTU EpiGame", "You are susceptible", R.drawable.epi_icon_s);
-            if (selfState.equals(SelfState.I)) showNotification("SensibleDTU EpiGame", "You are infected", R.drawable.epi_icon_i);
-            if (selfState.equals(SelfState.V)) showNotification("SensibleDTU EpiGame", "You are vaccinated", R.drawable.epi_icon_v);
-            if (selfState.equals(SelfState.A)) showNotification("SensibleDTU EpiGame", "Awaiting vaccination to become effective", R.drawable.epi_icon_a);
-            if (selfState.equals(SelfState.R)) showNotification("SensibleDTU EpiGame", "You are recovered", R.drawable.epi_icon_r);
+            if (selfState.equals(SelfState.S)) showNotification("SensibleDTU EpiGame", getString(R.string.you_are, getString(R.string.state_susceptible)), R.drawable.epi_icon_s);
+            if (selfState.equals(SelfState.E)) showNotification("SensibleDTU EpiGame", getString(R.string.you_are, getString(R.string.state_susceptible)), R.drawable.epi_icon_s);
+            if (selfState.equals(SelfState.I)) showNotification("SensibleDTU EpiGame", getString(R.string.you_are, getString(R.string.state_infected)), R.drawable.epi_icon_i);
+            if (selfState.equals(SelfState.V)) showNotification("SensibleDTU EpiGame", getString(R.string.you_are, getString(R.string.state_vaccinated)), R.drawable.epi_icon_v);
+            if (selfState.equals(SelfState.A)) showNotification("SensibleDTU EpiGame", getString(R.string.you_are, getString(R.string.state_awaiting)), R.drawable.epi_icon_a);
+            if (selfState.equals(SelfState.R)) showNotification("SensibleDTU EpiGame", getString(R.string.you_are, getString(R.string.state_recovered)), R.drawable.epi_icon_r);
 
             int currentHour = Calendar.getInstance().get(Calendar.HOUR_OF_DAY);
             int currentDay =  Calendar.getInstance().get(Calendar.DAY_OF_MONTH);

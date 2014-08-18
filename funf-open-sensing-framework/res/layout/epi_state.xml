@@ -144,7 +144,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textAppearance="?android:attr/textAppearanceLarge"
-                    android:text="Upload your data on time to get more accurate feedback."
+                    android:text="@string/upload_on_time"
                     android:id="@+id/digestTextViewUploadOnTime"
                     android:textColor="#ff000000"
                     android:layout_marginLeft="10dp"
@@ -156,7 +156,7 @@
                 <Button
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Got it!"
+                    android:text="@string/got_it"
                     android:layout_gravity="center_horizontal"
                     android:layout_marginTop="5dp"
                     android:id="@+id/button2"
@@ -174,7 +174,7 @@
             android:id="@+id/postStatusUpdateButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Share this on Facebook"
+            android:text="@string/button_share_this"
             android:textStyle="bold"
             android:layout_gravity="center_horizontal"
             android:textSize="20dp" />
@@ -204,7 +204,7 @@
                 <Button
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Read experiment description"
+                android:text="@string/button_experiment_desc"
                 android:id="@+id/button"
                 android:layout_gravity="center_horizontal"
                 android:layout_marginTop="5dp"
@@ -319,7 +319,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textAppearance="?android:attr/textAppearanceLarge"
-                android:text="Points you've earned this round: "
+                android:text="@string/summary_header"
                 android:textColor="@android:color/black"
                 android:id="@+id/pointsTitleText"
                 android:gravity="center"
@@ -335,10 +335,10 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textAppearance="?android:attr/textAppearanceLarge"
-                    android:text="Endowment:"
+                    android:text="@string/summary_endowment"
                     android:textColor="@android:color/black"
                 android:layout_marginLeft="10dp"
-                 />
+                android:id="@+id/summaryTextViewEndowment" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -371,8 +371,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textAppearance="?android:attr/textAppearanceLarge"
-                android:text="Fixed costs for vaccination:"
-                android:id="@+id/textView3"
+                android:text="@string/summary_fixed"
+                android:id="@+id/summaryTextViewFixedVaccination"
                 android:layout_centerVertical="true"
                 android:layout_alignParentLeft="true"
                 android:textColor="@android:color/black"
@@ -387,7 +387,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textAppearance="?android:attr/textAppearanceLarge"
-                android:text="Points lost due to infection:"
+                android:text="@string/summary_infection"
                 android:id="@+id/textView4"
                 android:textColor="#ff000000"
                 android:layout_marginLeft="10dp" />
@@ -423,7 +423,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textAppearance="?android:attr/textAppearanceLarge"
-                android:text="Points lost due to side effects:"
+                android:text="@string/summary_side"
                 android:id="@+id/textView5"
                 android:layout_alignParentTop="true"
                 android:layout_alignParentLeft="true"
@@ -453,7 +453,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textAppearance="?android:attr/textAppearanceLarge"
-                android:text="Points earned:"
+                android:text="@string/summary_earned"
                 android:id="@+id/textView6"
                 android:layout_centerVertical="true"
                 android:layout_alignParentLeft="true"
@@ -485,7 +485,7 @@
             <Button
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Proceed!"
+                    android:text="@string/proceed"
                     android:id="@+id/waveDescriptionAcceptedButton"
                     android:onClick="waveDescriptionConfimed"
                     android:gravity="center"
@@ -498,7 +498,7 @@
             <Button
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Read experiment description"
+                android:text="@string/button_experiment_desc"
                 android:id="@+id/button3"
                 android:onClick="showDescriptionActivity" />
         </RelativeLayout>

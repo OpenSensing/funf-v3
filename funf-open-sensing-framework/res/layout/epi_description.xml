@@ -61,14 +61,14 @@
         <Button
                 android:layout_width="115dp"
                 android:layout_height="wrap_content"
-                android:text="&lt;&lt; Back"
+                android:text="@string/button_back"
                 android:id="@+id/backButton"
                 android:onClick="back" />
 
         <Button android:id="@+id/proceedButton"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Got it!"
+                android:text="@string/got_it"
                 android:layout_gravity="center_horizontal"
                 android:onClick="proceed"
                 android:layout_alignParentTop="true"

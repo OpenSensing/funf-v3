@@ -244,7 +244,6 @@ public class EpiStateActivity extends FragmentActivity{
 
         } catch (Exception e) {
             e.printStackTrace();
-            Log.d(EpidemicProbe.EPI_TAG, "HERE *_*");
             showFacebook();
         }
 
@@ -299,7 +298,7 @@ public class EpiStateActivity extends FragmentActivity{
         if(d == (int) d)
             return String.format("%d",(int)d);
         else
-            return String.format("%s",d);
+            return String.format("%.2f",d);
     }
 
     private void proccessDigest4(JSONObject values) {
@@ -318,11 +317,11 @@ public class EpiStateActivity extends FragmentActivity{
             double vaccinatedAll = values.getDouble("vaccinated_interactions") * 100;
             double vaccinatedSideAll = values.getDouble("vaccinated_side_interactions") * 100;
 
-            digestTextViewDate.setText("Yesterday ("+dateYesterday +") you interacted with: ");
-            digestTextViewVaccinated.setText(""+fmt(vaccinatedAll)+"% of vaccinated people");
-            digestTextViewVaccinatedSide.setText(""+fmt(vaccinatedSideAll)+"% of vaccinated people with side effects");
-            digestTextViewInfected.setText(""+fmt(infectedAll)+"% of infected people");
-            digestTextViewSusceptible.setText(""+(susceptibleAll)+"% of susceptible people");
+            digestTextViewDate.setText(getString(R.string.digest_4_intro, dateYesterday));
+            digestTextViewVaccinated.setText(getString(R.string.digest_vaccinated_people, ""+fmt(vaccinatedAll)+"%"));
+            digestTextViewVaccinatedSide.setText(getString(R.string.digest_side_people, ""+fmt(vaccinatedSideAll)+"%"));
+            digestTextViewInfected.setText(getString(R.string.digest_infected_people, ""+fmt(infectedAll)+"%"));
+            digestTextViewSusceptible.setText(getString(R.string.digest_susceptible_people, ""+fmt(susceptibleAll)+"%"));
 
 
 
@@ -351,11 +350,11 @@ public class EpiStateActivity extends FragmentActivity{
             double vaccinatedAll = values.getDouble("vaccinated_all") * 100;
             double vaccinatedSideAll = values.getDouble("vaccinated_side_all") * 100;
 
-            digestTextViewDate.setText("Yesterday ("+dateYesterday +") in the global population: ");
-            digestTextViewVaccinated.setText(""+fmt(vaccinatedAll)+"% of vaccinated people");
-            digestTextViewVaccinatedSide.setText(""+fmt(vaccinatedSideAll)+"% of vaccinated people with side effects");
-            digestTextViewInfected.setText(""+fmt(infectedAll)+"% of infected people");
-            digestTextViewSusceptible.setText(""+(susceptibleAll)+"% of susceptible people");
+            digestTextViewDate.setText(getString(R.string.digest_8_intro, dateYesterday));
+            digestTextViewVaccinated.setText(getString(R.string.digest_vaccinated_people, ""+fmt(vaccinatedAll)+"%"));
+            digestTextViewVaccinatedSide.setText(getString(R.string.digest_side_people, ""+fmt(vaccinatedSideAll)+"%"));
+            digestTextViewInfected.setText(getString(R.string.digest_infected_people, ""+fmt(infectedAll)+"%"));
+            digestTextViewSusceptible.setText(getString(R.string.digest_susceptible_people, ""+fmt(susceptibleAll)+"%"));
 
 
 
@@ -386,23 +385,21 @@ public class EpiStateActivity extends FragmentActivity{
 
 
 
-            if (self_state.equals("S")) self_state = "susceptible";
-            if (self_state.equals("I")) self_state = "infected";
-            if (self_state.equals("E")) self_state = "susceptible";
-            if (self_state.equals("V")) self_state = "vaccinated";
-            if (self_state.equals("A")) self_state = "waiting for vaccination to become effective";
-            if (self_state.equals("R")) self_state = "recovered";
+            if (self_state.equals("S")) self_state = getString(R.string.state_susceptible);
+            if (self_state.equals("I")) self_state = getString(R.string.state_infected);
+            if (self_state.equals("E")) self_state = getString(R.string.state_susceptible);
+            if (self_state.equals("V")) self_state = getString(R.string.state_vaccinated);
+            if (self_state.equals("A")) self_state = getString(R.string.state_awaiting);
+            if (self_state.equals("R")) self_state = getString(R.string.state_recovered);
 
 
 
             int points = settings.getInt("points", 0);
             String message1 = "";
 
-            Log.d(EpidemicProbe.EPI_TAG, "points: "+points);
-
 
             if (points != 100) {
-                message1 = getString(R.string.status_update, self_state) + " Because of this I lost " + (100-points) + " points!";
+                message1 = getString(R.string.status_update, self_state) + " " + getString(R.string.lost_points, ""+(100-points));
             } else {
                 message1 = getString(R.string.status_update, self_state);
 
@@ -410,14 +407,14 @@ public class EpiStateActivity extends FragmentActivity{
 
             ((TextView) findViewById(R.id.postTextView)).setText(message1);
 
-            String youAreText = "You are " + self_state + ". ";
-            if (self_state.equals("waiting for vaccination to become effective")) {
+            String youAreText = getString(R.string.you_are, self_state);
+            if (self_state.equals(getString(R.string.state_awaiting))) {
                 Long vaccinationEffective = settings.getLong("to_vaccinated_time", 0L);
-                String untilVaccination = String.format("%.0f", (vaccinationEffective - System.currentTimeMillis())/1000.0/60.0);
-                youAreText += untilVaccination + " minutes until vaccination is effective.";
+                String untilVaccination = String.format(" %.0f ", (vaccinationEffective - System.currentTimeMillis())/1000.0/60.0);
+                youAreText += untilVaccination + getString(R.string.until_vaccination);
             }
-            else if (self_state.equals("infected") || self_state.equals("vaccinated") || self_state.equals("recovered")) {
-                youAreText += "And you lost "+ (100-points) + " points.";
+            else if (self_state.equals(getString(R.string.state_infected)) || self_state.equals(getString(R.string.state_vaccinated)) || self_state.equals(getString(R.string.state_recovered))) {
+                youAreText += " " + getString(R.string.you_lost_points, ""+(100-points));
             }
             ((TextView) findViewById(R.id.statusTextView)).setText(youAreText);
 
@@ -441,7 +438,7 @@ public class EpiStateActivity extends FragmentActivity{
 
             boolean vaccination_decision_made = settings.getBoolean("vaccination_decision_made", false);
 
-            if (self_state.equals("susceptible"))
+            if (self_state.equals(getString(R.string.state_susceptible)))
                 (findViewById(R.id.vaccinationLayout)).setVisibility(View.VISIBLE);
             else (findViewById(R.id.vaccinationLayout)).setVisibility(View.GONE);
 
@@ -471,15 +468,16 @@ public class EpiStateActivity extends FragmentActivity{
             (findViewById(R.id.waveDescriptionLayout)).setVisibility(View.VISIBLE);
 
             String final_state = settings.getString("last_state", "");
-            String finalStateDisplayText = "SUSCEPTIBLE";
+            String finalStateDisplayText = getString(R.string.state_susceptible);
+
             if(final_state.equals("I")) {
-                finalStateDisplayText = "INFECTED";
+                finalStateDisplayText = getString(R.string.state_infected);
             } else if (final_state.equals("V")) {
-                finalStateDisplayText = "VACCINATED";
+                finalStateDisplayText = getString(R.string.state_vaccinated);
             } else if (final_state.equals("R")) {
-                finalStateDisplayText = "RECOVERED";
+                finalStateDisplayText = getString(R.string.state_recovered);
             }
-            ((TextView)findViewById(R.id.previousWaveState)).setText("You finished the round as "+finalStateDisplayText);
+            ((TextView)findViewById(R.id.previousWaveState)).setText(getString(R.string.finished_round_as)+" "+finalStateDisplayText);
 
             ((TextView)findViewById(R.id.vaccinationCosts)).setText(""+settings.getInt("last_vaccination_lost_points", 0));
             ((TextView)findViewById(R.id.infectionCosts)).setText(""+settings.getInt("last_infected_lost_points", 0));
@@ -550,18 +548,18 @@ public class EpiStateActivity extends FragmentActivity{
             SharedPreferences settings = getSharedPreferences(EpidemicProbe.OWN_NAME, 0);
             String self_state = settings.getString("self_state", "");
 
-            if (self_state.equals("S")) self_state = "susceptible";
-            if (self_state.equals("I")) self_state = "infected";
-            if (self_state.equals("E")) self_state = "susceptible";
-            if (self_state.equals("V")) self_state = "vaccinated";
-            if (self_state.equals("A")) self_state = "waiting for vaccination to become effective";
-            if (self_state.equals("R")) self_state = "recovered";
+            if (self_state.equals("S")) self_state = getString(R.string.state_susceptible);
+            if (self_state.equals("I")) self_state = getString(R.string.state_infected);
+            if (self_state.equals("E")) self_state = getString(R.string.state_susceptible);
+            if (self_state.equals("V")) self_state = getString(R.string.state_vaccinated);
+            if (self_state.equals("A")) self_state = getString(R.string.state_awaiting);
+            if (self_state.equals("R")) self_state = getString(R.string.state_recovered);
 
             int points = settings.getInt("points", 0);
             String message1 = "";
 
             if (points != 100) {
-                message1 = getString(R.string.status_update, self_state) + " Because of this I lost " + (100 - points) + " points!";
+                message1 = getString(R.string.status_update, self_state) + " "+getString(R.string.lost_points, ""+(100-points));
             } else {
                 message1 = getString(R.string.status_update, self_state);
 

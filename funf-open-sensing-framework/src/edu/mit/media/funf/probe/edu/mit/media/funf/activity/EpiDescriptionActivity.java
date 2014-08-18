@@ -108,10 +108,10 @@ public class EpiDescriptionActivity extends Activity {
         else backButton.setVisibility(View.VISIBLE);
 
         if (screenNo == lastScreenNo) {
-            proceedButton.setText("Got it!");
+            proceedButton.setText(R.string.got_it);
         }
         else {
-            proceedButton.setText("Proceed >>");
+            proceedButton.setText(R.string.proceed + " >>");
         }
 
     }
@@ -132,7 +132,6 @@ public class EpiDescriptionActivity extends Activity {
     }
 
     private void understand() {
-        Log.d(EpidemicProbe.EPI_TAG, "understood!");
         saveLocalSharedPreference(EpidemicProbe.EPI_DIALOG_PREF_PREFIX+"understood", true);
         finish();
     }
