@@ -5,6 +5,9 @@ import android.app.AlertDialog;
 import android.app.Fragment;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.text.method.ScrollingMovementMethod;
@@ -83,7 +86,7 @@ public class EpiDescriptionActivity extends Activity {
 
     void showScreen4() {
         welcomeText.setText(R.string.welcome_text_4);
-        welcomeText.setCompoundDrawablesRelativeWithIntrinsicBounds(R.drawable.epi_icon_a, 0, 0, 0);
+        welcomeText.setCompoundDrawablesRelativeWithIntrinsicBounds(R.drawable.infection_probability, 0, 0, 0);
     }
 
     void showScreen5() {
@@ -111,7 +114,7 @@ public class EpiDescriptionActivity extends Activity {
             proceedButton.setText(R.string.got_it);
         }
         else {
-            proceedButton.setText(R.string.proceed + " >>");
+            proceedButton.setText(getString(R.string.proceed) + " >>");
         }
 
     }

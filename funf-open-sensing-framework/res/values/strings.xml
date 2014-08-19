@@ -33,86 +33,151 @@
     <string name="success">Success</string>
     <string name="successfully_posted_post">Success!</string>
     <string name="error">Error</string>
-    <string name="status_update">(DK)I am now %1$s in the SensibleDTU EpiGame!</string>
+    <string name="status_update">Jeg er nu %1$s i SensibleDTUs EpiGame!</string>
     <string name="exception">Exception: %1$s</string>
 
 
-    <string name="welcome_text_1">(DK)You will take part in an interactive game study. The study consists of 12 rounds, each lasting one week. In each week, you may contract a hypothetical disease and become infectious for other participants. You can decide either for or against vaccination. You will receive 100 points in each round and may lose between 0 and 90 points in each round, depending on your decision and the decisions of other participants. At the end of the 12 weeks, there will be a lottery in that we raffle ??. The more points you have left at the end of the 12 weeks, the higher is your likelihood of winning a price in the lottery. Additionally, all participants with data quality better than 80% will receive movie vouchers every 2 weeks. </string>
+    <!-- <string name="welcome_text_1">(DK)You will take part in an interactive game study. The study consists of 12 rounds, each lasting one week. In each week, you may contract a hypothetical disease and become infectious for other participants. You can decide either for or against vaccination. You will receive 100 points in each round and may lose between 0 and 90 points in each round, depending on your decision and the decisions of other participants. At the end of the 12 weeks, there will be a lottery in that we raffle ??. The more points you have left at the end of the 12 weeks, the higher is your likelihood of winning a price in the lottery. Additionally, all participants with data quality better than 80% will receive movie vouchers every 2 weeks. </string> -->
 
-    <string name="welcome_text_2">(DK)In each round, you can contract the disease. If you decide to vaccinate the vaccine becomes effective after 2 hours. Depending on your decision, you can be in one of three stages:
+    <string name="welcome_text_1">Nu starter SensibleDTUs interaktive epidemi-spil!\n\nSpillet består af 12 runder, hvor hver runde varer en uge. Hver uge slipper vi en hypotetisk sygdom løs, hvor inficerede deltagere smitter dig, hvis i er nær hinanden.\nDu kan vælge at blive vaccineret eller ej. Du modtager 100 points i hver runde, og du kan tabe mellem 0 og 90 points per runde, afhængig af din vaccinations-beslutning (samt de andre spilleres beslutninger).\n\nEfter de 12 uger trækker vi lod om ??. Jo flere points du har tilbage efter 12 uger, jo bedre er dine chancer for at vinde.\n\nDerudover modtager alle studerende der har datakvalitet bedre end 80% en gratis film-download hver anden uge. </string>
+
+
+
+    <!-- <string name="welcome_text_2">(DK)In each round, you can contract the disease. If you decide to vaccinate the vaccine becomes effective after 2 hours. Depending on your decision, you can be in one of three stages:
         1. Susceptible: You either did not vaccinate or you vaccinated within the last 2 hours, so the vaccine is not effective yet. You can contract the disease.\n
         2. Vaccinated: You vaccinated more than 2 hours ago and cannot contract the disease.\n
         3. Infected: You contracted the disease. You can infect others.
+</string> -->
+
+    <string name="welcome_text_2">Hver gang vi starter en ny runde kan du igen blive smittet. Hvis du beslutter dig for at blive vaccineret, begynder vaccinen at virke efter 2 timer. Afhængig af din beslutning kan du ende i en af følgende tre faser:\n\n
+        1. Modtagelig: Du har enten valgt ikke at vaccinere dig, eller du har vaccineret dig inden for de sidste 2 timer, så vaccinen virker ikke endnu. Du er derfor modtagelig for smitte.\n\n
+        2. Vaccineret: Du har vaccineret dig for over 2 timer siden og kan ikke længere få sygdommen.\n\n
+        3. Inficeret: Du har pådraget dig sygdommen. Du kan smitte andre.
 </string>
 
-    <string name="welcome_text_3">(DK)At the beginning of each round you may randomly become sick (independent of your contacts with others) and become an infection seed.
+    <!-- <string name="welcome_text_3">(DK)At the beginning of each round you may randomly become sick (independent of your contacts with others) and become an infection seed.
 During the game, you can contract the disease by being in physical proximity with other persons who are infected. Only susceptible people can contract the disease. The probability of contracting the disease depends on the number of other participants who are vaccinated. The greater the number of vaccinated people, the lower the probability of contracting the disease (see the next screen). If you contract the disease, you will lose between 0 and 90 points, with an average loss of 50 points. Small losses are more likely than large losses, just like mild courses of disease are more likely than severe ones. If you are infected, you can infect other susceptible participants.
+</string> -->
+
+    <string name="welcome_text_3">Under selve spillet kan du pådrage dig sygdommen ved at være i nærheden af personer som er inficeret. Kun modtagelige spillere kan blive syge. Sandsynligheden for at blive smittet afhænger af antallet af andre spiller som er vaccineret. Jo flere vaccinerede spillere, jo lavere er sandsynligheden for at pådrage sig sygdommen (se næste skærm).\n\nHvis du bliver smittet taber du mellem 0 og 90 points, med et gennemsnitligt tab af 50 points. Det er mere sandsynligt at opleve et lille point-tab end et stort, ligesom milde udgaver af en sygdom er mere sandsynlige end alvorlige forløb. Hvis du er inficeret kan du smitte andre modtagelige deltager.\n\nI begyndelsen af hver runde er det muligt at du tilfældigt bliver syg (uafhængigt af din kontakt med andre spillere) - en slags "patient nul".
 </string>
+
+
     <string name="welcome_text_4"></string>
-    <string name="welcome_text_5">(DK)At any time, you can vaccinate against the disease. Vaccination costs a fixed amount of 10 points. Once vaccinated, the vaccine becomes effective after 2 hours and your can no longer contract the disease. The probability of side effects due to vaccination is 30%. In case of side effects, you will lose between 0 and 90 points, with an average loss of 30 points. Small losses are more likely than large losses, just like mild side effects are more likely than severe ones. If you are vaccinated, you cannot infect others.
+
+    <!-- <string name="welcome_text_5">(DK)At any time, you can vaccinate against the disease. Vaccination costs a fixed amount of 10 points. Once vaccinated, the vaccine becomes effective after 2 hours and your can no longer contract the disease. The probability of side effects due to vaccination is 30%. In case of side effects, you will lose between 0 and 90 points, with an average loss of 30 points. Small losses are more likely than large losses, just like mild side effects are more likely than severe ones. If you are vaccinated, you cannot infect others.
 You can vaccinate at any time by opening the app. Additionally, you can check your current status - susceptible, vaccinated, or infected - in the app at any time.  At the end of each round, you will learn about your points earned.
+</string> -->
+
+	
+    <string name="welcome_text_5">Du kan til enhver tid vaccinere dig mod sygdommen. Vaccinationen koster altid 10 points. Vaccinen træder i kraft 2 timer efter du har vaccineret dig og derefter kan du ikke længere pådrage dig sygdommen.\nSandsynligheden for at du oplever bivirkninger pga. vaccinationen er 30%. Hvis du oplever bivirkninger, mister du mellem 0 og 90 points. Det er mere sandsynligt at opleve små point-tab end store, ligesom milde bivirkninger er mre sandsynlige end alvorlige bivirkninger. Hvis du er vaccineret kan du ikke inficere andre.\n\nDu kan til enhver tid vaccinere via app\'en. Og du også altid checke din nuværende status - modtagelig, vaccineret, eller inficeret - via App\'en.  Når hver runde afsluttets, informerer vi om hvor mange points du har optjent.
 </string>
 
-    <string name="welcome_text_extra_after_wave_4">(DK)You will also receive feedback each day about the relative number of other persons you had bluetooth contact during this round, who chose to vaccinate.</string>
-    <string name="welcome_text_extra_after_wave_8">(DK)You will also receive feedback each day about the relative number of all other persons playing the game, who chose to vaccinate.</string>
+
+    <!-- <string name="welcome_text_extra_after_wave_4">(DK)You will also receive feedback each day about the relative number of other persons you had bluetooth contact during this round, who chose to vaccinate.</string> -->
+
+    <string name="welcome_text_extra_after_wave_4">Du vil også modtage dagligt feedback om, hvilken brøkdel af de deltagere du har set, der har valgt at lade sig vaccinere.</string>
 
 
-    <string name="vaccination_text">(DK)Vaccination costs 10 points. It prevents from contracting the disease from 2 hours after pressing the button until the end of the round. Additional point losses due to side effects might appear.</string>
-    <string name="vaccination_text_disabled">(DK)You already made a vaccination decisions, please come back later...</string>
-    <string name="vaccination_text_waiting">(DK)Applying vaccination...</string>
+    <!-- <string name="welcome_text_extra_after_wave_8">(DK)You will also receive feedback each day about the relative number of all other persons playing the game, who chose to vaccinate.</string> -->
 
-    <string name="wave_description_1">(DK)The next round starts now. The rules are the same as in the previous round.</string>
-    <string name="wave_description_2">(DK)The next round starts now. The rules are the same as in the previous round.</string>
-    <string name="wave_description_3">(DK)The next round starts now. The rules are the same as in the previous round.</string>
-    <string name="wave_description_4">(DK)The next round starts now. The rules are the same as in the previous round.</string>
-    <string name="wave_description_5">(DK)The next round starts now. The rules are the same as in the previous round, except for the fact that each day you will receive feedback about the number of infections, vaccine uptake and side effects among the participants you had bluetooth contact with. Additionally, you will learn about the resulting average probability of infection during that day.</string>
-    <string name="wave_description_6">(DK)The next round starts now. The rules are the same as in the previous round.</string>
-    <string name="wave_description_7">(DK)The next round starts now. The rules are the same as in the previous round.</string>
-    <string name="wave_description_8">(DK)The next round starts now. The rules are the same as in the previous round.</string>
-    <string name="wave_description_9">(DK)The next round starts now. The rules are the same as in the previous round, except for the fact that each day you will receive feedback about the number of infections, vaccine uptake and side effects in the whole population of participants. Additionally, you will learn about the resulting average probability of infection during that day.</string>
-    <string name="wave_description_10">(DK)The next round starts now. The rules are the same as in the previous round.</string>
-    <string name="wave_description_11">(DK)The next round starts now. The rules are the same as in the previous round.</string>
-    <string name="wave_description_12">(DK)The next round starts now. The rules are the same as in the previous round.</string>
+    <string name="welcome_text_extra_after_wave_8">Du vil også modtage dagligt feedback om, hvilken brøkdel af alle deltagere i spillet, der har valgt at lade sig vaccinere.</string>
 
-    <string name="final_dialog">(DK)The competition has ended. Check out the results and prizes.</string>
+    <!-- <string name="vaccination_text">(DK)Vaccination costs 10 points. It prevents from contracting the disease from 2 hours after pressing the button until the end of the round. Additional point losses due to side effects might appear.</string> -->
 
-    <string name="got_it">(DK)Got it!</string>
-    <string name="proceed">(DK)Proceed</string>
+    <string name="vaccination_text">Vaccination koster 10 points. Den forhindrer dig fra at pådrage dig sygdommen startende fra 2 timer efter du har trykket på knappen og indtil runden slutter. Du kan opleve yderlige point-tab pga. bivirkninger.</string>
 
-    <string name="digest_4_intro">(DK)Yesterday (%1$s) among people you interacted with:</string>
-    <string name="digest_8_intro">(DK)Yesterday (%1$s) in the global population:</string>
+    <string name="vaccination_text_disabled">Du har allerede truffet en vaccinationsbeslutning. Kom venligst tilbage senere ...</string>
 
+    <string name="vaccination_text_waiting">Vaccinen anvendes ...</string>
 
-    <string name="digest_vaccinated_people">(DK)%1$s of vaccinated people</string>
-    <string name="digest_side_people">(DK)%1$s of vaccinated people with side effects</string>
-    <string name="digest_infected_people">(DK)%1$s of infected people</string>
-    <string name="digest_susceptible_people">(DK)%1$s of susceptible people</string>
+    <string name="wave_description_1">Den næste runde starter nu. Reglerne er de samme som i sidste runde.</string>
 
-    <string name="state_susceptible">(DK)susceptible</string>
-    <string name="state_infected">(DK)infected</string>
-    <string name="state_vaccinated">(DK)vaccinated</string>
-    <string name="state_awaiting">(DK)waiting for vaccination to become effective</string>
-    <string name="state_recovered">(DK)recovered</string>
+    <string name="wave_description_2">Den næste runde starter nu. Reglerne er de samme som i sidste runde.</string>
 
-    <string name="lost_points">(DK)Because of this I lost %1$s points!</string>
-    <string name="you_are">(DK)You are %1$s.</string>
-    <string name="until_vaccination">(DK)minutes until vaccination is effective.</string>
-    <string name="you_lost_points">(DK)And you lost %1$s points.</string>
-    <string name="finished_round_as">(DK)You finished the round as</string>
+    <string name="wave_description_3">Den næste runde starter nu. Reglerne er de samme som i sidste runde.</string>
 
-    <string name="summary_header">(DK)Points you have earned this round:</string>
-    <string name="summary_endowment">(DK)Endowment:</string>
-    <string name="summary_fixed">(DK)Fixed costs for vaccination:</string>
-    <string name="summary_infection">(DK)Points lost due to infection:</string>
-    <string name="summary_side">(DK)Points lost due to side effects:</string>
-    <string name="summary_earned">(DK)Points earned:</string>
+    <string name="wave_description_4">Den næste runde starter nu. Reglerne er de samme som i sidste runde.</string>
 
-    <string name="button_experiment_desc">(DK)Read experiment description</string>
-    <string name="upload_on_time">(DK)Upload your data on time to get more accurate feedback.</string>
-    <string name="button_share_this">(DK)Share this on Facebook</string>
-    <string name="button_back">&lt;&lt; (DK)Back</string>
+    <!-- <string name="wave_description_5">(DK)The next round starts now. The rules are the same as in the previous round, except for the fact that each day you will receive feedback about the number of infections, vaccine uptake and side effects among the participants you had bluetooth contact with. Additionally, you will learn about the resulting average probability of infection during that day.</string> -->
 
-    <string name="toast_text">(DK)SensibleDTU EpiGame: You are %1$s and lost %2$s points!</string>
+    <string name="wave_description_5">Den næste runde starter nu. Reglerne er de samme som i sidste runde, men hver dag vil du modtage feedback om det samlede antal infektioner, vaccinationsprocentdelen og biviknigerne blandt de deltagere, du har haft bluetooth-kontakt med. Endvidere informerer vi om den resulterende gennemsnitlige sandsynlighed for at blive smittet den dag. </string>
+
+    <string name="wave_description_6">Den næste runde starter nu. Reglerne er de samme som i sidste runde.</string>
+
+    <string name="wave_description_7">Den næste runde starter nu. Reglerne er de samme som i sidste runde.</string>
+
+    <string name="wave_description_8">Den næste runde starter nu. Reglerne er de samme som i sidste runde.</string>
+
+    <!-- <string name="wave_description_9">(DK)The next round starts now. The rules are the same as in the previous round, except for the fact that each day you will receive feedback about the number of infections, vaccine uptake and side effects in the whole population of participants. Additionally, you will learn about the resulting average probability of infection during that day.</string> -->
+
+    <string name="wave_description_9">Den næste runde starter nu. Reglerne er de samme som i sidste runde, men hver dag vil du modtage feedback om det samlede antal infektioner, vaccinationsprocentdelen og biviknigerne blandt alle spillerne. Endvidere informerer vi om den resulterende gennemsnitlige sandsynlighed for at blive smittet den dag.</string>
+
+    <string name="wave_description_10">Den næste runde starter nu. Reglerne er de samme som i sidste runde.</string>
+
+    <string name="wave_description_11">Den næste runde starter nu. Reglerne er de samme som i sidste runde.</string>
+
+    <string name="wave_description_12">Den næste runde starter nu. Reglerne er de samme som i sidste runde.</string>
+
+    <string name="final_dialog">Konkurrencen er slut. Check resultaterne og hvem der har vundet.</string>
+
+    <string name="got_it">Forstået!</string>
+
+    <string name="proceed">Fortsæt</string>
+
+    <string name="digest_4_intro">Igår (%1$s) blandt personer du var sammen med:</string>
+
+    <string name="digest_8_intro">Igår (%1$s) blandt alle spillere:</string>
+
+    <string name="digest_vaccinated_people">%1$s af vaccinerede deltagere</string>
+
+    <string name="digest_side_people">%1$s af vaccinerede deltagere med bivirkninger</string>
+
+    <string name="digest_infected_people">%1$s af inficerede deltagere</string>
+
+    <string name="digest_susceptible_people">%1$s af modtagelige deltagere</string>
+
+    <string name="state_susceptible">modtagelige</string>
+
+    <string name="state_infected">inficerede</string>
+
+    <string name="state_vaccinated">vaccinerede</string>
+
+    <string name="state_awaiting">venter på at vaccinen begynder at virke</string>
+
+    <string name="state_recovered">kommet sig</string>
+
+    <string name="lost_points">På grund af dette mistede jeg %1$s points!</string>
+
+    <string name="you_are">Du er %1$s.</string>
+
+    <string name="until_vaccination">minutter indtil vaccinen virker.</string>
+
+    <string name="you_lost_points">Og du mistede %1$s points.</string>
+
+    <string name="finished_round_as">Du afsluttede runden som</string>
+
+    <string name="summary_header">Points du har optjent denne runde:</string>
+
+    <string name="summary_endowment">Begavelse:</string>
+
+    <string name="summary_fixed">Fast omkostning for vaccination:</string>
+
+    <string name="summary_infection">Points tabt på grund af smitte:</string>
+
+    <string name="summary_side">Points tabt på grund af bivirkninger:</string>
+
+    <string name="summary_earned">Optjente points:</string>
+
+    <string name="button_experiment_desc">Læs beskrivelsen af spillet</string>
+
+    <string name="upload_on_time">Upload dine data kontinuerligt for at få bedre feedback.</string>
+
+    <string name="button_share_this">Del på Facebook</string>
+
+    <string name="button_back">&lt;&lt; Tilbage</string>
+
+    <string name="toast_text">SensibleDTU EpiGame: Du er %1$s og har mistet %2$s points!</string>
 
 
 </resources>
