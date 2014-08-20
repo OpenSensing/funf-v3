@@ -390,6 +390,7 @@ public class EpiStateActivity extends FragmentActivity{
             if (self_state.equals("E")) self_state = getString(R.string.state_susceptible);
             if (self_state.equals("V")) self_state = getString(R.string.state_vaccinated);
             if (self_state.equals("A")) self_state = getString(R.string.state_awaiting);
+            if (self_state.equals("AE")) self_state = getString(R.string.state_awaiting);
             if (self_state.equals("R")) self_state = getString(R.string.state_recovered);
 
 
@@ -398,20 +399,25 @@ public class EpiStateActivity extends FragmentActivity{
             String message1 = "";
 
 
-            if (points != 100) {
+            if (points != 100 && !self_state.equals(getString(R.string.state_susceptible)) && !self_state.equals(getString(R.string.state_susceptible)) && !self_state.equals(getString(R.string.state_awaiting))) {
                 message1 = getString(R.string.status_update, self_state) + " " + getString(R.string.lost_points, ""+(100-points));
             } else {
-                message1 = getString(R.string.status_update, self_state);
+                if (!self_state.equals(getString(R.string.state_awaiting))) message1 = getString(R.string.status_update, self_state);
+                else message1 = getString(R.string.status_update_awaiting, self_state);
 
             }
 
             ((TextView) findViewById(R.id.postTextView)).setText(message1);
 
-            String youAreText = getString(R.string.you_are, self_state);
+            String youAreText = "";
+            if (!self_state.equals(getString(R.string.state_awaiting))) youAreText = getString(R.string.you_are, self_state);
+            else youAreText = getString(R.string.you, self_state);
+
+
             if (self_state.equals(getString(R.string.state_awaiting))) {
                 Long vaccinationEffective = settings.getLong("to_vaccinated_time", 0L);
                 String untilVaccination = String.format(" %.0f ", (vaccinationEffective - System.currentTimeMillis())/1000.0/60.0);
-                youAreText += untilVaccination + getString(R.string.until_vaccination);
+                //youAreText += untilVaccination + getString(R.string.until_vaccination);
             }
             else if (self_state.equals(getString(R.string.state_infected)) || self_state.equals(getString(R.string.state_vaccinated)) || self_state.equals(getString(R.string.state_recovered))) {
                 youAreText += " " + getString(R.string.you_lost_points, ""+(100-points));
@@ -553,16 +559,17 @@ public class EpiStateActivity extends FragmentActivity{
             if (self_state.equals("E")) self_state = getString(R.string.state_susceptible);
             if (self_state.equals("V")) self_state = getString(R.string.state_vaccinated);
             if (self_state.equals("A")) self_state = getString(R.string.state_awaiting);
+            if (self_state.equals("AE")) self_state = getString(R.string.state_awaiting);
             if (self_state.equals("R")) self_state = getString(R.string.state_recovered);
 
             int points = settings.getInt("points", 0);
             String message1 = "";
 
-            if (points != 100) {
+            if (points != 100 && !self_state.equals(getString(R.string.state_susceptible)) && !self_state.equals(getString(R.string.state_susceptible)) && !self_state.equals(getString(R.string.state_awaiting))) {
                 message1 = getString(R.string.status_update, self_state) + " "+getString(R.string.lost_points, ""+(100-points));
             } else {
-                message1 = getString(R.string.status_update, self_state);
-
+                if (!self_state.equals(getString(R.string.state_awaiting))) message1 = getString(R.string.status_update, self_state);
+                else message1 = getString(R.string.status_update_awaiting, self_state);
             }
 
             final String message = message1;
