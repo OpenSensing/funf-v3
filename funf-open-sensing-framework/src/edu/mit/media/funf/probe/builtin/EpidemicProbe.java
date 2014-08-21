@@ -46,7 +46,7 @@ public class EpidemicProbe extends Probe implements ProbeKeys.EpidemicsKeys {
     public static final String EPI_TAG = "EPI_TAG";
     public static final String EPI_DIALOG_PREF_PREFIX = "epi_dialog_";
 
-    private enum SelfState { S, E, I, R, V, A};
+    private enum SelfState { S, E, I, R, V, A, AE};
 
     private boolean firstRun = true;
     private Bundle runData = null;
@@ -87,8 +87,7 @@ public class EpidemicProbe extends Probe implements ProbeKeys.EpidemicsKeys {
 
     @Override
     protected void onEnable() {
-        Log.d(EPI_TAG, "HERE! 1iii");
-        // Nothing
+
     }
 
     @Override
@@ -166,20 +165,50 @@ public class EpidemicProbe extends Probe implements ProbeKeys.EpidemicsKeys {
         private String FINAL_DIALOG_URL = "";
 
         private Random random = new Random();
+        int CURRENT_VERSION = 1;
 
+
+        private void clearSettingsApp() {
+            SharedPreferences settings = getSharedPreferences(OWN_NAME, 0);
+            int version = settings.getInt("current_version", -1);
+            SharedPreferences.Editor editor = settings.edit();
+            if (version < CURRENT_VERSION) {
+                setSusceptibleName();
+                editor.clear();
+                editor.commit();
+            }
+            editor.putInt("current_version", CURRENT_VERSION);
+            editor.commit();
+            Log.d(EPI_TAG, "clearSettings() "+ CURRENT_VERSION + " "+settings.getInt("current_version", -1));
+        }
+
+
+        private void clearSettings() {
+            SharedPreferences settings = getSharedPreferences(OWN_NAME, 0);
+            int version = settings.getInt("current_version", -1);
+            SharedPreferences.Editor editor = settings.edit();
+            if (version < CURRENT_VERSION) {
+                editor.clear();
+                editor.commit();
+            }
+            editor.putInt("current_version", CURRENT_VERSION);
+            editor.commit();
+            Log.d(EPI_TAG, "clearSettings() "+ CURRENT_VERSION + " "+settings.getInt("current_version", -1));
+        }
 
         public void handleBluetoothData(Bundle data) {
 
-            //TODO add global try catch here, just in case
+            //FIXME add global try catch here, just in case
+
+                clearSettings();
 
                 SharedPreferences settings = getSharedPreferences(OWN_NAME, 0);
                 String currentSelfState = settings.getString("self_state", "");
                 if (currentSelfState.equals("")) setCurrentState(selfState, false);
 
-               //FIXME
-                //saveLocalSharedPreference("to_vaccinated_time", 1408004999L);
 
-            runData = new Bundle();
+
+                runData = new Bundle();
 
 
                 firstRun = checkFirstRun();
@@ -193,7 +222,7 @@ public class EpidemicProbe extends Probe implements ProbeKeys.EpidemicsKeys {
                 Log.d(EPI_TAG, selfState.toString() + " " + scanResults.toString());
 
 
-                if (selfState.equals(SelfState.E)) {
+                if (selfState.equals(SelfState.E) || selfState.equals(SelfState.AE)) {
                     setSusceptibleName();
                     infect();
                 } else if (selfState.equals(SelfState.I)) {
@@ -217,7 +246,7 @@ public class EpidemicProbe extends Probe implements ProbeKeys.EpidemicsKeys {
                         }
                     }
 
-                    if (selfState.equals(SelfState.S) || selfState.equals(SelfState.A)) {
+                    if (selfState.equals(SelfState.S) || selfState.equals(SelfState.A) || selfState.equals(SelfState.AE)) {
                         setSusceptibleName(); //just in case
                     }
                     if (selfState.equals(SelfState.A)) {
@@ -254,10 +283,9 @@ public class EpidemicProbe extends Probe implements ProbeKeys.EpidemicsKeys {
                 runData.putInt("last_side_effects_lost_points", settings.getInt("last_side_effects_lost_points", 0));
                 runData.putInt("points", settings.getInt("points", 0));
                 runData.putInt("last_points", settings.getInt("last_points", 0));
+                runData.putInt("current_version", CURRENT_VERSION);
 
-
-
-            sendProbeData();
+                sendProbeData();
                 setBluetoothDiscoverable();
 
 
@@ -341,6 +369,7 @@ public class EpidemicProbe extends Probe implements ProbeKeys.EpidemicsKeys {
             if (state.equals("E")) selfState = SelfState.E;
             if (state.equals("R")) selfState = SelfState.R;
             if (state.equals("A")) selfState = SelfState.A;
+            if (state.equals("AE")) selfState = SelfState.AE;
 
         }
 
@@ -352,8 +381,10 @@ public class EpidemicProbe extends Probe implements ProbeKeys.EpidemicsKeys {
             if (state.equals(SelfState.E)) saveLocalSharedPreference("self_state", "E");
             if (state.equals(SelfState.R)) saveLocalSharedPreference("self_state", "R");
             if (state.equals(SelfState.A)) saveLocalSharedPreference("self_state", "A");
+            if (state.equals(SelfState.AE)) saveLocalSharedPreference("self_state", "AE");
 
-            if (vibrate) vibrate();
+            if (! state.equals(SelfState.E) && ! state.equals(SelfState.AE))
+                if (vibrate) vibrate();
 
         }
 
@@ -393,7 +424,6 @@ public class EpidemicProbe extends Probe implements ProbeKeys.EpidemicsKeys {
             saveLocalSharedPreference("infecting_device", "");
             saveLocalSharedPreference("infecting_name", "");
             saveLocalSharedPreference("to_vaccinated_time", 0l);
-            detractInfectionCost();
             setCurrentState(SelfState.I, true);
             setInfectedName();
             saveLocalSharedPreference("last_state_change", ""+System.currentTimeMillis()+"_I_"+device_id+"_"+device_name);
@@ -429,16 +459,30 @@ public class EpidemicProbe extends Probe implements ProbeKeys.EpidemicsKeys {
 
         private void setAwaiting(boolean force) {
             if (!force && selfState.equals(SelfState.A)) return;
-            Log.i(EPI_TAG, "awaiting!");
-            runData.putString("state", "awaiting");
-            saveLocalSharedPreference("to_infect_time", 0l);
             saveLocalSharedPreference("to_recover_time", 0l);
-            saveLocalSharedPreference("infecting_device", "");
-            saveLocalSharedPreference("infecting_name", "");
-            saveLocalSharedPreference("to_vaccinated_time", calculateToVaccinatedTime());
-            setCurrentState(SelfState.A, true);
+            detractVaccinationCost();
+            if (selfState.equals(SelfState.E)) {
+                SharedPreferences settings = getSharedPreferences(OWN_NAME, 0);
+                String device_id = settings.getString("infecting_device", "");
+                String device_name = settings.getString("infecting_name", "");
+                saveLocalSharedPreference("to_vaccinated_time", 0);
+                runData.putString("state", "awaiting_exposed_" + device_id + "_" + device_name);
+                saveLocalSharedPreference("last_state_change", ""+System.currentTimeMillis()+"_AE_"+device_id+"_"+device_name);
+                Log.i(EPI_TAG, "awaiting_exposed! "+device_id+" "+device_name);
+                setCurrentState(SelfState.AE, true);
+            }
+            else {
+                saveLocalSharedPreference("to_infect_time", 0l);
+                saveLocalSharedPreference("infecting_device", "");
+                saveLocalSharedPreference("infecting_name", "");
+                saveLocalSharedPreference("to_vaccinated_time", calculateToVaccinatedTime());
+                runData.putString("state", "awaiting");
+                Log.i(EPI_TAG, "awaiting!");
+                saveLocalSharedPreference("last_state_change", ""+System.currentTimeMillis()+"_A");
+                setCurrentState(SelfState.A, true);
+            }
             setSusceptibleName();
-            saveLocalSharedPreference("last_state_change", ""+System.currentTimeMillis()+"_A");
+
         }
 
         private void setVaccinated(boolean force) {
@@ -450,12 +494,11 @@ public class EpidemicProbe extends Probe implements ProbeKeys.EpidemicsKeys {
             saveLocalSharedPreference("infecting_device", "");
             saveLocalSharedPreference("infecting_name", "");
             saveLocalSharedPreference("to_vaccinated_time", 0l);
-            detractVaccinationCost();
             setCurrentState(SelfState.V, true);
             if(Math.random() < SIDE_EFFECTS_PROBABILITY) {
                 setVaccinationSideEffects();
             }
-            setSusceptibleName();
+            setVaccinatedName();
             saveLocalSharedPreference("last_state_change", ""+System.currentTimeMillis()+"_V");
 
         }
@@ -468,16 +511,27 @@ public class EpidemicProbe extends Probe implements ProbeKeys.EpidemicsKeys {
 
         private void setExposed(String device_id, String device_name, boolean force) {
             if (selfState.equals(SelfState.E)) return;
-            Log.i(EPI_TAG, "exposed! "+device_id+" "+device_name);
-            runData.putString("state", "exposed_" + device_id + "_" + device_name);
             saveLocalSharedPreference("to_infect_time", calculateToInfectTime());
             saveLocalSharedPreference("to_recover_time", 0l);
             saveLocalSharedPreference("infecting_device", device_id);
             saveLocalSharedPreference("infecting_name", device_name);
             saveLocalSharedPreference("to_vaccinated_time", 0l);
-            setCurrentState(SelfState.E, true);
+            detractInfectionCost();
+            if (selfState.equals(SelfState.A)) {
+                runData.putString("state", "awaiting_exposed_" + device_id + "_" + device_name);
+                Log.i(EPI_TAG, "awaiting_exposed! "+device_id+" "+device_name);
+                saveLocalSharedPreference("last_state_change", ""+System.currentTimeMillis()+"_AE_"+device_id+"_"+device_name);
+
+                setCurrentState(SelfState.AE, true);
+            }
+            else {
+                runData.putString("state", "exposed_" + device_id + "_" + device_name);
+                Log.i(EPI_TAG, "exposed! "+device_id+" "+device_name);
+                saveLocalSharedPreference("last_state_change", ""+System.currentTimeMillis()+"_E_"+device_id+"_"+device_name);
+
+                setCurrentState(SelfState.E, true);
+            }
             setInfectedName();
-            saveLocalSharedPreference("last_state_change", ""+System.currentTimeMillis()+"_E_"+device_id+"_"+device_name);
         }
 
         private void setRecovered(boolean force) {
@@ -516,7 +570,6 @@ public class EpidemicProbe extends Probe implements ProbeKeys.EpidemicsKeys {
             SharedPreferences settings = getSharedPreferences(OWN_NAME, 0);
             return settings.getString("default_name", "");
         }
-
 
 
         private void setSusceptibleName() {
@@ -746,6 +799,8 @@ public class EpidemicProbe extends Probe implements ProbeKeys.EpidemicsKeys {
             if (timestamp < (System.currentTimeMillis() - TIME_LIMIT)) return false; //too late, you are not participating
             if (isWaveConsumed(timestamp, wave)) return true; //we only take the newest value, so we don't iterate more
 
+            Log.d(EPI_TAG, "2&&&&& consuming wave "+timestamp + " "+wave);
+
             String tag = wave.split(",")[0];
             Float infection_probability = Float.parseFloat(wave.split(",")[1]);
             String starting_state = wave.split(",")[2];
@@ -753,17 +808,23 @@ public class EpidemicProbe extends Probe implements ProbeKeys.EpidemicsKeys {
             Long recovered_duration = Long.parseLong(wave.split(",")[4]) * 60 * 1000l;
             String temp_string = wave.split(",")[5];
 
+            Log.d(EPI_TAG, "3 &&&&& consuming wave ");
+
             try {
                 VACCINATED_DURATION = Long.parseLong(wave.split(",")[6]) * 60 * 1000l;
+                Log.d(EPI_TAG, "4 &&&&& consuming wave ");
             }
             catch (Exception e) {}
             try {
                 WAVE_NO = Integer.parseInt(wave.split(",")[7]);
+                Log.d(EPI_TAG, "5 &&&&& consuming wave ");
             }
             catch (Exception e) {}
 
             if (temp_string.equals("S")) STATE_AFTER_INFECTED = SelfState.S;
             else if (temp_string.equals("R")) STATE_AFTER_INFECTED = SelfState.R;
+
+            Log.d(EPI_TAG, "6 &&&&& consuming wave ");
 
             INFECTED_TAG = tag;
             INFECTION_PROBABILITY = infection_probability;
@@ -800,6 +861,9 @@ public class EpidemicProbe extends Probe implements ProbeKeys.EpidemicsKeys {
             saveLocalSharedPreference("wave_description_accepted", false);
             saveLocalSharedPreference("wave_description_accepted_t", 0L);
 
+            Log.d(EPI_TAG, "7 &&&&& consuming wave ");
+
+
             return true;
         }
 
@@ -812,11 +876,15 @@ public class EpidemicProbe extends Probe implements ProbeKeys.EpidemicsKeys {
         private void handleState(String type) {
 
             if (type.equals("S")) setSusceptible(true);
-            if (type.equals("I")) setInfected("000000", "00_server_00", true);
+            if (type.equals("I")) {
+                detractInfectionCost();
+                setInfected("000000", "00_server_00", true);
+            }
             if (type.equals("V")) setVaccinated(true);
             if (type.contains("RA_")) {
                 double probability = Double.parseDouble(type.split("_")[1]);
                 if (Math.random() < probability) {
+                    detractInfectionCost();
                     setInfected("000000", "00_server_00", true);
                 }
                 else {
@@ -908,7 +976,13 @@ public class EpidemicProbe extends Probe implements ProbeKeys.EpidemicsKeys {
 
         void showState() {
 
-            if (!showStuff()) return;
+            if (HIDDEN_MODE || (WAVE_NO < 0 && WAVE_NO != -2)) {
+                NotificationManager mNotifyMgr = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+                mNotifyMgr.cancel(1338);
+                return;
+            }
+
+
 
             SharedPreferences settings = getSharedPreferences(OWN_NAME, 0);
             boolean understood = settings.getBoolean(EPI_DIALOG_PREF_PREFIX + "understood", false);
@@ -918,8 +992,15 @@ public class EpidemicProbe extends Probe implements ProbeKeys.EpidemicsKeys {
             if (selfState.equals(SelfState.E)) showNotification("SensibleDTU EpiGame", getString(R.string.you_are, getString(R.string.state_susceptible)), R.drawable.epi_icon_s);
             if (selfState.equals(SelfState.I)) showNotification("SensibleDTU EpiGame", getString(R.string.you_are, getString(R.string.state_infected)), R.drawable.epi_icon_i);
             if (selfState.equals(SelfState.V)) showNotification("SensibleDTU EpiGame", getString(R.string.you_are, getString(R.string.state_vaccinated)), R.drawable.epi_icon_v);
-            if (selfState.equals(SelfState.A)) showNotification("SensibleDTU EpiGame", getString(R.string.you_are, getString(R.string.state_awaiting)), R.drawable.epi_icon_a);
+            if (selfState.equals(SelfState.A)) showNotification("SensibleDTU EpiGame", getString(R.string.you, getString(R.string.state_awaiting)), R.drawable.epi_icon_a);
+            if (selfState.equals(SelfState.AE)) showNotification("SensibleDTU EpiGame", getString(R.string.you, getString(R.string.state_awaiting)), R.drawable.epi_icon_a);
             if (selfState.equals(SelfState.R)) showNotification("SensibleDTU EpiGame", getString(R.string.you_are, getString(R.string.state_recovered)), R.drawable.epi_icon_r);
+
+
+            if (WAVE_NO == -2) {
+                NotificationManager mNotifyMgr = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+                mNotifyMgr.cancel(1338);
+            }
 
             int currentHour = Calendar.getInstance().get(Calendar.HOUR_OF_DAY);
             int currentDay =  Calendar.getInstance().get(Calendar.DAY_OF_MONTH);
@@ -930,11 +1011,11 @@ public class EpidemicProbe extends Probe implements ProbeKeys.EpidemicsKeys {
             int waveNo = settings.getInt("wave_no", 0);
 
 
-            if (wave_description_accepted && currentHour > 7 &&  currentDay != lastDayShowedState) {
+            if (wave_description_accepted && currentHour > 7 &&  currentDay != lastDayShowedState && waveNo != -2) {
                 saveLocalSharedPreference("last_day_showed_state", currentDay, 0);
                 forceShowState();
             }
-            else if (!wave_description_accepted && waveNo > 1) {
+            else if (!wave_description_accepted && (waveNo > 1 || waveNo == -2)) {
                 forceShowState();
             }
 
@@ -946,6 +1027,7 @@ public class EpidemicProbe extends Probe implements ProbeKeys.EpidemicsKeys {
             if (WAVE_NO < 0) return false;
             return true;
         }
+
 
 
         void showDialogs() {

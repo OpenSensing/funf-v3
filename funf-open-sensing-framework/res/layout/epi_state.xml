@@ -222,7 +222,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Vaccination"
+                android:text="@string/vaccination"
                 android:id="@+id/vaccinationTextView"
                 android:layout_gravity="center_horizontal"
                 android:layout_marginTop="20dp"
@@ -238,7 +238,7 @@
                 <Button
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Vaccinate"
+                    android:text="@string/vaccinate"
                     android:id="@+id/vaccinateButton"
                     android:width="@dimen/com_facebook_profilepictureview_preset_size_large"
                     android:layout_alignParentTop="true"
@@ -249,7 +249,7 @@
                 <Button
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Not now"
+                    android:text="@string/not_now"
                     android:id="@+id/vaccinateNotNowButton"
                     android:width="@dimen/com_facebook_profilepictureview_preset_size_large"
                     android:layout_alignParentTop="true"
@@ -338,7 +338,8 @@
                     android:text="@string/summary_endowment"
                     android:textColor="@android:color/black"
                 android:layout_marginLeft="10dp"
-                android:id="@+id/summaryTextViewEndowment" />
+                android:id="@+id/summaryTextViewEndowment"
+                android:textSize="18dp" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -376,7 +377,8 @@
                 android:layout_centerVertical="true"
                 android:layout_alignParentLeft="true"
                 android:textColor="@android:color/black"
-                android:layout_marginLeft="10dp" />
+                android:layout_marginLeft="10dp"
+                android:textSize="18dp" />
         </RelativeLayout>
 
         <RelativeLayout
@@ -390,7 +392,8 @@
                 android:text="@string/summary_infection"
                 android:id="@+id/textView4"
                 android:textColor="#ff000000"
-                android:layout_marginLeft="10dp" />
+                android:layout_marginLeft="10dp"
+                android:textSize="18dp" />
 
             <TextView
                     android:layout_width="wrap_content"
@@ -428,7 +431,8 @@
                 android:layout_alignParentTop="true"
                 android:layout_alignParentLeft="true"
                 android:layout_marginLeft="10dp"
-                android:textColor="#ff000000" />
+                android:textColor="#ff000000"
+                android:textSize="18dp" />
         </RelativeLayout>
 
         <RelativeLayout
@@ -459,7 +463,8 @@
                 android:layout_alignParentLeft="true"
                 android:textStyle="bold"
                 android:textColor="#ff000000"
-                android:layout_marginLeft="10dp" />
+                android:layout_marginLeft="10dp"
+                android:textSize="18dp" />
         </RelativeLayout>
 
 
