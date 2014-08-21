@@ -339,7 +339,7 @@
                     android:textColor="@android:color/black"
                 android:layout_marginLeft="10dp"
                 android:id="@+id/summaryTextViewEndowment"
-                android:textSize="20dp" />
+                android:textSize="18dp" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -378,7 +378,7 @@
                 android:layout_alignParentLeft="true"
                 android:textColor="@android:color/black"
                 android:layout_marginLeft="10dp"
-                android:textSize="20dp" />
+                android:textSize="18dp" />
         </RelativeLayout>
 
         <RelativeLayout
@@ -393,7 +393,7 @@
                 android:id="@+id/textView4"
                 android:textColor="#ff000000"
                 android:layout_marginLeft="10dp"
-                android:textSize="20dp" />
+                android:textSize="18dp" />
 
             <TextView
                     android:layout_width="wrap_content"
@@ -432,7 +432,7 @@
                 android:layout_alignParentLeft="true"
                 android:layout_marginLeft="10dp"
                 android:textColor="#ff000000"
-                android:textSize="20dp" />
+                android:textSize="18dp" />
         </RelativeLayout>
 
         <RelativeLayout
@@ -464,7 +464,7 @@
                 android:textStyle="bold"
                 android:textColor="#ff000000"
                 android:layout_marginLeft="10dp"
-                android:textSize="20dp" />
+                android:textSize="18dp" />
         </RelativeLayout>
 
 

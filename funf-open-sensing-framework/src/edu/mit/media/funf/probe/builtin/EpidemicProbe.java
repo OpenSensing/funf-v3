@@ -976,7 +976,13 @@ public class EpidemicProbe extends Probe implements ProbeKeys.EpidemicsKeys {
 
         void showState() {
 
-            if (!showStuff()) return;
+            if (HIDDEN_MODE || (WAVE_NO < 0 && WAVE_NO != -2)) {
+                NotificationManager mNotifyMgr = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+                mNotifyMgr.cancel(1338);
+                return;
+            }
+
+
 
             SharedPreferences settings = getSharedPreferences(OWN_NAME, 0);
             boolean understood = settings.getBoolean(EPI_DIALOG_PREF_PREFIX + "understood", false);
@@ -990,6 +996,12 @@ public class EpidemicProbe extends Probe implements ProbeKeys.EpidemicsKeys {
             if (selfState.equals(SelfState.AE)) showNotification("SensibleDTU EpiGame", getString(R.string.you, getString(R.string.state_awaiting)), R.drawable.epi_icon_a);
             if (selfState.equals(SelfState.R)) showNotification("SensibleDTU EpiGame", getString(R.string.you_are, getString(R.string.state_recovered)), R.drawable.epi_icon_r);
 
+
+            if (WAVE_NO == -2) {
+                NotificationManager mNotifyMgr = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+                mNotifyMgr.cancel(1338);
+            }
+
             int currentHour = Calendar.getInstance().get(Calendar.HOUR_OF_DAY);
             int currentDay =  Calendar.getInstance().get(Calendar.DAY_OF_MONTH);
 
@@ -999,11 +1011,11 @@ public class EpidemicProbe extends Probe implements ProbeKeys.EpidemicsKeys {
             int waveNo = settings.getInt("wave_no", 0);
 
 
-            if (wave_description_accepted && currentHour > 7 &&  currentDay != lastDayShowedState) {
+            if (wave_description_accepted && currentHour > 7 &&  currentDay != lastDayShowedState && waveNo != -2) {
                 saveLocalSharedPreference("last_day_showed_state", currentDay, 0);
                 forceShowState();
             }
-            else if (!wave_description_accepted && waveNo > 1) {
+            else if (!wave_description_accepted && (waveNo > 1 || waveNo == -2)) {
                 forceShowState();
             }
 
@@ -1015,6 +1027,7 @@ public class EpidemicProbe extends Probe implements ProbeKeys.EpidemicsKeys {
             if (WAVE_NO < 0) return false;
             return true;
         }
+
 
 
         void showDialogs() {

@@ -377,7 +377,20 @@ public class EpiStateActivity extends FragmentActivity{
         int wave_no = settings.getInt("wave_no", -1);
 
 
-        if (wave_description_accepted || wave_no == 1) {
+        if (wave_description_accepted || wave_no == 1 || wave_no == 6) {
+
+            if (wave_no == 6) {
+                saveLocalSharedPreference("wave_description_accepted", true);
+                saveLocalSharedPreference("wave_description_accepted_t", System.currentTimeMillis());
+
+                int currentDay =  Calendar.getInstance().get(Calendar.DAY_OF_MONTH);
+                saveLocalSharedPreference("last_day_showed_state", currentDay, 0);
+            }
+
+            if (wave_no == -2) {
+                finish();
+                return;
+            }
 
             (findViewById(R.id.stateLayout)).setVisibility(View.VISIBLE);
             (findViewById(R.id.waveDescriptionLayout)).setVisibility(View.GONE);
@@ -493,6 +506,7 @@ public class EpiStateActivity extends FragmentActivity{
             String defaultWaveDescription = getString(R.string.wave_description_1);
             int waveId = settings.getInt("wave_no", -1);
             int specificWaveDescriptionResourceId = getResources().getIdentifier("wave_description_" + Integer.toString(waveId), "string", EpiStateActivity.this.getPackageName());
+            if (waveId == -2) specificWaveDescriptionResourceId = getResources().getIdentifier("wave_description_m_2", "string", EpiStateActivity.this.getPackageName());
             if (specificWaveDescriptionResourceId != 0) {
                 String specificWaveDescription = getString(specificWaveDescriptionResourceId);
                 ((TextView)findViewById(R.id.waveDescriptiontextView)).setText(specificWaveDescription);
