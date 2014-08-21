@@ -124,6 +124,7 @@
                 android:screenOrientation="portrait"
                 android:theme="@android:style/Theme.Holo.Wallpaper.NoTitleBar">
         </activity>
+        <activity android:name=".DataQualityActivity"/>
 
         <receiver android:name="dk.dtu.imm.experiencesampling.receivers.QuestionReceiver">
             <intent-filter>
