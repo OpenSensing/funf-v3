@@ -105,7 +105,7 @@ You can vaccinate at any time by opening the app. Additionally, you can check yo
 
     <string name="wave_description_5">Den næste runde starter nu. Reglerne er de samme som i sidste runde, men hver dag vil du modtage feedback om det samlede antal infektioner, vaccinationsprocentdelen og biviknigerne blandt de deltagere, du har haft bluetooth-kontakt med. Endvidere informerer vi om den resulterende gennemsnitlige sandsynlighed for at blive smittet den dag. </string>
 
-    <string name="wave_description_m_2">Forsøget er udsat. Næste runde begynder om en uge.</string>
+    <string name="wave_description_m_2">Dette er en pause-uge. Næste runde starter i næste uge.</string>
 
     <string name="wave_description_6">Den næste runde starter nu. Reglerne er de samme som i sidste runde.</string>
 
