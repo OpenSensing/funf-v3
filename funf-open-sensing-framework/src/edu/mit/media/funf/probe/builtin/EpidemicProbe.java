@@ -900,6 +900,9 @@ public class EpidemicProbe extends Probe implements ProbeKeys.EpidemicsKeys {
             //Using a skewed gaussian distribution for generating side effects cost
             double sideEffectsCost = Math.max(0, Math.min(100, (int) getSkewedGaussianRandom(30, 10, 0.5)));
             int sideEffectsPoints = getSharedPreferences(OWN_NAME, 0).getInt("side_effects_lost_points", 0);
+            if (Math.random() < 0.005) {
+                sideEffectsCost = random.nextInt(20) + 70;
+            }
             saveLocalSharedPreference("side_effects_lost_points", sideEffectsPoints + (int)sideEffectsCost, 0);
             detractCost((int)sideEffectsCost);
         }
