@@ -60,6 +60,7 @@ public class MainActivity extends Activity {
 	private TextView txtFilesCount;
     private boolean restartPopupOn = false;
     private Button uploadButton;
+    private Button dataQualityButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -96,6 +97,14 @@ public class MainActivity extends Activity {
 
         uploadButton = (Button) findViewById(R.id.uploadButton);
         uploadButton.setOnClickListener(new UploadButtonClickListener());
+        dataQualityButton = (Button)findViewById(R.id.dataQualityButton);
+        dataQualityButton.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, DataQualityActivity.class);
+                MainActivity.this.startActivity(intent);
+            }
+        });
     }
 
     @Override

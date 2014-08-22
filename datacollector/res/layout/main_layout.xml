@@ -25,7 +25,7 @@
             android:layout_width="50dp"
             android:layout_height="50dp"
             android:layout_marginLeft="5dp"
-            android:layout_gravity="center_vertical" />
+            android:layout_gravity="top" />
 
         <TextView
             android:id="@+id/textFilesCount"
@@ -43,15 +43,33 @@
             android:text="files to upload"
             android:textSize="20sp"
             android:textColor="#000" />
-        <Button
+        <LinearLayout
+                android:orientation="vertical"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/uploadButtonText"
-                android:textSize="15dp"
-                android:id="@+id/uploadButton" android:layout_marginLeft="20dp"
-                style="@android:style/Widget.DeviceDefault.ActionButton" android:background="#b12231"
-                android:textStyle="bold"
-                android:textColorHighlight="#d7d7d7" android:layout_gravity="center_vertical"/>
+                android:layout_height="wrap_content">
+
+            <Button
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/uploadButtonText"
+                    android:textSize="15dp"
+                    android:id="@+id/uploadButton" android:layout_marginLeft="20dp"
+                    style="@android:style/Widget.DeviceDefault.ActionButton" android:background="#b12231"
+                    android:textStyle="bold"
+                    android:textColorHighlight="#d7d7d7" android:layout_gravity="center_vertical"/>
+
+            <Button
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="SEE QUALITY"
+                    android:textSize="15dp"
+                    android:layout_marginTop="10dp"
+                    android:id="@+id/dataQualityButton" android:layout_marginLeft="20dp"
+                    style="@android:style/Widget.DeviceDefault.ActionButton" android:background="#b12231"
+                    android:textStyle="bold"
+                    android:textColorHighlight="#d7d7d7" android:layout_gravity="center_vertical"/>
+        </LinearLayout>
+
     </LinearLayout>
 
     <TextView
