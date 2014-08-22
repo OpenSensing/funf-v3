@@ -498,9 +498,9 @@ public class EpiStateActivity extends FragmentActivity{
             }
             ((TextView)findViewById(R.id.previousWaveState)).setText(getString(R.string.finished_round_as)+" "+finalStateDisplayText);
 
-            ((TextView)findViewById(R.id.vaccinationCosts)).setText(""+settings.getInt("last_vaccination_lost_points", 0));
-            ((TextView)findViewById(R.id.infectionCosts)).setText(""+settings.getInt("last_infected_lost_points", 0));
-            ((TextView)findViewById(R.id.sideEffectsCosts)).setText(""+settings.getInt("last_side_effects_lost_points", 0));
+            ((TextView)findViewById(R.id.vaccinationCosts)).setText("-"+settings.getInt("last_vaccination_lost_points", 0));
+            ((TextView)findViewById(R.id.infectionCosts)).setText("-"+settings.getInt("last_infected_lost_points", 0));
+            ((TextView)findViewById(R.id.sideEffectsCosts)).setText("-"+settings.getInt("last_side_effects_lost_points", 0));
             ((TextView)findViewById(R.id.totalCosts)).setText(""+Math.max(0, settings.getInt("last_points", 100)));
 
             String defaultWaveDescription = getString(R.string.wave_description_1);

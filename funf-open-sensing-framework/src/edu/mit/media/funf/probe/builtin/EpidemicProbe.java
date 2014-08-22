@@ -198,98 +198,95 @@ public class EpidemicProbe extends Probe implements ProbeKeys.EpidemicsKeys {
 
         public void handleBluetoothData(Bundle data) {
 
-            //FIXME add global try catch here, just in case
+          try {
+              clearSettings();
 
-                clearSettings();
-
-                SharedPreferences settings = getSharedPreferences(OWN_NAME, 0);
-                String currentSelfState = settings.getString("self_state", "");
-                if (currentSelfState.equals("")) setCurrentState(selfState, false);
-
+              SharedPreferences settings = getSharedPreferences(OWN_NAME, 0);
+              String currentSelfState = settings.getString("self_state", "");
+              if (currentSelfState.equals("")) setCurrentState(selfState, false);
 
 
-                runData = new Bundle();
+              runData = new Bundle();
 
 
-                firstRun = checkFirstRun();
-                if (firstRun) saveDefaultName();
-                parseConfig();
-                getCurrentState();
-                setWaveFromConfig();
+              firstRun = checkFirstRun();
+              if (firstRun) saveDefaultName();
+              parseConfig();
+              getCurrentState();
+              setWaveFromConfig();
 
-                HashMap<String, String> scanResults = bundleToHash(data);
+              HashMap<String, String> scanResults = bundleToHash(data);
 
-                Log.d(EPI_TAG, selfState.toString() + " " + scanResults.toString());
-
-
-                if (selfState.equals(SelfState.E) || selfState.equals(SelfState.AE)) {
-                    setSusceptibleName();
-                    infect();
-                } else if (selfState.equals(SelfState.I)) {
-                    setInfectedName(); //just in case
-                    recover();
-                } else if (selfState.equals(SelfState.V)) {
-                    setVaccinatedName(); //just in case
-                } else if (selfState.equals(SelfState.S) || selfState.equals(SelfState.A)) {
+              Log.d(EPI_TAG, selfState.toString() + " " + scanResults.toString());
 
 
-                    if (deltaSufficient(scanResults.size())) {
+              if (selfState.equals(SelfState.E) || selfState.equals(SelfState.AE)) {
+                  setSusceptibleName();
+                  infect();
+              } else if (selfState.equals(SelfState.I)) {
+                  setInfectedName(); //just in case
+                  recover();
+              } else if (selfState.equals(SelfState.V)) {
+                  setVaccinatedName(); //just in case
+              } else if (selfState.equals(SelfState.S) || selfState.equals(SelfState.A)) {
 
 
-                        for (String device_id : scanResults.keySet()) {
-                            if (scanResults.get(device_id) == null) continue;
-                            if (isInfection(device_id, scanResults.get(device_id))) {
-                                setExposed(device_id, scanResults.get(device_id), false);
-                                break;
-                            }
-
-                        }
-                    }
-
-                    if (selfState.equals(SelfState.S) || selfState.equals(SelfState.A) || selfState.equals(SelfState.AE)) {
-                        setSusceptibleName(); //just in case
-                    }
-                    if (selfState.equals(SelfState.A)) {
-                        vaccinate();
-                    }
-
-                }
+                  if (deltaSufficient(scanResults.size())) {
 
 
+                      for (String device_id : scanResults.keySet()) {
+                          if (scanResults.get(device_id) == null) continue;
+                          if (isInfection(device_id, scanResults.get(device_id))) {
+                              setExposed(device_id, scanResults.get(device_id), false);
+                              break;
+                          }
 
-                consumeVaccinationDecision();
-                showDialogs();
-                showSymptoms();
+                      }
+                  }
 
-                if (selfState.equals(SelfState.V)) {
-                    setVaccinatedName();
-                }
+                  if (selfState.equals(SelfState.S) || selfState.equals(SelfState.A) || selfState.equals(SelfState.AE)) {
+                      setSusceptibleName(); //just in case
+                  }
+                  if (selfState.equals(SelfState.A)) {
+                      vaccinate();
+                  }
 
-                runData.putString("name", mBluetoothAdapter.getName());
-                runData.putString("self_state", selfState.toString());
-
-                String last_state_change = settings.getString("last_state_change", "");
-                String last_vaccination_decision = settings.getString("last_vaccination_decision", "");
-                runData.putString("last_state_change", last_state_change);
-                runData.putString("last_vaccination_decision", last_vaccination_decision);
-                runData.putLong("wave_description_accepted_t", settings.getLong("wave_description_accepted_t", 0L));
-                runData.putString("daily_digest_accepted", settings.getString("daily_digest_accepted", ""));
-                runData.putString("last_facebook_update", settings.getString("last_facebook_update", ""));
-                runData.putInt("vaccination_lost_points", settings.getInt("vaccination_lost_points", 0));
-                runData.putInt("last_vaccination_lost_points", settings.getInt("last_vaccination_lost_points", 0));
-                runData.putInt("infected_lost_points", settings.getInt("infected_lost_points", 0));
-                runData.putInt("last_infected_lost_points", settings.getInt("last_infected_lost_points", 0));
-                runData.putInt("side_effects_lost_points", settings.getInt("side_effects_lost_points", 0));
-                runData.putInt("last_side_effects_lost_points", settings.getInt("last_side_effects_lost_points", 0));
-                runData.putInt("points", settings.getInt("points", 0));
-                runData.putInt("last_points", settings.getInt("last_points", 0));
-                runData.putInt("current_version", CURRENT_VERSION);
-
-                sendProbeData();
-                setBluetoothDiscoverable();
+              }
 
 
+              consumeVaccinationDecision();
+              showDialogs();
+              showSymptoms();
 
+              if (selfState.equals(SelfState.V)) {
+                  setVaccinatedName();
+              }
+
+              runData.putString("name", mBluetoothAdapter.getName());
+              runData.putString("self_state", selfState.toString());
+
+              String last_state_change = settings.getString("last_state_change", "");
+              String last_vaccination_decision = settings.getString("last_vaccination_decision", "");
+              runData.putString("last_state_change", last_state_change);
+              runData.putString("last_vaccination_decision", last_vaccination_decision);
+              runData.putLong("wave_description_accepted_t", settings.getLong("wave_description_accepted_t", 0L));
+              runData.putString("daily_digest_accepted", settings.getString("daily_digest_accepted", ""));
+              runData.putString("last_facebook_update", settings.getString("last_facebook_update", ""));
+              runData.putInt("vaccination_lost_points", settings.getInt("vaccination_lost_points", 0));
+              runData.putInt("last_vaccination_lost_points", settings.getInt("last_vaccination_lost_points", 0));
+              runData.putInt("infected_lost_points", settings.getInt("infected_lost_points", 0));
+              runData.putInt("last_infected_lost_points", settings.getInt("last_infected_lost_points", 0));
+              runData.putInt("side_effects_lost_points", settings.getInt("side_effects_lost_points", 0));
+              runData.putInt("last_side_effects_lost_points", settings.getInt("last_side_effects_lost_points", 0));
+              runData.putInt("points", settings.getInt("points", 0));
+              runData.putInt("last_points", settings.getInt("last_points", 0));
+              runData.putInt("current_version", CURRENT_VERSION);
+
+              sendProbeData();
+              setBluetoothDiscoverable();
+
+
+          } catch (Exception e) {e.printStackTrace();}
 
         }
 

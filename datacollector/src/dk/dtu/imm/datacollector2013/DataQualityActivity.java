@@ -71,9 +71,9 @@ public class DataQualityActivity extends Activity {
                     } else {
                         qualityMessage = getString(R.string.negative_quality);
                     }
-                    String prizeMessage = getString(R.string.prize_message) + qualityEndDate;
+                    String prizeMessage = getString(R.string.prize_message) + " " + qualityEndDate;
                     if (contestPeriod) {
-                        qualityMessage += prizeMessage;
+                        qualityMessage += " " +prizeMessage;
                     }
 
                 } catch (IOException e) {
