@@ -28,5 +28,5 @@
     <string name="server_pending">Waiting for server...</string>
     <string name="positive_quality">Good job! You can keep your data quality high by always making sure to have your files uploaded. </string>
     <string name="negative_quality">You can do better! Upload files to increase your data quality. </string>
-    <string name="prize_message">Win TDC streaming tickets! Have an 80% data quality by </string>
+    <string name="prize_message">Win TDC streaming tickets! Have 80% data quality by </string>
 </resources>
