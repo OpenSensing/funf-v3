@@ -72,7 +72,7 @@ You can vaccinate at any time by opening the app. Additionally, you can check yo
 </string> -->
 
 	
-    <string name="welcome_text_5">Du kan til enhver tid vaccinere dig mod sygdommen. Vaccinationen koster altid 10 points. Vaccinen træder i kraft nogle timer efter du har vaccineret dig og derefter kan du ikke længere pådrage dig sygdommen.\nSandsynligheden for at du oplever bivirkninger pga. vaccinationen er 30%. Hvis du oplever bivirkninger, mister du mellem 0 og 90 points. Det er mere sandsynligt at opleve små point-tab end store, ligesom milde bivirkninger er mre sandsynlige end alvorlige bivirkninger. Hvis du er vaccineret kan du ikke inficere andre.\n\nDu kan til enhver tid vaccinere via app\'en. Og du også altid checke din nuværende status - modtagelig, vaccineret, eller inficeret - via App\'en.  Når hver runde afsluttets, informerer vi om hvor mange points du har optjent.
+    <string name="welcome_text_5">Du kan til enhver tid vaccinere dig mod sygdommen. Vaccinationen koster altid 10 points. Vaccinen træder i kraft nogle timer efter du har vaccineret dig og derefter kan du ikke længere pådrage dig sygdommen.\nSandsynligheden for at du oplever bivirkninger pga. vaccinationen er 30%. Hvis du oplever bivirkninger, mister du mellem 0 og 90 points, med et gennemsnitligt tab på 30 points. Det er mere sandsynligt at opleve små point-tab end store, ligesom milde bivirkninger er mre sandsynlige end alvorlige bivirkninger. Hvis du er vaccineret kan du ikke inficere andre.\n\nDu kan til enhver tid vaccinere via app\'en. Og du også altid checke din nuværende status - modtagelig, vaccineret, eller inficeret - via App\'en.  Når hver runde afsluttets, informerer vi om hvor mange points du har optjent.
 </string>
 
 
