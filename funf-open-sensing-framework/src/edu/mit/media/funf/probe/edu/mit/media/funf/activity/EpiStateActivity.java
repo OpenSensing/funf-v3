@@ -10,7 +10,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.util.Base64;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -202,7 +201,9 @@ public class EpiStateActivity extends FragmentActivity{
     private void showFacebook() {
         hideDigest();
         hideFinalDialog();
+        showVaccination();
         findViewById(R.id.shareOnFacebookLayout).setVisibility(View.VISIBLE);
+
 
         Session session = Session.getActiveSession();
         boolean enableButtons = (session != null && session.isOpened());
@@ -218,16 +219,16 @@ public class EpiStateActivity extends FragmentActivity{
         findViewById(R.id.shareOnFacebookLayout).setVisibility(View.GONE);
     }
 
-    private void showDigest(int waveNo) {
+    private boolean showDigest(int waveNo) {
 
         if (waveNo <= 4) {
             showFacebook();
-            return;
+            return false;
         }
 
         hideFacebook();
         hideFinalDialog();
-
+        hideVaccination();
 
         SharedPreferences settings = getSharedPreferences(EpidemicProbe.OWN_NAME, 0);
         String dailyDigestString = settings.getString("daily_digest", "");
@@ -235,7 +236,7 @@ public class EpiStateActivity extends FragmentActivity{
 
         if (dailyDigest == null) {
             showFacebook();
-            return;
+            return false;
         }
 
         try {
@@ -245,13 +246,24 @@ public class EpiStateActivity extends FragmentActivity{
         } catch (Exception e) {
             e.printStackTrace();
             showFacebook();
+            return false;
         }
+
+        return true;
 
     }
 
     private void hideDigest() {
         findViewById(R.id.digestLayout).setVisibility(View.GONE);
 
+    }
+
+    private void hideVaccination() {
+        findViewById(R.id.vaccinationLayout).setVisibility(View.GONE);
+    }
+
+    private void showVaccination() {
+        findViewById(R.id.vaccinationLayout).setVisibility(View.VISIBLE);
     }
 
     private void showFinalDialog() {
@@ -437,7 +449,7 @@ public class EpiStateActivity extends FragmentActivity{
             }
             ((TextView) findViewById(R.id.statusTextView)).setText(youAreText);
 
-
+            boolean showingDigest = false;
 
             if (System.currentTimeMillis() >= settings.getLong("show_final_dialog", 9999999999L*1000L)) {
                 showFinalDialog();
@@ -445,7 +457,7 @@ public class EpiStateActivity extends FragmentActivity{
                 if (settings.getString("daily_digest_accepted", "").equals(getDateNow()))
                     showFacebook();
                 else
-                    showDigest(settings.getInt("wave_no", 0));
+                    showingDigest = showDigest(settings.getInt("wave_no", 0));
             }
 
 
@@ -460,6 +472,8 @@ public class EpiStateActivity extends FragmentActivity{
             if (self_state.equals(getString(R.string.state_susceptible)))
                 (findViewById(R.id.vaccinationLayout)).setVisibility(View.VISIBLE);
             else (findViewById(R.id.vaccinationLayout)).setVisibility(View.GONE);
+
+            if (showingDigest) (findViewById(R.id.vaccinationLayout)).setVisibility(View.GONE);
 
             if (vaccination_decision_made) {
                 (findViewById(R.id.vaccinationLayout)).setAlpha(0.4f);
