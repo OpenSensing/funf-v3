@@ -53,7 +53,7 @@
 
     <string name="welcome_text_2">Hver gang vi starter en ny runde kan du igen blive smittet. Hvis du beslutter dig for at blive vaccineret, begynder vaccinen at virke efter nogle timer. Afhængig af din beslutning kan du ende i en af følgende tre faser:\n\n
         1. Modtagelig: Du har enten valgt ikke at vaccinere dig, eller du har vaccineret dig inden for de sidste nogle timer, så vaccinen virker ikke endnu. Du er derfor modtagelig for smitte.\n\n
-        2. Vaccineret: Du har vaccineret dig for over 2 timer siden og kan ikke længere få sygdommen.\n\n
+        2. Vaccineret: Du har vaccineret dig for over nogle timer siden og kan ikke længere få sygdommen.\n\n
         3. Inficeret: Du har pådraget dig sygdommen. Du kan smitte andre.
 </string>
 
