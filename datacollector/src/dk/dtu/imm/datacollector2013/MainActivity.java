@@ -1,5 +1,39 @@
 package dk.dtu.imm.datacollector2013;
 
+import android.app.Activity;
+import android.app.ActivityManager;
+import android.app.AlertDialog;
+import android.bluetooth.BluetoothAdapter;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.content.SharedPreferences;
+import android.content.pm.ActivityInfo;
+import android.content.res.Configuration;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
+import android.net.Uri;
+import android.os.Bundle;
+import android.os.Environment;
+import android.os.FileObserver;
+import android.support.v4.content.LocalBroadcastManager;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.ListView;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+
 import java.io.File;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
@@ -8,28 +42,8 @@ import java.util.GregorianCalendar;
 import java.util.LinkedList;
 import java.util.List;
 
-import android.app.ActivityManager;
-import android.app.AlertDialog;
-import android.content.*;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
-import android.os.*;
-import android.widget.*;
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
-
-import android.app.Activity;
-import android.bluetooth.BluetoothAdapter;
-import android.content.pm.ActivityInfo;
-import android.content.res.Configuration;
-import android.net.Uri;
-import android.support.v4.content.LocalBroadcastManager;
-import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.View.OnClickListener;
-import android.view.ViewGroup;
 import edu.mit.media.funf.configured.ConfiguredPipeline;
+import edu.mit.media.funf.probe.edu.mit.media.funf.activity.EpiStateActivity;
 
 public class MainActivity extends Activity {
 
@@ -61,6 +75,7 @@ public class MainActivity extends Activity {
     private boolean restartPopupOn = false;
     private Button uploadButton;
     private Button dataQualityButton;
+    private Button epigameButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -103,6 +118,15 @@ public class MainActivity extends Activity {
             public void onClick(View v) {
                 Intent intent = new Intent(MainActivity.this, DataQualityActivity.class);
                 MainActivity.this.startActivity(intent);
+            }
+        });
+        epigameButton = (Button)findViewById(R.id.epigameButton);
+        epigameButton.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent dialogIntent = new Intent(getBaseContext(), EpiStateActivity.class);
+                dialogIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK |  Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED);
+                getApplication().startActivity(dialogIntent);
             }
         });
     }

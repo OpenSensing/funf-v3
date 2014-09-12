@@ -68,7 +68,21 @@
                     style="@android:style/Widget.DeviceDefault.ActionButton" android:background="#b12231"
                     android:textStyle="bold"
                     android:textColorHighlight="#d7d7d7" android:layout_gravity="center_vertical"/>
+
+            <Button
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="OPEN EPIGAME"
+                android:textSize="15dp"
+                android:layout_marginTop="10dp"
+                android:id="@+id/epigameButton" android:layout_marginLeft="20dp"
+                style="@android:style/Widget.DeviceDefault.ActionButton" android:background="#b12231"
+                android:textStyle="bold"
+                android:textColorHighlight="#d7d7d7" android:layout_gravity="center_vertical"/>
+
         </LinearLayout>
+
+
 
     </LinearLayout>
 

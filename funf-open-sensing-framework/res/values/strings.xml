@@ -145,11 +145,11 @@ You can vaccinate at any time by opening the app. Additionally, you can check yo
 
     <string name="state_infected">inficerede</string>
 
-    <string name="state_vaccinated">vaccinerede</string>
+    <string name="state_vaccinated">vaccineret</string>
 
     <string name="state_awaiting">venter på at vaccinen begynder at virke</string>
 
-    <string name="state_recovered">kommet sig</string>
+    <string name="state_recovered">nu rask</string>
 
     <string name="lost_points">På grund af dette mistede jeg %1$s points!</string>
 

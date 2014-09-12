@@ -992,22 +992,41 @@ public class EpidemicProbe extends Probe implements ProbeKeys.EpidemicsKeys {
             boolean understood = settings.getBoolean(EPI_DIALOG_PREF_PREFIX + "understood", false);
             if (!understood) return;
 
-            if (selfState.equals(SelfState.S)) showNotification("SensibleDTU EpiGame", getString(R.string.you_are, getString(R.string.state_susceptible)), R.drawable.epi_icon_s);
-            if (selfState.equals(SelfState.E)) showNotification("SensibleDTU EpiGame", getString(R.string.you_are, getString(R.string.state_susceptible)), R.drawable.epi_icon_s);
-            if (selfState.equals(SelfState.I)) showNotification("SensibleDTU EpiGame", getString(R.string.you_are, getString(R.string.state_infected)), R.drawable.epi_icon_i);
-            if (selfState.equals(SelfState.V)) showNotification("SensibleDTU EpiGame", getString(R.string.you_are, getString(R.string.state_vaccinated)), R.drawable.epi_icon_v);
-            if (selfState.equals(SelfState.A)) showNotification("SensibleDTU EpiGame", getString(R.string.you, getString(R.string.state_awaiting)), R.drawable.epi_icon_a);
-            if (selfState.equals(SelfState.AE)) showNotification("SensibleDTU EpiGame", getString(R.string.you, getString(R.string.state_awaiting)), R.drawable.epi_icon_a);
-            if (selfState.equals(SelfState.R)) showNotification("SensibleDTU EpiGame", getString(R.string.you_are, getString(R.string.state_recovered)), R.drawable.epi_icon_r);
+            int currentHour = Calendar.getInstance().get(Calendar.HOUR_OF_DAY);
+            int currentDay =  Calendar.getInstance().get(Calendar.DAY_OF_MONTH);
 
+            String lastIconState = settings.getString("last_icon_state", "");
+            int lastIconDay = settings.getInt("last_icon_day", 0);
+
+            if ((! selfState.toString().equals(lastIconState)) || (currentHour > 10 && currentDay != lastIconDay)) {
+
+                saveLocalSharedPreference("last_icon_state", selfState.toString());
+
+                if (currentHour > 10)
+                    saveLocalSharedPreference("last_icon_day", currentDay, 0);
+
+                if (selfState.equals(SelfState.S))
+                    showNotification("SensibleDTU EpiGame", getString(R.string.you_are, getString(R.string.state_susceptible)), R.drawable.epi_icon_s);
+                if (selfState.equals(SelfState.E))
+                    showNotification("SensibleDTU EpiGame", getString(R.string.you_are, getString(R.string.state_susceptible)), R.drawable.epi_icon_s);
+                if (selfState.equals(SelfState.I))
+                    showNotification("SensibleDTU EpiGame", getString(R.string.you_are, getString(R.string.state_infected)), R.drawable.epi_icon_i);
+                if (selfState.equals(SelfState.V))
+                    showNotification("SensibleDTU EpiGame", getString(R.string.you_are, getString(R.string.state_vaccinated)), R.drawable.epi_icon_v);
+                if (selfState.equals(SelfState.A))
+                    showNotification("SensibleDTU EpiGame", getString(R.string.you, getString(R.string.state_awaiting)), R.drawable.epi_icon_a);
+                if (selfState.equals(SelfState.AE))
+                    showNotification("SensibleDTU EpiGame", getString(R.string.you, getString(R.string.state_awaiting)), R.drawable.epi_icon_a);
+                if (selfState.equals(SelfState.R))
+                    showNotification("SensibleDTU EpiGame", getString(R.string.you_are, getString(R.string.state_recovered)), R.drawable.epi_icon_r);
+            }
 
             if (WAVE_NO == -2) {
                 NotificationManager mNotifyMgr = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
                 mNotifyMgr.cancel(1338);
             }
 
-            int currentHour = Calendar.getInstance().get(Calendar.HOUR_OF_DAY);
-            int currentDay =  Calendar.getInstance().get(Calendar.DAY_OF_MONTH);
+
 
 
             int lastDayShowedState = settings.getInt("last_day_showed_state", 0);
@@ -1062,7 +1081,6 @@ public class EpidemicProbe extends Probe implements ProbeKeys.EpidemicsKeys {
         }
 
         private void forceShowState() {
-
             Intent dialogIntent = new Intent(getBaseContext(), EpiStateActivity.class);
             dialogIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK |  Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED);
             getApplication().startActivity(dialogIntent);
