@@ -43,6 +43,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import edu.mit.media.funf.configured.ConfiguredPipeline;
+import edu.mit.media.funf.probe.builtin.EpidemicProbe;
 import edu.mit.media.funf.probe.edu.mit.media.funf.activity.EpiStateActivity;
 
 public class MainActivity extends Activity {
@@ -129,6 +130,11 @@ public class MainActivity extends Activity {
                 getApplication().startActivity(dialogIntent);
             }
         });
+
+        SharedPreferences settings = getSharedPreferences(EpidemicProbe.OWN_NAME, 0);
+        int waveNo = settings.getInt("wave_no", -1);
+        if (waveNo < 0) epigameButton.setEnabled(false);
+        else epigameButton.setEnabled(true);
     }
 
     @Override
