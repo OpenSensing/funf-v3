@@ -12,6 +12,7 @@ import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
+import android.graphics.Color;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
@@ -133,8 +134,16 @@ public class MainActivity extends Activity {
 
         SharedPreferences settings = getSharedPreferences(EpidemicProbe.OWN_NAME, 0);
         int waveNo = settings.getInt("wave_no", -1);
-        if (waveNo < 0) epigameButton.setEnabled(false);
-        else epigameButton.setEnabled(true);
+        if (waveNo < 0) {
+            epigameButton.setEnabled(false);
+            epigameButton.setBackgroundColor(Color.parseColor("#DB6E79"));
+            epigameButton.setTextColor(Color.parseColor("#C7BDBF"));
+        }
+        else {
+            epigameButton.setEnabled(true);
+            epigameButton.setBackgroundColor(Color.parseColor("#b12231"));
+            epigameButton.setTextColor(Color.parseColor("#ffffff"));
+        }
     }
 
     @Override
