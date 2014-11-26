@@ -84,6 +84,12 @@ public class ProbeKeys {
 		HIGH_ACTIVITY_INTERVALS = "HIGH_ACTIVITY_INTERVALS";
 	}
 	
+	public static interface ActivityRecognitionKeys extends BaseProbeKeys {
+		public static final String
+		CONFIDENCE = "CONFIDENCE",
+		ACTIVITY_TYPE = "ACTIVITY_TYPE";
+		}
+	
 	public static interface AndroidInfoKeys extends BaseProbeKeys {
 		public static final String 
 		FIRMWARE_VERSION = "FIRMWARE_VERSION",

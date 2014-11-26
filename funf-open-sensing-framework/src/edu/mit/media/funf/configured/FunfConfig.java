@@ -201,7 +201,6 @@ public class FunfConfig implements OnSharedPreferenceChangeListener {
 		return prefs;
 	}
 	
-
 	public Editor edit() {
 		return new Editor();
 	}

@@ -292,12 +292,13 @@ public class AccelerometerFeaturesProbe extends Probe implements SensorEventList
 		}
 	}
 
+	
 	@Override
 	public void sendProbeData() {
 		// TODO Auto-generated method stub
 
 	}
-
+	
 	@Override
 	public void onAccuracyChanged(Sensor arg0, int arg1) {
 		// TODO Auto-generated method stub

@@ -173,7 +173,7 @@ public class AudioFeaturesProbe extends Probe implements AudioFeaturesKeys {
 	    			data8bit[i*2] = (byte)data16bit[i];
 	    			data8bit[i*2+1] = (byte)(data16bit[i] >> 8);
 	    		}
-	    		//		        	writeLogTextLine("Read " + readAudioSamples + " samples");
+	    		//writeLogTextLine("Read " + readAudioSamples + " samples");
 
 	    		// L1-norm
 	    		double accum = 0;

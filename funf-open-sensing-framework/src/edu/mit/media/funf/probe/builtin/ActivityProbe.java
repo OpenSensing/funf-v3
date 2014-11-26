@@ -154,7 +154,7 @@ public class ActivityProbe extends Probe implements ActivityKeys {
 				+ (count - 1) *(deltaAvg * deltaAvg);
 			sum += magnitude;
 			avg = newAvg;
-			//Log.d(TAG, "UPDATED VALUES:(count, varianceSum, sum, avg) " + count + ", " + varianceSum+ ", " + sum+ ", " + avg);
+			Log.d(TAG, "UPDATED VALUES:(count, varianceSum, sum, avg) " + count + ", " + varianceSum+ ", " + sum+ ", " + avg);
 		}
 		
 		public void handleAccelerometerData(Bundle data) {

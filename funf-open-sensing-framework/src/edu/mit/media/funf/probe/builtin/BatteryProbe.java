@@ -52,9 +52,10 @@ public class BatteryProbe extends Probe implements BatteryKeys {
 
 	@Override
 	public String[] getRequiredPermissions() {
-		return new String[] {
-			android.Manifest.permission.BATTERY_STATS,
-		};
+		return null;
+//		return new String[] {
+//			android.Manifest.permission.BATTERY_STATS,
+//		};
 	}
 	
 	@Override

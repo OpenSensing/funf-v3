@@ -107,7 +107,6 @@ public class MFCC
 		{
 			ceps[i] = lifterWeights[i]*melCeps.A[i][0];
 		}
-
 		return ceps;
 	}
 

@@ -288,9 +288,9 @@ public abstract class ConfiguredPipeline extends CustomizedIntentService impleme
 	}
 	
 	public void updateConfig(URL url) {
-        String token = Utils.getSensibleAccessToken(this);
-        String connector = ((url.getQuery() == null) ? "?" : "&") + "access_token=";
-        String url_with_token = url.toExternalForm() + connector + token;
+        //String token = Utils.getSensibleAccessToken(this);
+        //String connector = ((url.getQuery() == null) ? "?" : "&") + "access_token=";
+        String url_with_token = url.toExternalForm();// + connector + token;
         Log.d(TAG, "Will pull config from: " + url_with_token);
 		String jsonString = IOUtils.httpGet(url_with_token, null);
 		updateConfig(jsonString);
