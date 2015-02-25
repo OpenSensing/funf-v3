@@ -23,8 +23,8 @@
 
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
       package="dk.dtu.imm.datacollector2013"
-      android:versionCode="15"
-      android:versionName="2014_v2.1.3_4_4">
+      android:versionCode="22"
+      android:versionName="2014_v2.2.0_4_3">
     <uses-sdk  android:minSdkVersion="19" android:targetSdkVersion="19" />
     <application android:label="@string/app_name" android:largeHeap="true" android:icon="@drawable/red_logo5">
 
@@ -43,6 +43,8 @@
         <activity android:name="com.facebook.LoginActivity" android:screenOrientation="portrait"/>
 
         <meta-data android:name="com.facebook.sdk.ApplicationId" android:value="@string/app_id"/>
+
+        <meta-data android:name="com.google.android.gms.version" android:value="@integer/google_play_services_version" />
 
         <!-- Probe Services -->
         <service android:name="edu.mit.media.funf.probe.builtin.ActivityProbe"></service>
@@ -83,12 +85,14 @@
         <service android:name="edu.mit.media.funf.probe.builtin.AudioFeaturesProbe"></service>
         <service android:name="edu.mit.media.funf.probe.builtin.AccelerometerFeaturesProbe"></service>
         
-        
+        <service android:name="edu.mit.media.funf.probe.builtin.ActivityRecognitionProbe"></service>
+
         <!-- Framework services -->
         <service android:name=".MainPipeline"></service>
         <service android:name="edu.mit.media.funf.storage.NameValueDatabaseService"></service>
         <service android:name="edu.mit.media.funf.storage.HttpUploadService"></service>
         <service android:name=".RegistrationHandler"/>
+        <service android:name="edu.mit.media.funf.ActivityRecognitionIntentService"></service>
 
         <receiver android:name=".LauncherReceiver" android:enabled="true">
         	<intent-filter>
@@ -113,7 +117,6 @@
                 <action android:name="edu.mit.media.funf.probe.builtin.BluetoothProbe.BLUETOOTH_TIMEOUT_EVENT"/>
             </intent-filter>
         </receiver>
-        
 
     </application>
 
@@ -190,5 +193,11 @@
     <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
     <permission android:name="dk.dtu.imm.datacollector2013.permission.C2D_MESSAGE" android:protectionLevel="signature" />
     <uses-permission android:name="dk.dtu.imm.datacollector.permission.C2D_MESSAGE" />
+
+    <!-- Activity recognition. -->
+    <uses-permission android:name="com.google.android.gms.permission.ACTIVITY_RECOGNITION" />
+
+
+
 
 </manifest>
