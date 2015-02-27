@@ -124,7 +124,7 @@ public abstract class SensorProbe extends Probe {
 	@Override
 	public void onRun(Bundle params) {
 		Log.i(TAG, "SensorKeys listener:" + sensorListener + " SensorKeys:" + sensor + " SensorManager:" + getSensorManager());
-		getSensorManager().registerListener(sensorListener,sensor, getSensorDelay(params));
+		getSensorManager().registerListener(sensorListener, sensor, getSensorDelay(params));
 		Log.i(TAG, "RecentEvents before clear:" + recentEvents.size());
 		recentEvents.clear();
 		Log.i(TAG, "Creating thread");
@@ -185,6 +185,7 @@ public abstract class SensorProbe extends Probe {
     private Bundle buildDataBundle(List<SensorEventCopy> events) {
         Log.i(TAG, "Events length: " + "" + events.size());
         Bundle data = new Bundle();
+        if (events.size() < 1) return data;
         Sensor sensor  = events.get(0).sensor;
         Bundle sensorBundle = new Bundle();
         sensorBundle.putFloat("MAXIMUM_RANGE", sensor.getMaximumRange());
