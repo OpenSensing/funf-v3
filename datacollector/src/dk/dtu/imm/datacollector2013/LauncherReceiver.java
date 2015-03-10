@@ -25,7 +25,6 @@ import android.app.Service;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import dk.dtu.imm.experiencesampling.ExperienceSampling;
 
 public class LauncherReceiver extends BroadcastReceiver {
 	
@@ -33,11 +32,6 @@ public class LauncherReceiver extends BroadcastReceiver {
 	
 	public static void launch(Context context) {
 		startService(context, MainPipeline.class); // Ensure main funf system is running
-
-        long scheduleInterval = 10 * 60 * 1000; // 10 minutes
-        long gpsTimeout = 30 * 1000; // 30 sec
-        String mainConfigJson = MainPipeline.getMainConfigAsJsonString(context);
-        ExperienceSampling.startExperienceSampling(context, RegistrationHandler.SHARED_PREFERENCES_NAME, RegistrationHandler.PROPERTY_SENSIBLE_TOKEN, scheduleInterval, gpsTimeout, mainConfigJson);
 
         launched = true;
 	}
