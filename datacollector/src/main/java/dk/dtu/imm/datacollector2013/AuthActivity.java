@@ -40,13 +40,13 @@ public class AuthActivity extends Activity {
     /**
      * Production address
      */
-    private static final String DOMAIN_URL = "https://www.sensible.dtu.dk/";
+    private static final String DOMAIN_URL = "http://neuro247data.compute.dtu.dk/";
 
-    private static final String GRANT_ENDPOINT_URL = "sensible-dtu/authorization_manager/connector_funf/auth/grant/";
-    private static final String SUCCESS_URL = "/sensible-data/?status=success";
+    private static final String GRANT_ENDPOINT_URL = "api/authorization_manager/connector_funf/auth/grant/";
+    private static final String SUCCESS_URL = "/platform/?status=success";
     private static final String BASE_URL = DOMAIN_URL + GRANT_ENDPOINT_URL + "?scope=connector_funf.submit_data";
 
-    private static final String CODE_URL_PREFIX = "sensible-dtu/authorization_manager/connector_funf/auth/granted/";
+    private static final String CODE_URL_PREFIX = "api/authorization_manager/connector_funf/auth/granted/";
 
     public void onCreate(Bundle savedInstanceState) {
 
@@ -69,7 +69,7 @@ public class AuthActivity extends Activity {
     private void uisetup() {
         wv = (WebView)this.findViewById(R.id.webView);
         // clear cache
-        wv.clearCache(true);
+        //wv.clearCache(false);
         // Don't store passwords or form data
         WebSettings mWebSettings = wv.getSettings();
         mWebSettings.setSavePassword(false);
@@ -77,7 +77,7 @@ public class AuthActivity extends Activity {
         // don't store cookies:
         CookieManager cookieManager = CookieManager.getInstance();
         //cookieManager.setAcceptCookie(false);
-        cookieManager.removeAllCookie();
+        //cookieManager.removeAllCookie();
 
         wv.getSettings().setJavaScriptEnabled(true);
         wv.requestFocus(View.FOCUS_DOWN);

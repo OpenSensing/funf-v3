@@ -88,15 +88,15 @@ public class RegistrationHandler extends Service {
     }
 
     //private static final String DOMAIN_URL = "http://54.229.13.160/devel/";
-    private static final String DOMAIN_URL = "https://www.sensible.dtu.dk/";
+    private static final String DOMAIN_URL = "http://neuro247data.compute.dtu.dk/";
 
     //private static final String BASE_URL = "http://ec2-54-229-13-160.eu-west-1.compute.amazonaws.com:8082/authorization_manager/connector_funf/auth/grant/?scope=connector_funf.submit_data&";
 
-    private static final String CODE_TO_TOKEN_URL = DOMAIN_URL + "sensible-dtu/authorization_manager/connector_funf/auth/token/";
+    private static final String CODE_TO_TOKEN_URL = DOMAIN_URL + "api/authorization_manager/connector_funf/auth/token/";
     //private static final String CODE_TO_TOKEN_URL = DOMAIN_URL + "sensible-dtu/authorization_manager/connector_raw/v1/auth/token_mobile/";
 
-    private static final String REFRESH_TOKEN_URL = DOMAIN_URL + "sensible-dtu/authorization_manager/connector_funf/auth/refresh_token/";
-    private static final String SET_GCM_ID_URL = DOMAIN_URL + "sensible-dtu/authorization_manager/connector_funf/auth/gcm/";
+    private static final String REFRESH_TOKEN_URL = DOMAIN_URL + "api/authorization_manager/connector_funf/auth/refresh_token/";
+    private static final String SET_GCM_ID_URL = DOMAIN_URL + "api/authorization_manager/connector_funf/auth/gcm/";
 
 
 
