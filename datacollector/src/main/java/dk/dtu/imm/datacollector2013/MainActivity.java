@@ -19,7 +19,6 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
 import android.app.Activity;
-import android.bluetooth.BluetoothAdapter;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.net.Uri;
@@ -105,16 +104,6 @@ public class MainActivity extends Activity {
         fileObserver.startWatching();
         if(restartPopupOn) return;
 
-		BluetoothAdapter bt = BluetoothAdapter.getDefaultAdapter();
-		if (!bt.isEnabled()) {
-			bt.enable();
-		}
-
-		if (bt.getScanMode() != BluetoothAdapter.SCAN_MODE_CONNECTABLE_DISCOVERABLE) {
-			Intent discoverableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE);
-			discoverableIntent.putExtra(BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION, 0);
-			startActivity(discoverableIntent);
-		}
 
 		if (!serviceRunning) {
 			serviceRunning = true;
