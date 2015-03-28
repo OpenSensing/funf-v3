@@ -1,0 +1,33 @@
+apply plugin: 'android'
+
+
+android {
+    compileSdkVersion 21
+    buildToolsVersion "22.0.1"
+    defaultConfig {
+        minSdkVersion 19
+        targetSdkVersion 19
+        versionCode 22
+        versionName "2014_v2.2.0_4_3"
+        applicationId 'dk.dtu.imm.datacollector2013'
+    }
+
+
+
+
+
+    
+    
+
+     buildTypes {
+        release {
+
+            
+        }
+    }
+}
+
+dependencies {
+    compile project(':funf-open-sensing-framework')
+    compile 'com.google.android.gms:play-services:7.0.0'
+}
