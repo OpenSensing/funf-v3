@@ -35,6 +35,7 @@ import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.SystemClock;
 import android.util.Log;
 import edu.mit.media.funf.Utils;
 
@@ -201,11 +202,11 @@ public abstract class SensorProbe extends Probe {
         int[] accuracy = new int[events.size()];
         int valuesLength = Math.min(valueNames.length, events.get(0).values.length); // Accounts for optional values
         float[][] values = new float[valuesLength][events.size()];
-
+        long bootTime = System.currentTimeMillis() - SystemClock.elapsedRealtime();
         for (int i=0; i<events.size(); i++) {
             SensorEventCopy event = events.get(i);
 
-            timestamp[i] = event.timestamp;
+            timestamp[i] = bootTime*1000 - event.timestamp;
             accuracy[i] = event.accuracy;
             for (int valueIndex=0; valueIndex<valuesLength; valueIndex++) {
                 values[valueIndex][i] = event.values[valueIndex];
