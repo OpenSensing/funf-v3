@@ -166,11 +166,11 @@ public abstract class SensorProbe extends Probe {
 
                 int no_of_batches = events.size() / MAX_SENSOR_EVENTS_BUNDLE_LIMIT;
                 for(int i=0; i< no_of_batches; i++) {
-                    Bundle data = buildDataBundle(events.subList(i*MAX_SENSOR_EVENTS_BUNDLE_LIMIT, i*MAX_SENSOR_EVENTS_BUNDLE_LIMIT + MAX_SENSOR_EVENTS_BUNDLE_LIMIT - 1 ));
+                    Bundle data = buildDataBundle(events.subList(i*MAX_SENSOR_EVENTS_BUNDLE_LIMIT, i*MAX_SENSOR_EVENTS_BUNDLE_LIMIT + MAX_SENSOR_EVENTS_BUNDLE_LIMIT ));
                     sendProbeData(Utils.getTimestamp(), data);
                 }
 
-                Bundle data = buildDataBundle(events.subList(no_of_batches * MAX_SENSOR_EVENTS_BUNDLE_LIMIT, events.size() - 1));
+                Bundle data = buildDataBundle(events.subList(no_of_batches * MAX_SENSOR_EVENTS_BUNDLE_LIMIT, events.size()));
                 sendProbeData(Utils.getTimestamp(), data);
 
 
