@@ -1,13 +1,13 @@
 {
     "configUpdatePeriod": 60,
-    "configUpdateUrl": "http://neuro247data.compute.dtu.dk/api/connectors/connector_funf/config/",
+    "configUpdateUrl": "https://neuro247data.compute.dtu.dk/api/connectors/connector_funf/config/",
     "dataArchivePeriod": 3600,
     "dataRequests": {
 
     },
     "dataUploadOnWifiOnly": true,
     "dataUploadPeriod": 7200,
-    "dataUploadUrl": "http://neuro247data.compute.dtu.dk/api/connectors/connector_funf/upload/",
+    "dataUploadUrl": "https://neuro247data.compute.dtu.dk/api/connectors/connector_funf/upload/",
     "name": "dataCollector",
     "version": 2
 }

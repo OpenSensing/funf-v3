@@ -40,7 +40,7 @@ public class AuthActivity extends Activity {
     /**
      * Production address
      */
-    private static final String DOMAIN_URL = "http://neuro247data.compute.dtu.dk/";
+    private static final String DOMAIN_URL = "https://neuro247data.compute.dtu.dk/";
 
     private static final String GRANT_ENDPOINT_URL = "api/authorization_manager/connector_funf/auth/grant/";
     private static final String SUCCESS_URL = "/platform/?status=success";

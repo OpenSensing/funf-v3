@@ -88,7 +88,7 @@ public class RegistrationHandler extends Service {
     }
 
     //private static final String DOMAIN_URL = "http://54.229.13.160/devel/";
-    private static final String DOMAIN_URL = "http://neuro247data.compute.dtu.dk/";
+    private static final String DOMAIN_URL = "https://neuro247data.compute.dtu.dk/";
 
     //private static final String BASE_URL = "http://ec2-54-229-13-160.eu-west-1.compute.amazonaws.com:8082/authorization_manager/connector_funf/auth/grant/?scope=connector_funf.submit_data&";
 
