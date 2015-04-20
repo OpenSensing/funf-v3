@@ -19,35 +19,29 @@
  * You should have received a copy of the GNU Lesser General Public 
  * License along with Funf. If not, see <http://www.gnu.org/licenses/>.
  */
-package dk.dtu.imm.datacollector2013;
+package dk.dtu.imm.goactive;
 
-import android.app.Service;
-import android.content.BroadcastReceiver;
-import android.content.Context;
-import android.content.Intent;
+import android.os.Bundle;
+import com.google.gson.*;
+import edu.mit.media.funf.Utils;
 
-public class LauncherReceiver extends BroadcastReceiver {
+import java.lang.reflect.Type;
+import java.util.Map;
+ 
+public class JsonUtils {
 	
-	private static boolean launched = false;
-	
-	public static void launch(Context context) {
-		startService(context, MainPipeline.class); // Ensure main funf system is running
-
-        launched = true;
+	public static Gson getGson() {
+		return new GsonBuilder().setPrettyPrinting().registerTypeAdapter(Bundle.class, new BundleJsonSerializer()).create();
 	}
-	
-	public static void startService(Context context, Class<? extends Service> serviceClass) {
-		Intent i = new Intent(context.getApplicationContext(), serviceClass);
-		context.getApplicationContext().startService(i);
-	} 
-	
-	public static boolean isLaunched() {
-		return launched;
-	}
-	
-	@Override
-	public void onReceive(Context context, Intent intent) {
-		launch(context);
-        startService(context, RegistrationHandler.class);
+
+	public static class BundleJsonSerializer implements JsonSerializer<Bundle> {
+		public JsonElement serialize(Bundle bundle, Type type, JsonSerializationContext context) {
+			JsonObject object = new JsonObject();
+			for (Map.Entry<String, Object> entry : Utils.getValues(bundle).entrySet()) {
+				object.add(entry.getKey(), context.serialize(entry.getValue()));
+			}
+			return object;
+		}
 	}
 }
+  

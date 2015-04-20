@@ -1,4 +1,4 @@
-package dk.dtu.imm.datacollector2013;
+package dk.dtu.imm.goactive;
 
 import android.app.Activity;
 import android.content.*;

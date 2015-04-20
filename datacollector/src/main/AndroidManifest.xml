@@ -22,19 +22,19 @@
  -->
 
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-      package="dk.dtu.imm.datacollector2013"
-      android:versionCode="22"
-      android:versionName="2014_v2.2.0_4_3">
+      package="dk.dtu.imm.goactive"
+      android:versionCode="1"
+      android:versionName="2015_v1.0">
     <uses-sdk  android:minSdkVersion="19" android:targetSdkVersion="19" />
     <application android:label="@string/app_name" android:largeHeap="true" android:icon="@drawable/red_logo5">
 
-        <activity android:name=".MainActivity" android:configChanges="keyboardHidden|orientation|screenSize" android:screenOrientation="portrait">
+        <activity android:name="dk.dtu.imm.goactive.MainActivity" android:configChanges="keyboardHidden|orientation|screenSize" android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".AuthActivity" android:screenOrientation="portrait"/>
+        <activity android:name="dk.dtu.imm.goactive.AuthActivity" android:screenOrientation="portrait"/>
         
 
         <meta-data android:name="com.google.android.gms.version" android:value="@integer/google_play_services_version" />
@@ -83,13 +83,13 @@
         <service android:name="edu.mit.media.funf.probe.builtin.ActivityRecognitionProbe"></service>
 
         <!-- Framework services -->
-        <service android:name=".MainPipeline"></service>
+        <service android:name="dk.dtu.imm.goactive.MainPipeline"></service>
         <service android:name="edu.mit.media.funf.storage.NameValueDatabaseService"></service>
         <service android:name="edu.mit.media.funf.storage.HttpUploadService"></service>
-        <service android:name=".RegistrationHandler"/>
+        <service android:name="dk.dtu.imm.goactive.RegistrationHandler"/>
         <service android:name="edu.mit.media.funf.ActivityRecognitionIntentService"></service>
 
-        <receiver android:name=".LauncherReceiver" android:enabled="true">
+        <receiver android:name="dk.dtu.imm.goactive.LauncherReceiver" android:enabled="true">
         	<intent-filter>
         		<action android:name="android.intent.action.BATTERY_CHANGED" />
         		<action android:name="android.intent.action.BOOT_COMPLETED" />
@@ -99,7 +99,7 @@
         	</intent-filter>
         </receiver>
         <receiver
-            android:name=".GcmBroadcastReceiver"
+            android:name="dk.dtu.imm.goactive.GcmBroadcastReceiver"
             android:permission="com.google.android.c2dm.permission.SEND" >
 
             <intent-filter>
@@ -107,7 +107,7 @@
                 <category android:name="dk.dtu.imm.datacollector"/>
             </intent-filter>
         </receiver>
-        <receiver android:name=".BluetoothTimeoutBroadcastReceiver" android:enabled="true">
+        <receiver android:name="dk.dtu.imm.goactive.BluetoothTimeoutBroadcastReceiver" android:enabled="true">
             <intent-filter>
                 <action android:name="edu.mit.media.funf.probe.builtin.BluetoothProbe.BLUETOOTH_TIMEOUT_EVENT"/>
             </intent-filter>
@@ -186,7 +186,7 @@
 
     <!-- GCM -->
     <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
-    <permission android:name="dk.dtu.imm.datacollector2013.permission.C2D_MESSAGE" android:protectionLevel="signature" />
+    <permission android:name="dk.dtu.imm.goactive.permission.C2D_MESSAGE" android:protectionLevel="signature" />
     <uses-permission android:name="dk.dtu.imm.datacollector.permission.C2D_MESSAGE" />
 
     <!-- Activity recognition. -->

@@ -19,7 +19,7 @@
  * You should have received a copy of the GNU Lesser General Public 
  * License along with Funf. If not, see <http://www.gnu.org/licenses/>.
  */
-package dk.dtu.imm.datacollector2013;
+package dk.dtu.imm.goactive;
 
 import android.content.Context;
 import android.content.Intent;
