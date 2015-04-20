@@ -31,6 +31,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.channels.FileChannel;
+import java.util.zip.GZIPOutputStream;
 
 import javax.crypto.Cipher;
 import javax.crypto.CipherOutputStream;
@@ -92,12 +93,12 @@ public interface FileCopier {
 		}
 	}
 	
-	public static class EncryptedFileCopier implements FileCopier {
-		public static final String TAG = EncryptedFileCopier.class.getName();
+	public static class EncryptedAndCompressedFileCopier implements FileCopier {
+		public static final String TAG = EncryptedAndCompressedFileCopier.class.getName();
 		private final SecretKey key;
 		private final String transformation;
 		
-		public EncryptedFileCopier(SecretKey key, String transformation) {
+		public EncryptedAndCompressedFileCopier(SecretKey key, String transformation) {
 			this.key = key;
 			this.transformation = transformation;
 		}
@@ -131,16 +132,20 @@ public interface FileCopier {
 			InputStream in = null;
 			OutputStream out = null;
 			CipherOutputStream co = null;
+            GZIPOutputStream gout = null;
 			try {
 				in = new FileInputStream(sourceFile);
 				out = new FileOutputStream(destinationFile); 
 				co = new CipherOutputStream(out, ecipher);
+                gout = new GZIPOutputStream(co);
 				byte[] buf = new byte[128*4096]; 
 				int len = 0; 
 				while ((len = in.read(buf)) > 0) 
 				{ 
-					co.write(buf, 0, len); 
-				} 
+					gout.write(buf, 0, len);
+				}
+
+                gout.finish();
 			} catch (FileNotFoundException e) {
 				Log.e(TAG, "File not found", e);
 				return false;
