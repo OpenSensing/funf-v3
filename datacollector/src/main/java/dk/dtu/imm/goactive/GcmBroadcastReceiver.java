@@ -98,7 +98,7 @@ public class GcmBroadcastReceiver extends BroadcastReceiver {
 
         NotificationCompat.Builder mBuilder =
                 new NotificationCompat.Builder(ctx)
-                        .setSmallIcon(R.drawable.red_logo5)
+                        .setSmallIcon(R.drawable.go_active_phone_icon)
                         .setContentTitle(title)
                         .setStyle(new NotificationCompat.BigTextStyle()
                                 .bigText(msg))
@@ -118,7 +118,7 @@ public class GcmBroadcastReceiver extends BroadcastReceiver {
 
         NotificationCompat.Builder mBuilder =
                 new NotificationCompat.Builder(ctx)
-                        .setSmallIcon(R.drawable.red_logo5)
+                        .setSmallIcon(R.drawable.go_active_phone_icon)
                         .setContentTitle(title)
                         .setStyle(new NotificationCompat.BigTextStyle()
                                 .bigText(msg))

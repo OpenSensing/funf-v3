@@ -49,7 +49,7 @@ public class RegistrationHandler extends Service {
     private static final String PROPERTY_APP_VERSION = "appVersion";
     private static final String PROPERTY_ON_SERVER_EXPIRATION_TIME = "onServerExpirationTimeMs";
 
-    private static final String SHOW_REGISTRATION_REMINDER = "dk.dtu.imm.datacollector2013.show_registration_reminder";
+    private static final String SHOW_REGISTRATION_REMINDER = "dk.dtu.imm.goactive.show_registration_reminder";
 
     public static final String SHARED_PREFERENCES_NAME = "sensible_auth";
     public static final String PROPERTY_SENSIBLE_TOKEN = "sensible_token";
@@ -188,7 +188,7 @@ public class RegistrationHandler extends Service {
 
         NotificationCompat.Builder mBuilder =
                 new NotificationCompat.Builder(context)
-                        .setSmallIcon(R.drawable.red_logo5)
+                        .setSmallIcon(R.drawable.go_active_phone_icon)
                         .setContentTitle(title)
                         .setStyle(new NotificationCompat.BigTextStyle()
                                 .bigText(msg))

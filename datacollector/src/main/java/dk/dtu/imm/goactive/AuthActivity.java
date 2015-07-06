@@ -160,7 +160,7 @@ public class AuthActivity extends Activity {
         String imei = tm.getDeviceId();
         String link = BASE_URL + "&client_id=" + RegistrationHandler.CLIENT_ID + "&gcm_id=" + regId + "&device_id=" + imei;
         Log.d(TAG, link);
-        wv.getSettings().setUserAgentString("dk.dtu.imm.datacollector2013");
+        wv.getSettings().setUserAgentString("dk.dtu.imm.goactive");
         wv.loadUrl(link);
 
     }

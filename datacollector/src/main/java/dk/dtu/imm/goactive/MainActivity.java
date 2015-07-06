@@ -79,7 +79,7 @@ public class MainActivity extends Activity {
             restartPopupOn = true;
         }
 
-        fileObserver = new FileObserver(new File(Environment.getExternalStorageDirectory(), "dk.dtu.imm.datacollector2013/mainPipeline/archive").getAbsolutePath()) {
+        fileObserver = new FileObserver(new File(Environment.getExternalStorageDirectory(), "dk.dtu.imm.goactive/mainPipeline/archive").getAbsolutePath()) {
             @Override
             public void onEvent(int i, String s) {
                 if(i == FileObserver.CREATE || i == FileObserver.DELETE){
@@ -175,7 +175,7 @@ public class MainActivity extends Activity {
 
     private double getUploadFileSize() {
         double fileSize = 0;
-        for(File file: new File(Environment.getExternalStorageDirectory(), "dk.dtu.imm.datacollector2013/mainPipeline/archive").listFiles()) {
+        for(File file: new File(Environment.getExternalStorageDirectory(), "dk.dtu.imm.goactive/mainPipeline/archive").listFiles()) {
             fileSize += file.length();
         }
         fileSize = fileSize / (1024 * 1024);
@@ -245,7 +245,7 @@ public class MainActivity extends Activity {
     private int getFilesCount() {
 		String[] files = null;
 		try {
-			files = new File(Environment.getExternalStorageDirectory(), "dk.dtu.imm.datacollector2013/mainPipeline/archive").list();
+			files = new File(Environment.getExternalStorageDirectory(), "dk.dtu.imm.goactive/mainPipeline/archive").list();
 		} catch(Exception e) {
             Log.e(TAG, e.toString());
 		}

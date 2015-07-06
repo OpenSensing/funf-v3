@@ -8,8 +8,8 @@ android {
         minSdkVersion 19
         targetSdkVersion 19
         versionCode 22
-        versionName "2014_v2.2.0_4_3"
-        applicationId 'dk.dtu.imm.datacollector2013'
+        versionName "2015_v1.0"
+        applicationId 'dk.dtu.imm.goactive'
     }
 
     packagingOptions {

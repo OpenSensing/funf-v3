@@ -13,7 +13,7 @@ import android.support.v4.app.NotificationCompat;
  */
 public class BluetoothTimeoutBroadcastReceiver extends BroadcastReceiver{
     private static final int NOTIFICATION_ID = 2;
-    public static final String RESTART_POPUP_ACTION = "dk.dtu.imm.datacollector2013.restart_bluetooth_popup";
+    public static final String RESTART_POPUP_ACTION = "dk.dtu.imm.goactive.restart_bluetooth_popup";
 
     @Override
     public void onReceive(Context context, Intent intent) {
