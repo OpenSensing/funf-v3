@@ -10,11 +10,23 @@ import java.util.List;
 
 import android.app.ActivityManager;
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.*;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.*;
 import android.widget.*;
+
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GooglePlayServicesUtil;
+import com.google.android.gms.common.Scopes;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.ResultCallback;
+import com.google.android.gms.common.api.Scope;
+import com.google.android.gms.common.api.Status;
+import com.google.android.gms.fitness.Fitness;
+import com.google.android.gms.fitness.FitnessStatusCodes;
+import com.google.android.gms.fitness.data.DataType;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -28,14 +40,17 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+
+import edu.mit.media.funf.ActivityUtils;
 import edu.mit.media.funf.configured.ConfiguredPipeline;
 
-public class MainActivity extends Activity {
+public class MainActivity extends Activity  implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener{
 
 	public static final String KEY_MESSAGES = "MESSAGES";
     public static final String RESTART_DEVICE_MESSAGE = "På grund af problemer med Android drivers er der et problem med din Bluetooth. Genstart venligst telefonen, så skulle den virke igen. Mange tak!";
     private static final String TAG = "AUTH_MainActivity";
     public static final String RESTART_DEVICE_MESSAGE_TITLE = "Bluetooth problem";
+    private static final String WEB_CLIENT_ID = "894633196263-b3vortocf30h3r3a538ngirpub2r80so.apps.googleusercontent.com";
     private static boolean serviceRunning = false;
     private ConnectivityManager connectivityManager;
     private FileObserver fileObserver;
@@ -59,6 +74,9 @@ public class MainActivity extends Activity {
 	private TextView txtFilesCount;
     private boolean restartPopupOn = false;
     private Button uploadButton;
+
+    private GoogleApiClient mGoogleApiClient;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -324,6 +342,121 @@ public class MainActivity extends Activity {
             } else {
                 showNoInternetDialog();
             }
+        }
+    }
+
+    public void subscribe(DataType dataType) {
+        Fitness.RecordingApi.subscribe(mGoogleApiClient, dataType).setResultCallback(subscribeCallback);
+    }
+
+    ResultCallback<Status> subscribeCallback =  new ResultCallback<Status>() {
+        @Override
+        public void onResult(Status status) {
+            if (status.isSuccess()) {
+                if (status.getStatusCode()
+                        == FitnessStatusCodes.SUCCESS_ALREADY_SUBSCRIBED) {
+                    Log.i(TAG, "Existing subscription.");
+                } else {
+                    Log.i(TAG, "Successfully subscribed to Fitness API!");
+                }
+            } else {
+                Log.i(TAG, "There was a problem subscribing.");
+            }
+        }
+    };
+
+
+    @Override
+    public void onConnected(Bundle bundle) {
+        Log.d(TAG, "Google API connected");
+        subscribe(DataType.TYPE_STEP_COUNT_DELTA);
+        subscribe(DataType.TYPE_ACTIVITY_SAMPLE);
+        subscribe(DataType.TYPE_CALORIES_EXPENDED);
+        subscribe(DataType.TYPE_DISTANCE_DELTA);
+
+        // If we don't need the connection we should close it. Not sure if we should
+        // wait until subscriptions are validated
+        mGoogleApiClient.disconnect();
+    }
+
+    @Override
+    public void onConnectionSuspended(int i) {
+        // If your connection to the sensor gets lost at some point,
+        // you'll be able to determine the reason and react to it here.
+        if (i == GoogleApiClient.ConnectionCallbacks.CAUSE_NETWORK_LOST) {
+            Log.i(TAG, "Connection lost.  Cause: Network Lost.");
+        } else if (i == GoogleApiClient.ConnectionCallbacks.CAUSE_SERVICE_DISCONNECTED) {
+            Log.i(TAG, "Connection lost.  Reason: Service Disconnected");
+        }
+    }
+
+    @Override
+    public void onConnectionFailed(ConnectionResult connectionResult) {
+        /*
+         * Google Play services can resolve some errors it detects.
+         * If the error has a resolution, try sending an Intent to
+         * start a Google Play services activity that can resolve
+         * error.
+         */
+        if (connectionResult.hasResolution()) {
+
+            try {
+                connectionResult.startResolutionForResult(this,
+                        ActivityUtils.CONNECTION_FAILURE_RESOLUTION_REQUEST);
+
+                            /*
+                             * Thrown if Google Play services canceled the original
+                             * PendingIntent
+                             */
+            } catch (IntentSender.SendIntentException e) {
+                // display an error or log it here.
+            }
+
+                        /*
+                         * If no resolution is available, display Google
+                         * Play service error dialog. This may direct the
+                         * user to Google Play Store if Google Play services
+                         * is out of date.
+                         */
+        } else {
+            Dialog dialog = GooglePlayServicesUtil.getErrorDialog(
+                    connectionResult.getErrorCode(),
+                    getParent(),
+                    ActivityUtils.CONNECTION_FAILURE_RESOLUTION_REQUEST);
+            if (dialog != null) {
+                dialog.show();
+            }
+        }
+        Log.d(TAG, "Connection Failed: " + connectionResult.toString());
+    }
+
+    /**
+     * Verify that Google Play services is available before making a request.
+     *
+     * @return true if Google Play services is available, otherwise false
+     */
+    private boolean servicesConnected() {
+
+        // Check that Google Play services is available
+        int resultCode = GooglePlayServicesUtil.isGooglePlayServicesAvailable(this);
+
+        // If Google Play services is available
+        if (ConnectionResult.SUCCESS == resultCode) {
+
+            // In debug mode, log the status
+            Log.d("GoogleFitnessProbe", "Google Play Services available");
+
+            // Continue
+            return true;
+
+            // Google Play services was not available for some reason
+        } else {
+            Dialog dialog = GooglePlayServicesUtil.getErrorDialog(resultCode, this, 0);
+            if (dialog != null) {
+                //This dialog will help the user update to the latest GooglePlayServices
+                dialog.show();
+            }
+            return false;
         }
     }
 }

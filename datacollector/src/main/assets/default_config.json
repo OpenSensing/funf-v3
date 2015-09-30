@@ -1,6 +1,6 @@
 {
     "configUpdatePeriod": 3600,
-    "configUpdateUrl": "https://neuro247data.compute.dtu.dk/api/connectors/connector_funf/config123/",
+    "configUpdateUrl": "https://neuro247data.compute.dtu.dk/api/connectors/connector_funf/config/",
     "dataArchivePeriod": 60,
     "dataRequests": {
         "edu.mit.media.funf.probe.builtin.ScreenProbe": [
@@ -9,7 +9,7 @@
     },
     "dataUploadOnWifiOnly": true,
     "dataUploadPeriod": 7200,
-    "dataUploadUrl": "https://neuro247data.compute.dtu.dk/api/connectors/connector_funf/upload123/",
+    "dataUploadUrl": "https://neuro247data.compute.dtu.dk/api/connectors/connector_funf/upload/",
     "name": "dataCollector",
     "version": 2
 }
