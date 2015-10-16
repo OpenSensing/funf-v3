@@ -50,7 +50,6 @@ public class MainActivity extends Activity  implements GoogleApiClient.Connectio
     public static final String RESTART_DEVICE_MESSAGE = "På grund af problemer med Android drivers er der et problem med din Bluetooth. Genstart venligst telefonen, så skulle den virke igen. Mange tak!";
     private static final String TAG = "AUTH_MainActivity";
     public static final String RESTART_DEVICE_MESSAGE_TITLE = "Bluetooth problem";
-    private static final String WEB_CLIENT_ID = "894633196263-b3vortocf30h3r3a538ngirpub2r80so.apps.googleusercontent.com";
     private static boolean serviceRunning = false;
     private ConnectivityManager connectivityManager;
     private FileObserver fileObserver;
@@ -76,6 +75,12 @@ public class MainActivity extends Activity  implements GoogleApiClient.Connectio
     private Button uploadButton;
 
     private GoogleApiClient mGoogleApiClient;
+    // Request code to use when launching the resolution activity
+    private static final int REQUEST_RESOLVE_ERROR = 1001;
+    // Unique tag for the error dialog fragment
+    private static final String DIALOG_ERROR = "dialog_error";
+    // Bool to track whether the app is already resolving an error
+    private boolean mResolvingError = false;
 
 
     @Override
@@ -113,6 +118,9 @@ public class MainActivity extends Activity  implements GoogleApiClient.Connectio
 
         uploadButton = (Button) findViewById(R.id.uploadButton);
         uploadButton.setOnClickListener(new UploadButtonClickListener());
+
+        // Build and connect to Google API Client
+        connectGoogleFitness();
     }
 
     @Override
@@ -129,6 +137,10 @@ public class MainActivity extends Activity  implements GoogleApiClient.Connectio
 		} else {
 			Log.d(TAG, "Not starting the service again");
 		}
+
+        if (!mResolvingError) {
+            mGoogleApiClient.connect();
+        }
 
 	}
 
@@ -391,43 +403,61 @@ public class MainActivity extends Activity  implements GoogleApiClient.Connectio
     }
 
     @Override
-    public void onConnectionFailed(ConnectionResult connectionResult) {
-        /*
-         * Google Play services can resolve some errors it detects.
-         * If the error has a resolution, try sending an Intent to
-         * start a Google Play services activity that can resolve
-         * error.
-         */
-        if (connectionResult.hasResolution()) {
-
+    public void onConnectionFailed(ConnectionResult result) {
+        Log.d(TAG, "Connection Failed: " + result.toString());
+        if (mResolvingError) {
+            // Already attempting to resolve an error.
+            return;
+        } else if (result.hasResolution()) {
             try {
-                connectionResult.startResolutionForResult(this,
-                        ActivityUtils.CONNECTION_FAILURE_RESOLUTION_REQUEST);
-
-                            /*
-                             * Thrown if Google Play services canceled the original
-                             * PendingIntent
-                             */
+                mResolvingError = true;
+                result.startResolutionForResult(this, REQUEST_RESOLVE_ERROR);
             } catch (IntentSender.SendIntentException e) {
-                // display an error or log it here.
+                // There was an error with the resolution intent. Try again.
+                mGoogleApiClient.connect();
             }
-
-                        /*
-                         * If no resolution is available, display Google
-                         * Play service error dialog. This may direct the
-                         * user to Google Play Store if Google Play services
-                         * is out of date.
-                         */
         } else {
+            // Show dialog using GoogleApiAvailability.getErrorDialog()
             Dialog dialog = GooglePlayServicesUtil.getErrorDialog(
-                    connectionResult.getErrorCode(),
-                    getParent(),
-                    ActivityUtils.CONNECTION_FAILURE_RESOLUTION_REQUEST);
+                    result.getErrorCode(),
+                    this,
+                    REQUEST_RESOLVE_ERROR);
             if (dialog != null) {
                 dialog.show();
             }
+            mResolvingError = true;
         }
-        Log.d(TAG, "Connection Failed: " + connectionResult.toString());
+
+
+    }
+
+    private void connectGoogleFitness() {
+        if (servicesConnected()){
+            mGoogleApiClient = new GoogleApiClient.Builder(this)
+                    .addApi(Fitness.RECORDING_API)
+                    .addConnectionCallbacks(this)
+                    .addOnConnectionFailedListener(this)
+                    .addScope(new Scope(Scopes.FITNESS_ACTIVITY_READ))
+                    .addScope(new Scope(Scopes.FITNESS_LOCATION_READ))
+                    .addScope(new Scope(Scopes.FITNESS_BODY_READ))
+                    .build();
+            mGoogleApiClient.connect();
+        } else
+            Log.d(TAG, "Google services not available");
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == REQUEST_RESOLVE_ERROR) {
+            mResolvingError = false;
+            if (resultCode == RESULT_OK) {
+                // Make sure the app is not already connected or attempting to connect
+                if (!mGoogleApiClient.isConnecting() &&
+                        !mGoogleApiClient.isConnected()) {
+                    mGoogleApiClient.connect();
+                }
+            }
+        }
     }
 
     /**
