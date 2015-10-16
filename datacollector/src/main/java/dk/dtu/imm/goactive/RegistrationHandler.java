@@ -67,8 +67,8 @@ public class RegistrationHandler extends Service {
     /**
      * SENSIBLE
      */
-    public static final String CLIENT_ID= SECURE_encryptionKey.CLIENT_ID;
-    private static final String CLIENT_SECRET = SECURE_encryptionKey.CLIENT_SECRET;
+    public static final String CLIENT_ID= SECURE_OAuth.CLIENT_ID;
+    private static final String CLIENT_SECRET = SECURE_OAuth.CLIENT_SECRET;
 
 
     GoogleCloudMessaging gcm;
@@ -165,7 +165,7 @@ public class RegistrationHandler extends Service {
                 @Override
                 public void onReceive(Context context, Intent intent) {
                     sendNotification("Register your phone!",
-                            "Touch to register your phone with SensibleDTU experiment");
+                            "Touch to register your phone with GoActiwe experiment");
                 }
             };
             registerReceiver(br, new IntentFilter(SHOW_REGISTRATION_REMINDER) );
@@ -174,7 +174,7 @@ public class RegistrationHandler extends Service {
             am = (AlarmManager)context.getSystemService(Context.ALARM_SERVICE);
         }
         sendNotification("Register your phone!",
-                "Touch to register your phone with SensibleDTU experiment");
+                "Touch to register your phone with GoActiwe experiment");
         am.setInexactRepeating(AlarmManager.RTC, System.currentTimeMillis(),
                 AlarmManager.INTERVAL_FIFTEEN_MINUTES, pi);
     }

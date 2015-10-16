@@ -66,7 +66,7 @@ public class GcmBroadcastReceiver extends BroadcastReceiver {
                         extras.getString("message"),
                         extras.getString("url"));
             } else {
-                sendNotification(intent.getExtras().getString("title", "SensibleDTU"),
+                sendNotification(intent.getExtras().getString("title", "GoActiwe"),
                         intent.getExtras().getString("message"));
             }
         }

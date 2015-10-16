@@ -22,6 +22,6 @@
  -->
 
 <resources>
-    <string name="app_name">DataCollector</string>
+    <string name="app_name">GoActiwe</string>
     <string name="uploadButtonText">UPLOAD NOW</string>
 </resources>

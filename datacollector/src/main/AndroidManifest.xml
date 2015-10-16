@@ -104,7 +104,7 @@
 
             <intent-filter>
                 <action android:name="com.google.android.c2dm.intent.RECEIVE" />
-                <category android:name="dk.dtu.imm.datacollector"/>
+                <category android:name="dk.dtu.imm.goactive"/>
             </intent-filter>
         </receiver>
         <receiver android:name="dk.dtu.imm.goactive.BluetoothTimeoutBroadcastReceiver" android:enabled="true">
@@ -187,7 +187,7 @@
     <!-- GCM -->
     <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
     <permission android:name="dk.dtu.imm.goactive.permission.C2D_MESSAGE" android:protectionLevel="signature" />
-    <uses-permission android:name="dk.dtu.imm.datacollector.permission.C2D_MESSAGE" />
+    <uses-permission android:name="dk.dtu.imm.goactive.permission.C2D_MESSAGE" />
 
     <!-- Activity recognition. -->
     <uses-permission android:name="com.google.android.gms.permission.ACTIVITY_RECOGNITION" />

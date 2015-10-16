@@ -7,8 +7,8 @@ android {
     defaultConfig {
         minSdkVersion 19
         targetSdkVersion 19
-        versionCode 22
-        versionName "2015_v1.0"
+        versionCode 2
+        versionName "2015_v1.1"
         applicationId 'dk.dtu.imm.goactive'
     }
 
@@ -27,7 +27,7 @@ android {
      buildTypes {
         release {
 
-            
+
         }
     }
 }
