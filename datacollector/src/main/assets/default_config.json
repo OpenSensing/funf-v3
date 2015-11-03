@@ -1,5 +1,5 @@
 {
-    "configUpdatePeriod": 3600,
+    "configUpdatePeriod": 60,
     "configUpdateUrl": "https://neuro247data.compute.dtu.dk/api/connectors/connector_funf/config/",
     "dataArchivePeriod": 60,
     "dataRequests": {
