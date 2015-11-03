@@ -206,7 +206,7 @@ public abstract class SensorProbe extends Probe {
         for (int i=0; i<events.size(); i++) {
             SensorEventCopy event = events.get(i);
 
-            timestamp[i] = bootTime*1000 - event.timestamp;
+            timestamp[i] = bootTime*1000000 + event.timestamp;
             accuracy[i] = event.accuracy;
             for (int valueIndex=0; valueIndex<valuesLength; valueIndex++) {
                 values[valueIndex][i] = event.values[valueIndex];
